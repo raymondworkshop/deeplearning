@@ -20,14 +20,8 @@
    + the github for the code
    + the fixed meetting time
 
-### reference
-* CS 20: Tensorflow for Deep Learning Research 
-* COS495 Natural Language Processing
-*  http://web.stanford.edu/class/cs20si/syllabus.html
-*  github
 
-
-#### 2018-05-23
+#### 2018-05-24
   * setup the env on python and tensorflow on mac
   * TODO: 
     - setup the env on windows
