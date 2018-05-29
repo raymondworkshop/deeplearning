@@ -1,5 +1,12 @@
 ### work notes
 
+#### 2018-05-29
+  * setup google cloud <http://cs231n.github.io/gce-tutorial/>
+  
+  * NN algorithms
+  
+  * the server: 10.237.4.253 raymond/raymond
+
 #### meetup with Dr. Wang on 28/05/2018
 * about tensorflow [1]:
     + Setup the env about python and tensorflow
