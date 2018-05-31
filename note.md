@@ -1,5 +1,13 @@
 ### work notes
 
+#### 2018-05-31
+  * read the paper - "predicting latent structured intents from shopping queries"     - MLP
+    - RNN
+    - LSTM 
+    
+  * claw the review data - "small" subsets  
+  * run basic word2vec on TF  
+
 #### 2018-05-30
   * word embedding
     + data normalization  
