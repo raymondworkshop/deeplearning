@@ -1,5 +1,18 @@
 ### work notes
 
+#### 2018-05-30
+  * word embedding
+    + data normalization  
+      - lemmatization and word stem ?  
+      
+    + document vectorization  
+      - count vectorizer and TF-IDF vectorizer  
+      - word2vec <- could care about the order (word context) -> semantic  
+        -> we get the similar vectors for the words  
+        
+    + 
+
+
 #### 2018-05-29
   * setup google cloud <http://cs231n.github.io/gce-tutorial/>
   
