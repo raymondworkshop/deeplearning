@@ -7,6 +7,7 @@ import json
 import re
 #from lxml import html  
 #import pickle
+import time
 
 AMAZON_URL = "https://www.amazon.com/s/?keywords=laptop"
 AMAZON_DP = "https://www.amazon.com/dp/"
@@ -63,7 +64,16 @@ def get_results(asin):
     #product_title = soup.title.string
     # #product_price = soup.find(id="style_name_0_price").text
     _dict["asin"] = asin
-    _dict["title"] = soup.title.string
+    title = soup.title.string
+    if "Robot Check" in title:
+        time.sleep(60 )
+        title = soup.title.string
+        if "Robot Check" in title:
+            _dict["title"] = ""
+        else:
+            _dict["title"] = soup.title.string
+    else:
+        _dict["title"] = soup.title.string
 
     product_price = soup.find(id="style_name_0_price")
     if product_price:
@@ -121,7 +131,7 @@ def get_results(asin):
     return _dict
 
 def main():
-    
+    """
     # get all asins of some product
     ASINS =  []
 
@@ -145,23 +155,23 @@ def main():
     #write the file
     with open("amazon_asin_update.md", 'a') as f:
         f.write(str(ASINS))
-        
+    """  
 
     #get the infor based on ASINS
     # reviews, technical specifications, price, brand
     #title
     # price - id "style_name_0_price"
     
-    #ASINS = ["B07C7XY7GS", "B017XR0XWC"]
+    ASINS = [ "B017XR0XWC"]
     #f = open()
-    """
-    f1 = open("amazon_asin.md", 'r')
-    ASINS = eval(f1.readline())
+    
+    #f1 = open("amazon_asin_0625.md", 'r')
+    #ASINS = eval(f1.readline())
 
     #ASINS = ["B07CYX3DG8"]
     #ASINS = ["B01MYGF32C"]
   
-    f = open('amazon_update.json', 'a', encoding="utf-8") 
+    f = open('amazon_update_0625.json', 'a', encoding="utf-8") 
     _ret = {}
     for asin in ASINS:
         _ret = get_results(asin)
@@ -169,7 +179,7 @@ def main():
         f.write(str(_ret) + "\n")
 
     f.close()
-    """
+    
 
     #print(_ret)
     #print(get_results)
