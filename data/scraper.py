@@ -162,22 +162,22 @@ def get_results(asin):
     _reviews_div = soup.find('div', attrs={'class': 'a-row a-spacing-large'})
     _reviews_cnt = 0
     _reviews_href = ""
-    _reviews_div_b = _reviews_div.find('a')
-    if _reviews_div_b.href:
-        try:
-            if _reviews_div.a['href']:
-                _reviews_href = _reviews_div.a['href']
-                if _reviews_href:
-                    _reviews_cnt_txt = _reviews_div.text
-                if _reviews_cnt_txt:
-                    _reviews_cnt_txt_ = re.search(r'\d+', _reviews_cnt_txt)
-                    if _reviews_cnt_txt_:
-                        _reviews_cnt = int(_reviews_cnt_txt_.group())
+    if _reviews_div:
+        _reviews_div_b = _reviews_div.find('a')
+        if _reviews_div_b:
+            try:
+                if _reviews_div.a.find('href'):
+                    _reviews_href = _reviews_div.a['href']
+                    if _reviews_href:
+                        _reviews_cnt_txt = _reviews_div.text
+                    if _reviews_cnt_txt:
+                        _reviews_cnt_txt_ = re.search(r'\d+', _reviews_cnt_txt)
+                        if _reviews_cnt_txt_:
+                            _reviews_cnt = int(_reviews_cnt_txt_.group())
 
         #reviews_href = "/".join(str(x) for x in _reviews_href)
-        except TypeError:
-            pass
-
+            except TypeError:
+                pass
 
     _reviews_html = AMAZON + _reviews_href + "&pageNumber="
 
@@ -240,7 +240,7 @@ def main():
     #ASINS = ["B017XR0XWC"]
     # f = open()
 
-    f1 = open("amazon_asin_0625.md", 'r')
+    f1 = open("amazon_asin_0625_.md", 'r')
     ASINS = eval(f1.readline())
 
     # ASINS = ["B07CYX3DG8"]
