@@ -79,7 +79,7 @@ def get_reviews(html, cnt):
         for item in _reviews_div:
             _txt = item.get_text().lstrip().rstrip().rstrip("\n").lstrip("\n")
             _txt_list = _txt.encode('utf-8').split()
-            if len(_txt_list) > 5:  # bad option
+            if len(_txt_list) > 1:  # bad option
                 _reviews.append(_txt_list)
 
     return _reviews
@@ -117,7 +117,8 @@ def get_results(asin):
 
     product_price = soup.find(id="style_name_0_price")
     if product_price:
-        _dict["price"] = product_price.text.rstrip('\n').lstrip("\n").rstrip().rstrip()
+        _dict["price"] = product_price.text.rstrip(
+            '\n').lstrip("\n").rstrip().rstrip()
     else:
         _dict["price"] = ""
 
@@ -142,7 +143,8 @@ def get_results(asin):
         for _tr in tech_details_1:
             _th = _tr.th.get_text()
             _td = _tr.td.get_text()
-            _tech_details[_th] = _td.lstrip().rstrip().rstrip("\n").lstrip("\n")
+            _tech_details[_th] = _td.lstrip(
+            ).rstrip().rstrip("\n").lstrip("\n")
 
     _tech_details_2 = soup.find(id="productDetails_techSpec_section_2")
     if _tech_details_2:
@@ -150,7 +152,8 @@ def get_results(asin):
         for _tr in tech_details_2:
             _th = _tr.th.get_text()
             _td = _tr.td.get_text()
-            _tech_details[_th] = _td.lstrip().rstrip().rstrip("\n").lstrip("\n")
+            _tech_details[_th] = _td.lstrip(
+            ).rstrip().rstrip("\n").lstrip("\n")
 
     if _tech_details:
         _dict["tech"] = _tech_details
@@ -162,24 +165,30 @@ def get_results(asin):
     _reviews_div = soup.find('div', attrs={'class': 'a-row a-spacing-large'})
     _reviews_cnt = 0
     _reviews_href = ""
-    #_reviews_div = '<div class="a-row a-spacing-large"><a class="a-link-emphasis a-text-bold" data-hook="see-all-reviews-link-foot" href="/HP-17-3-Laptop-Intel-Memory/product-reviews/B06X1869F3/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&amp;reviewerType=all_reviews">See all 129 reviews</a></div>'
+
+    import pdb
+    pdb.set_trace()
     if _reviews_div:
-        try:
-            for a in _reviews_div.find('a', href=True, text=True):
-                _reviews_href = a['href']
-            #_reviews_txt = a.txt
-                _reviews_txt = re.search(r'\d+', a.txt)
-                _reviews_cnt = int(_reviews_txt.group())
-        #reviews_href = "/".join(str(x) for x in _reviews_href)
-        except TypeError:
-            pass
+        _reviews_div_a = _reviews_div.find('a')
+        if _reviews_div_a:
+            try:
+                a_txt = _reviews_div.a.text
+                if a_txt:
+                    _reviews_txt = re.search(r'\d+', a_txt)
+                    if not _reviews_txt:
+                        _reviews_cnt = int(_reviews_txt.group())
+                        #href
+                        _reviews_href = _reviews_div.a['href']
+
+            except TypeError:
+                pass
 
     if _reviews_href:
         _reviews_html = AMAZON + _reviews_href + "&pageNumber="
 
     #import pdb
-    # pdb.set_trace()
-    if _reviews_cnt > 1 : #assume the review is more than 1 word
+    #pdb.set_trace()
+    if _reviews_cnt > 5:  # assume the review is more than 1 word
         _dict["reviews"] = get_reviews(_reviews_html, _reviews_cnt)
     else:
         _reviews_txt = soup.find_all(
@@ -198,6 +207,8 @@ def get_results(asin):
     # if not reviews:
     #	reviews = parser.xpath(XPATH_REVIEW_SECTION_2)
 
+    import pdb
+    pdb.set_trace()
     return _dict
 
 
@@ -226,7 +237,7 @@ def main():
     # write the file
     with open("amazon_asin_0627.md", 'a') as f:
         f.write(str(tuple(ASINS)))
-    
+
     """
     # get the infor based on ASINS
     # reviews, technical specifications, price, brand
@@ -246,8 +257,7 @@ def main():
     ASINS = ["B06X1869F3"]
     #ASINS = ["B07C8BJ1NT","B01JJQVNLK","B078KNND2S", "B005OSFT90", "B01AP5AJFA","B01AP5AJFA", "ACSVBGNA01", "B06WWKYM1X"]
 
-
-    f = open('amazon_update_0628_latest_.json', 'a', encoding="utf-8")
+    f = open('amazon_update_0628_latest_1.json', 'a', encoding="utf-8")
     _ret = {}
     for asin in ASINS:
         _ret = get_results(asin)
@@ -255,7 +265,7 @@ def main():
         f.write(str(_ret) + "\n")
 
     f.close()
-   
+
     # print(_ret)
     # print(get_results)
     return 0
