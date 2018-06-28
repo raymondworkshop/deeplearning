@@ -65,10 +65,12 @@ def get_reviews(html, cnt):
     #import pdb
     # pdb.set_trace()
     #_reviews = []
-    while page < pages:
+    while page <= pages:
         url = html + str(page)
-        page = page + 1
+        
         print("The review page %d url: %s" % (page, url))
+        page = page + 1
+
         r = requests.get(url, headers=HEADERS)
         soup = BeautifulSoup(r.content, 'html5lib')
 
@@ -166,8 +168,8 @@ def get_results(asin):
     _reviews_cnt = 0
     _reviews_href = ""
 
-    import pdb
-    pdb.set_trace()
+    #import pdb
+    #pdb.set_trace()
     if _reviews_div:
         _reviews_div_a = _reviews_div.find('a')
         if _reviews_div_a:
@@ -175,9 +177,10 @@ def get_results(asin):
                 a_txt = _reviews_div.a.text
                 if a_txt:
                     _reviews_txt = re.search(r'\d+', a_txt)
-                    if not _reviews_txt:
+                    if _reviews_txt:
                         _reviews_cnt = int(_reviews_txt.group())
                         #href
+                        #if _reviews_div.a.find('href'):
                         _reviews_href = _reviews_div.a['href']
 
             except TypeError:
@@ -188,7 +191,7 @@ def get_results(asin):
 
     #import pdb
     #pdb.set_trace()
-    if _reviews_cnt > 5:  # assume the review is more than 1 word
+    if _reviews_href and _reviews_cnt > 5:  # assume the review is more than 1 word
         _dict["reviews"] = get_reviews(_reviews_html, _reviews_cnt)
     else:
         _reviews_txt = soup.find_all(
@@ -207,8 +210,8 @@ def get_results(asin):
     # if not reviews:
     #	reviews = parser.xpath(XPATH_REVIEW_SECTION_2)
 
-    import pdb
-    pdb.set_trace()
+    #import pdb
+    #pdb.set_trace()
     return _dict
 
 
@@ -246,18 +249,18 @@ def main():
 
     #ASINS = ["B017XR0XWC"]
     # f = open()
-    """
-    f1 = open("amazon_asin_0627.md", 'r')
+    
+    f1 = open("amazon_asin_0628.md", 'r')
     ASINS = eval(f1.readline())
-
+    """
     with open("amazon_asin_0628.md", 'a') as f:
         f.write(str(set(ASINS)))
     """
 
-    ASINS = ["B06X1869F3"]
+    #ASINS = ["B06X1869F3"]
     #ASINS = ["B07C8BJ1NT","B01JJQVNLK","B078KNND2S", "B005OSFT90", "B01AP5AJFA","B01AP5AJFA", "ACSVBGNA01", "B06WWKYM1X"]
 
-    f = open('amazon_update_0628_latest_1.json', 'a', encoding="utf-8")
+    f = open('amazon_update_0628_latest_2.json', 'a', encoding="utf-8")
     _ret = {}
     for asin in ASINS:
         _ret = get_results(asin)
