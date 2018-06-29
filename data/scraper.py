@@ -58,7 +58,7 @@ def num_there(s):
 
 
 def get_reviews(html, cnt):
-    pages = round(cnt / 10)
+    pages = round(cnt / 10) + 1 # bug
     _reviews = []
     page = 1
 
@@ -134,7 +134,13 @@ def get_results(asin):
             _td = str(row.get_text().rstrip("\n").lstrip("\n"))
             if num_there(_td):
                 #_td = _tr.td.get_text().lstrip().rstrip().rstrip("\n").lstrip("\n")
-                _dict["date"] = _td
+                _dict["date"] = _td.lstrip().rstrip().rstrip("\n").lstrip("\n")
+                
+                year = re.search('\d{4}', _dict["date"]).group()
+                if int(year) < 2017: # only get the ones in recent two years
+                    return _dict
+                
+
     else:
         _dict["date"] = ""
 
@@ -145,8 +151,7 @@ def get_results(asin):
         for _tr in tech_details_1:
             _th = _tr.th.get_text()
             _td = _tr.td.get_text()
-            _tech_details[_th] = _td.lstrip(
-            ).rstrip().rstrip("\n").lstrip("\n")
+            _tech_details[_th] = _td.rstrip("\n").lstrip("\n").lstrip().rstrip()
 
     _tech_details_2 = soup.find(id="productDetails_techSpec_section_2")
     if _tech_details_2:
@@ -154,8 +159,7 @@ def get_results(asin):
         for _tr in tech_details_2:
             _th = _tr.th.get_text()
             _td = _tr.td.get_text()
-            _tech_details[_th] = _td.lstrip(
-            ).rstrip().rstrip("\n").lstrip("\n")
+            _tech_details[_th] = _td.rstrip("\n").lstrip("\n").lstrip().rstrip()
 
     if _tech_details:
         _dict["tech"] = _tech_details
@@ -191,7 +195,7 @@ def get_results(asin):
 
     #import pdb
     #pdb.set_trace()
-    if _reviews_href and _reviews_cnt > 5:  # assume the review is more than 1 word
+    if _reviews_href and _reviews_cnt > 4:  # assume the review is more than 1 word
         _dict["reviews"] = get_reviews(_reviews_html, _reviews_cnt)
     else:
         _reviews_txt = soup.find_all(
@@ -250,17 +254,18 @@ def main():
     #ASINS = ["B017XR0XWC"]
     # f = open()
     
-    f1 = open("amazon_asin_0628.md", 'r')
-    ASINS = eval(f1.readline())
+    #f1 = open("amazon_asin_0628.md", 'r')
+    #ASINS = eval(f1.readline())
     """
     with open("amazon_asin_0628.md", 'a') as f:
         f.write(str(set(ASINS)))
     """
 
-    #ASINS = ["B06X1869F3"]
+    ASINS = ["B07193JRJR"]
     #ASINS = ["B07C8BJ1NT","B01JJQVNLK","B078KNND2S", "B005OSFT90", "B01AP5AJFA","B01AP5AJFA", "ACSVBGNA01", "B06WWKYM1X"]
 
-    f = open('amazon_update_0628_latest_2.json', 'a', encoding="utf-8")
+    #f = open('amazon_update_0628_latest_4.json', 'a', encoding="utf-8")
+    f = open('amazon_update_0629_draft.json', 'a', encoding="utf-8")
     _ret = {}
     for asin in ASINS:
         _ret = get_results(asin)
