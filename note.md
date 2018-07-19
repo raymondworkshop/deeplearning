@@ -1,9 +1,38 @@
 ### work notes
 
+#### 2018-07-18 
+ * 
+
+#### 2018-07-17 
+ * work harder
+
+ * problem fix:
+  - export LD_LIBRARY_PATH=LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64/
+ 
+
+#### 2018-07-13  
+ *　精力问题
+
+#### 2018-07-12  
+ * 
+
+#### 2018-07-11
+ * notes on the server
+   - source /usr/local/tensorflow/bin/activate
+   - GPU: export CUDA_VISIBLE_DEVICES=1
+   - check gpu process : nvidiva-smi
+
+
+#### 2018-07-09 
+ * reproduce the paper
+
+
+
+
 #### 2018-05-31
   * read the paper - "predicting latent structured intents from shopping queries"     - MLP
-    - RNN
-    - LSTM 
+    - LSTM/RNN
+    - CNN
     
   * claw the review data - "small" subsets  
   * run basic word2vec on TF  
