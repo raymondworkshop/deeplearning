@@ -7,6 +7,7 @@ import logging
 
 import json
 import gzip
+import ast
 
 class Sentences():
     def __iter__(self):
@@ -23,23 +24,32 @@ def parse(path):
     for l in g:
         yield eval(l)
 
-
-
 def word2vec_training():
     #sentences = word2vec.Text8Corpus('reviewsText_small.zip')
-    sentences = Sentences()
+    #sentences = Sentences()
     
     """
     sentences = []
     for review in parse('C:/Users/raymondzhao/myproject/research/src/reviews_Electronics_big.json.gz'):
         sentences.append(review['reviewText'])
     """
+    sentences = []
+    with open("C:\\Users\\raymondzhao\\myproject\\amazon_reviews.json", "r", encoding="utf-8") as f1:
+        for line in f1:
+            if 'reviews' in line:
+                #line = line.replace("\'", "\"")
+                data = ast.literal_eval(line)
+                reviews = data['reviews']
 
+                for _review in reviews:
+                    review = [w.decode() for w in _review]
+                    sentences.append(review)
+     
     #training
     #parameter - 
     model = gensim.models.Word2Vec(sentences, size=300, min_count=1) #
-    model.save('amazon_reviews.model')
-    model.save_word2vec_format('amazon_reviews.model.bin', binary=True)
+    model.save('amazon_reviews_only.model')
+    model.save_word2vec_format('amazon_reviews_only_model.bin', binary=True)
 
     #test
     w1 = "good"
