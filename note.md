@@ -1,7 +1,32 @@
 ### work notes
 
 #### 2018-07-18 
- * 
+ * result
+
+Found 838332 reviews.
+Found 21616 unique tokens.
+Shape of data tensor: (838332, 300)
+Shape of label tensor: (838332, 6)
+
+SWEM-aver:
+
+Layer (type)                 Output Shape              Param #
+=================================================================
+input_1 (InputLayer)         (None, 300)               0
+_________________________________________________________________
+embedding_1 (Embedding)      (None, 300, 100)          2000000
+_________________________________________________________________
+lambda_1 (Lambda)            (None, 100)               0
+_________________________________________________________________
+dense_1 (Dense)              (None, 6)                 606
+=================================================================
+Total params: 2,000,606
+Trainable params: 606
+Non-trainable params: 2,000,000
+_________________________________________________________________
+None
+Train on 528149 samples, validate on 58684 samples
+
 
 #### 2018-07-17 
  * work harder
