@@ -19,6 +19,13 @@ from keras.utils import to_categorical
 
 
 from keras.models import Model
+import tensorflow as tf
+from keras.layers import Lambda
+
+from keras import regularizers
+
+from engine_training import ExtendedModel
+#from engine_training import ThetaPrime
 
 
 import pickle
@@ -27,8 +34,8 @@ import ast
 import math
 
 MAX_NUM_WORDS = 20000
-MAX_SEQUENCE_LENGTH = 1000
-EMBEDDING_DIM = 300
+MAX_SEQUENCE_LENGTH = 300  #300
+EMBEDDING_DIM = 100
 
 VALIDATION_SPLIT = 0.3
 
@@ -63,15 +70,15 @@ def get_cpu_label(_str):
 
 def get_sscreen_label(_str):
     # [ 11.6 inches, 13.3 inches,14 inches,15.6 inches, 17.3 inches ]
-    _cpu_map = {
+    _sscreen_map = {
         "<= 12 inches": 0,
         "<= 13 inches":1,
         "<= 14 inches": 2,
         "<= 15 inches":3,
-        "> 15 inches":4,
+        "> 15 inches":4
     }
 
-    _sscreen_label = 5 #unknown
+    _sscreen_label = 4 #unknown
     if 'inches' in _str:
         _sscreen_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
         if _sscreen_size <= 12:
@@ -89,8 +96,41 @@ def get_sscreen_label(_str):
 
 
 def get_ram_label(_str):
+    # [ "4 GB SDRAM DDR3", "4 GB DDR3 SDRAM","8 GB",4 GB SDRAM DDR4","16 GB DDR4" ,"2 GB SDRAM","6 GB DDR SDRAM", "12 GB DDR SDRAM" ]
+    _ram_map = {
+        "2 GB SDRAM": 0,
+        "4 GB SDRAM DDR3": 1,
+        "6 GB DDR SDRAM":2,
+        "8 GB SDRAM DDR3": 3,
+        "8 GB SDRAM DDR4": 4,
+        "12 GB DDR SDRAM":5,
+        "16 GB DDR4":6
+    }
 
-    return
+    _ram_label = 7 #unknown
+    if 'GB'  in _str:
+        _ram_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
+        if _ram_size == 2:
+            _ram_label = 0
+        elif _ram_size == 4:
+            _ram_label = 1
+        elif _ram_size  == 6:
+            _ram_label = 2
+        elif _ram_size == 8:
+            if 'DDR3' in _str:
+                _ram_label = 3
+            if 'DDR4' in _str:
+                _ram_label = 4
+        elif _ram_size  == 12:
+            _ram_label = 5
+        elif _ram_size  == 16:
+            _ram_label = 6
+        else:
+            _ram_label = 7
+
+    return _ram_label
+    
+    return _ram_label
 
 def read_data(file):
     list_reviews = []
@@ -161,8 +201,12 @@ def train():
     asins[ "B07BLKT38D"] = lst3
     """
 
-    docs = []
-    labels = array([])
+    # The text samples and their labels
+    texts = []  #list of text samples
+    #labels = array([])
+    labels = [] #list of label ids
+    labels_index = {}  # dictionary mapping label name to numeric id
+
     # ['14 inches', '2.16 GHz Intel Celeron', '4 GB SDRAM DDR3', 
     # [[b'I', b'placed', b'my', b'order', b'on', b'December', b'19th', b'and', b'was', b'under', b'the', b'impression', b'it', b'would', b'arrive', b'on', b'the', b'22nd']]
     for _asin in asins:
@@ -170,36 +214,52 @@ def train():
         # [screensize,cpu, ram, reviews]
         _cpu = asins[_asin][1]
         if _cpu:
-           _cpu_label = get_cpu_label(_cpu)
+           _cpu_id = get_cpu_label(_cpu)
+           labels_index[_cpu] = _cpu_id
+
+        _sscreen = asins[_asin][0]
+        if _sscreen:
+            _sscreen_id = get_sscreen_label(_sscreen)
+            labels_index[_sscreen] = _sscreen_id
+
+        _ram = asins[_asin][2]
+        if _ram:
+            _ram_id = get_ram_label(_ram)
+            labels_index[_ram] = _ram_id
+        
         #reviews
-        _reviews = asins[_asin][3] 
-        docs = docs + _reviews
+        reviews = asins[_asin][3] 
+        for _t in reviews:
+            t =  " ".join(str(x) for x in _t)
+            texts.append(t)
+            #labels.append(_cpu_id)
+            #labels.append(_sscreen_id)
+            labels.append(_ram_id)
+            
 
-        _labels = array([_cpu_label] * len(_reviews))
-        labels = numpy.append(labels, _labels)
-
+    #Found 838332 reviews
+    print('Found %s reviews.' % len(texts))
     # define class labels
-    labels.ravel()
+    #labels.ravel()
     #labels = array([1,1,1,1,1,0,0,0,0,0])
-    #flattern docs
-    flattened_docs = [str(j) for i in docs for j in i]
+    #flattened_docs = [str(j) for i in docs for j in i]
 
     # prepare tokenizer
     # finally, vectorize the text samples into a 2D integer tensor
     tokenizer = Tokenizer(num_words=MAX_NUM_WORDS)
-    tokenizer.fit_on_texts(flattened_docs)
-    vocab_size = len()
+    tokenizer.fit_on_texts(texts)
     
     # integer encode the documents
-    sequences = tokenizer.texts_to_sequences(flattened_docs)
+    sequences = tokenizer.texts_to_sequences(texts)
 
     word_index = tokenizer.word_index
+    #
     print('Found %s unique tokens.' % len(word_index))
 
-    # pad documents to a max length of 1000 words
+    # pad documents to a max length of 300 words
     data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
 
-    #labels = to_categorical(numpy.asarray(labels))
+    labels = to_categorical(numpy.asarray(labels))
     print('Shape of data tensor:', data.shape)
     print('Shape of label tensor:', labels.shape)
 
@@ -226,7 +286,7 @@ def train():
     f.close()
     print('Loaded %s word vectors.' % len(embeddings_index))
     
-    # create a weight matrix for words in training docs
+    ## prepare embedding matrix
     print('Preparing embedding matrix.')
 
     # create a weight matrix for words in training docs
@@ -244,16 +304,21 @@ def train():
     # note that we set trainable = False so as to keep the embeddings fixed
     embedding_layer = Embedding(num_words,
                             EMBEDDING_DIM,
-                            embeddings_initializer=Constant(embedding_matrix),
+                            #embeddings_initializer=Constant(embedding_matrix),
+                            weights=[embedding_matrix],
                             input_length=MAX_SEQUENCE_LENGTH,
                             trainable=False)
 
     print('Training model.')
     # define model
+
+    # create model
     """
     # train a 1D convnet with global maxpooling
     sequence_input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
     embedded_sequences = embedding_layer(sequence_input)
+    
+    # a 1D convolutional neural network (CNN)
     x = Conv1D(128, 5, activation='relu')(embedded_sequences)
     x = MaxPooling1D(5)(x)
     x = Conv1D(128, 5, activation='relu')(x)
@@ -261,22 +326,60 @@ def train():
     x = Conv1D(128, 5, activation='relu')(x)
     x = GlobalMaxPooling1D()(x)
     x = Dense(128, activation='relu')(x)
-    preds = Dense(len(labels), activation='softmax')(x)
+    preds = Dense(6, activation='softmax')(x)
+
     """
-    model =Sequential()
-    model.add(embedding_layer)
+    """
+    x = Dense(1, activation='relu',input_dim=300)(embedded_sequences)
+    preds = Dense(6, activation='softmax')(x)
+    """
+    #vsize = 100
+    #vv = ThetaPrime(vsize)
+
+    model = Sequential()
+
+    def average_emb(input_seq):
+        # the mean
+        H_enc = tf.reduce_mean(input_seq, axis=1)  # batch 1 emb
+        #H_enc = tf.reduce_max(input_seq, axis=1)
+
+        embedded_sequences = H_enc
+        return embedded_sequences
+
+    input_sequences = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int64')
+    xx = embedding_layer(input_sequences)
+    #xx = Lambda(average_emb)(xx)
+
+    #preds = Dense(8, kernel_initializer='he_normal', kernel_regularizer=regularizers.l2(0), activation='sigmoid')(xx)
+    #preds = Dense(8, activation='sigmoid')(xx)
+    #model.add(Dense(8, activation='sigmoid')(xx))
+    #model = Model(input_sequences, preds)
+    #model = ExtendedModel(input=input_sequences, output=preds)
+
+    #model.add_extra_trainable_weight(tf.Variable(numpy.zeros((vsize), dtype='float32')))
+    preds = Dense(8, activation='sigmoid')(xx)
+
+    model = Model(input_sequences, preds)
+    
+    """
+    model.add(xx)
     model.add(Flatten())
+    model.add(Dense(6, activation='sigmoid'))
+    """
 
-
-    model = Model(sequence_input, preds)
     model.compile(loss='categorical_crossentropy',
               optimizer='rmsprop',
               metrics=['acc'])
 
-    # fit the model
+    # summarize the model
+    print(model.summary())
+
     model.fit(x_train, y_train,
-          epochs=10,
-          validation_data=(x_val, y_val))
+          batch_size=128,
+          epochs=20,
+          validation_split=.1)
+
+    # fit the model
      
     #model.fit(padded_docs, labels, epochs=50, verbose=0)
 
@@ -284,7 +387,7 @@ def train():
     loss, accuracy = model.evaluate(x_val, y_val, verbose=0)
     print('Accuracy: %f' % (accuracy*100))
 
-    return
+    return 0
 
 def main():
     #data()
