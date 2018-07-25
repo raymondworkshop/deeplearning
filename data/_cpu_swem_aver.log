@@ -1,0 +1,208 @@
+orflow) [raymond@TB-COM-DLC02 exp2]$ python -i trains_amazon.py
+/usr/local/tensorflow/lib/python3.6/site-packages/h5py/__init__.py:36: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  from ._conv import register_converters as _register_converters
+Using TensorFlow backend.
+The asin %s: B07193JRJR
+The asin %s: B07BKNWVRT
+The asin %s: B07C89VH3J
+The asin %s: B079QZ5DD7
+The asin %s: B078WRSHV4
+The asin %s: B07C8H76ST
+The asin %s: B07C826G84
+The asin %s: B0764HW117
+The asin %s: B0721Y4BKP
+The asin %s: B07879JVQ8
+The asin %s: B01N6S4A2U
+The asin %s: B0749DN9BN
+The asin %s: B074VLX5XV
+The asin %s: B07BVZRVPF
+The asin %s: B077P7D2B2
+The asin %s: B06XFGF7SN
+The asin %s: B078JXMS8W
+The asin %s: B074TXHFX4
+The asin %s: B077YPSPQQ
+The asin %s: B079L3CTSJ
+The asin %s: B07C86S13K
+The asin %s: B077XS11LS
+The asin %s: B0788JTZFM
+The asin %s: B07BQVMWG5
+The asin %s: B071XSKHWV
+The asin %s: B077RNJR5N
+The asin %s: B0727VQLGM
+The asin %s: B072MTXBLM
+The asin %s: B077TLC1KQ
+The asin %s: B075S6YTRS
+The asin %s: B06XMQ82P4
+The asin %s: B0785H4MT5
+The asin %s: B073WQLZ7M
+The asin %s: B078251NTK
+The asin %s: B077PY4WH4
+The asin %s: B01LZ6XKS6
+The asin %s: B077RML4SK
+The asin %s: B077P1CBYZ
+The asin %s: B072N4D64S
+The asin %s: B077RJD7TS
+The asin %s: B07DP3K7KF
+The asin %s: B077ZHV9WQ
+The asin %s: B077ZLH5LC
+The asin %s: B079TGL2BZ
+The asin %s: B07192C4X4
+The asin %s: B07B6BTZ5K
+The asin %s: B077MMH1D8
+The asin %s: B06XFG7157
+The asin %s: B071JPYP1Z
+The asin %s: B077RQSMSR
+The asin %s: B074WFZJ1D
+The asin %s: B077Y3VYC5
+The asin %s: B071XTQDL6
+The asin %s: B06XJJG4PD
+The asin %s: B075TF3HT6
+The asin %s: B07B5C855G
+The asin %s: B07BKVHNPK
+The asin %s: B078BQVGFV
+The asin %s: B078X1J1BC
+The asin %s: B078GMKCDS
+The asin %s: B072J8ZNX6
+The asin %s: B077TFZ323
+The asin %s: B07116R1GY
+The asin %s: B0746NCNSG
+The asin %s: B0762PPGJJ
+The asin %s: B01N12UBQO
+The asin %s: B076BFW7VZ
+The asin %s: B009LL9VDG
+The asin %s: B0768M9KVY
+The asin %s: B0072PTV2O
+The asin %s: B077BL6GLH
+The asin %s: B073R5TXB7
+The asin %s: B06XD3QBLZ
+The asin %s: B071K1Q8TK
+The asin %s: B0752W6W4Q
+The asin %s: B071CHYSL5
+The asin %s: B0711DNBKX
+The asin %s: B07BP9QG2J
+The asin %s: B072FRYB5X
+The asin %s: B078Y2XB1Y
+The asin %s: B073W6J71R
+The asin %s: B0072PYHEQ
+The asin %s: B0795W86N3
+The asin %s: B06XFGDD8P
+The asin %s: B074M6P779
+The asin %s: B07BNPJ824
+The asin %s: B07CH6XDV9
+The asin %s: B0794QQKC8
+The asin %s: B077HQMRVH
+The asin %s: B076QGSPY8
+The asin %s: B07BPQJ9GN
+The asin %s: B06XNP29BR
+The asin %s: B077GBXBCM
+The asin %s: B079XKBTTK
+The asin %s: B0764LNTCZ
+The asin %s: B0753NHZY7
+The asin %s: B077QGHB4L
+The asin %s: B078WSX4QL
+The asin %s: B073QVTHZ6
+The asin %s: B06X9K3BH5
+The asin %s: B07FG1PXX9
+The asin %s: B075QJDVHP
+The asin %s: B0778DVNHH
+The asin %s: B06X17KZMK
+The asin %s: B0797KF5ZX
+The asin %s: B077T47HST
+The asin %s: B074Q54GSR
+The asin %s: B07BLKT38D
+The asin %s: B071X8PH9S
+The asin %s: B0749JVRQ3
+The asin %s: B077GF2VY8
+The asin %s: B0788K4NSG
+The asin %s: B06XD3LXXK
+The asin %s: B075N1YHVK
+The asin %s: B0798WT34S
+The asin %s: B076FGKHWC
+Found 838332 reviews.
+Found 21616 unique tokens.
+Shape of data tensor: (838332, 300)
+Shape of label tensor: (838332, 6)
+Loaded 400000 word vectors.
+Preparing embedding matrix.
+Training model.
+2018-07-24 12:41:38.495080: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2018-07-24 12:41:38.710009: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1356] Found device 0 with properties:
+name: Tesla P100-PCIE-16GB major: 6 minor: 0 memoryClockRate(GHz): 1.3285
+pciBusID: 0000:04:00.0
+totalMemory: 15.89GiB freeMemory: 12.70GiB
+2018-07-24 12:41:38.916886: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1356] Found device 1 with properties:
+name: Tesla P100-PCIE-16GB major: 6 minor: 0 memoryClockRate(GHz): 1.3285
+pciBusID: 0000:83:00.0
+totalMemory: 15.89GiB freeMemory: 12.70GiB
+2018-07-24 12:41:38.917076: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0, 1
+2018-07-24 12:41:40.424715: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-07-24 12:41:40.424795: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 1
+2018-07-24 12:41:40.424811: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N N
+2018-07-24 12:41:40.424832: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 1:   N N
+2018-07-24 12:41:40.425480: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 12302 MB memory) -> physical GPU (device: 0, name: Tesla P100-PCIE-16GB, pci bus id: 0000:04:00.0, compute capability: 6.0)
+2018-07-24 12:41:40.548021: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:1 with 12302 MB memory) -> physical GPU (device: 1, name: Tesla P100-PCIE-16GB, pci bus id: 0000:83:00.0, compute capability: 6.0)
+WARNING:tensorflow:From /usr/local/tensorflow/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py:2745: calling reduce_sum (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /usr/local/tensorflow/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py:1299: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+input_1 (InputLayer)         (None, 300)               0
+_________________________________________________________________
+embedding_1 (Embedding)      (None, 300, 100)          2000000
+_________________________________________________________________
+lambda_1 (Lambda)            (None, 100)               0
+_________________________________________________________________
+dense_1 (Dense)              (None, 6)                 606
+=================================================================
+Total params: 2,000,606
+Trainable params: 606
+Non-trainable params: 2,000,000
+_________________________________________________________________
+None
+Train on 528149 samples, validate on 58684 samples
+Epoch 1/20
+528149/528149 [==============================] - 59s - loss: 1.2163 - acc: 0.6117 - val_loss: 1.0971 - val_acc: 0.6127
+Epoch 2/20
+528149/528149 [==============================] - 59s - loss: 1.0962 - acc: 0.6119 - val_loss: 1.0930 - val_acc: 0.6127
+Epoch 3/20
+528149/528149 [==============================] - 62s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0931 - val_acc: 0.6127
+Epoch 4/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0930 - val_acc: 0.6127
+Epoch 5/20
+528149/528149 [==============================] - 59s - loss: 1.0952 - acc: 0.6119 - val_loss: 1.0931 - val_acc: 0.6127
+Epoch 6/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0930 - val_acc: 0.6127
+Epoch 7/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0930 - val_acc: 0.6127
+Epoch 8/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0931 - val_acc: 0.6127
+Epoch 9/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0930 - val_acc: 0.6127
+Epoch 10/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0931 - val_acc: 0.6127
+Epoch 11/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0930 - val_acc: 0.6127
+Epoch 12/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0930 - val_acc: 0.6127
+Epoch 13/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0930 - val_acc: 0.6127
+Epoch 14/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0931 - val_acc: 0.6127
+Epoch 15/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0931 - val_acc: 0.6127
+Epoch 16/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0931 - val_acc: 0.6127
+Epoch 17/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0931 - val_acc: 0.6127
+Epoch 18/20
+528149/528149 [==============================] - 59s - loss: 1.0952 - acc: 0.6119 - val_loss: 1.0931 - val_acc: 0.6127
+Epoch 19/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0931 - val_acc: 0.6127
+Epoch 20/20
+528149/528149 [==============================] - 59s - loss: 1.0953 - acc: 0.6119 - val_loss: 1.0931 - val_acc: 0.6127
+Accuracy: 61.228076
+
