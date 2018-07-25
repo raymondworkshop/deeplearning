@@ -346,8 +346,8 @@ def train():
         embedded_sequences = H_enc
         return embedded_sequences
 
-    input_sequences = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int64')
-    xx = embedding_layer(input_sequences)
+    #input_sequences = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int64')
+    #xx = embedding_layer(input_sequences)
     #xx = Lambda(average_emb)(xx)
 
     #preds = Dense(8, kernel_initializer='he_normal', kernel_regularizer=regularizers.l2(0), activation='sigmoid')(xx)
@@ -357,9 +357,7 @@ def train():
     #model = ExtendedModel(input=input_sequences, output=preds)
 
     #model.add_extra_trainable_weight(tf.Variable(numpy.zeros((vsize), dtype='float32')))
-    preds = Dense(8, activation='sigmoid')(xx)
-
-    model = Model(input_sequences, preds)
+    #model = Model(input_sequences, preds)
     
     """
     model.add(xx)
@@ -367,21 +365,22 @@ def train():
     model.add(Dense(6, activation='sigmoid'))
     """
 
+    
+    model.add(embedding_layer)
+    model.add(Flatten())
+    model.add(Dense(8, activation='sigmoid'))
+
     model.compile(loss='categorical_crossentropy',
               optimizer='rmsprop',
               metrics=['acc'])
 
     # summarize the model
     print(model.summary())
-
+    # fit the model
     model.fit(x_train, y_train,
           batch_size=128,
-          epochs=20,
+          epochs=5,
           validation_split=.1)
-
-    # fit the model
-     
-    #model.fit(padded_docs, labels, epochs=50, verbose=0)
 
     # evaluate the model
     loss, accuracy = model.evaluate(x_val, y_val, verbose=0)
