@@ -130,7 +130,6 @@ def get_ram_label(_str):
 
     return _ram_label
     
-    return _ram_label
 
 def read_data(file):
     list_reviews = []
@@ -175,6 +174,21 @@ def read_data(file):
                     asins[_asin].append(list_reviews)
 
     return asins
+
+def aver_emb_encoder(x_emb, x_mask): # emb / L
+    """ compute the average over all word embeddings """
+    x_mask = tf.expand_dims(x_mask, axis=-1)
+    x_mask = tf.expand_dims(x_mask, axis=-1)  # batch L 1 1
+
+    x_sum = tf.multiply(x_emb, x_mask)  # batch L emb 1
+    H_enc_0 = tf.reduce_sum(x_sum, axis=1, keep_dims=True)  # batch 1 emb 1
+    H_enc = tf.squeeze(H_enc_0, [1, 3])  # batch emb
+    x_mask_sum = tf.reduce_sum(x_mask, axis=1, keep_dims=True)  # batch 1 1 1
+    x_mask_sum = tf.squeeze(x_mask_sum, [2, 3])  # batch 1
+
+    H_enc = H_enc / x_mask_sum  # batch emb
+
+    return H_enc
 
 def train():
     # get documents
@@ -299,6 +313,8 @@ def train():
         if embedding_vector is not None:
             # words not found in embedding index will be all-zeros.
             embedding_matrix[i] = embedding_vector
+        else:
+            embedding_matrix[i] = tf.random_uniform_initializer(-0.001, 0.001)
 
     # load pre-trained word embeddings into an Embedding layer
     # note that we set trainable = False so as to keep the embeddings fixed
@@ -365,7 +381,6 @@ def train():
     model.add(Dense(6, activation='sigmoid'))
     """
 
-    
     model.add(embedding_layer)
     model.add(Flatten())
     model.add(Dense(8, activation='sigmoid'))
