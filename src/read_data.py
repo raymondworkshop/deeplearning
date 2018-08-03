@@ -1,12 +1,25 @@
 """
-read the data
+data processing and analysis
+@raymond
+
+history:
+   - create
+   - add data stastics on 03/08/2018
 
 """
+from pandas import DataFrame
+
+#import matplotlib.pyplot as plt
+import pandas as pd
+import matplotlib.pyplot as plt
 
 import gzip
 import json
 import ast
 
+
+# data frame in pandas
+df = pd.DataFrame()
 
 def parse(path):
     g = gzip.open(path, 'r')
@@ -14,7 +27,7 @@ def parse(path):
         yield json.dumps(eval(l))
 
 
-def read_data(file):
+def get_data(file):
     list_reviews = []
     asins = {}
 
@@ -35,12 +48,6 @@ def read_data(file):
 
             if 'tech' in line and len(data['tech']) > 0 and 'reviews' in line:
                 _asin = str(data['asin'])
-
-                reviews = data['reviews']
-                for _t in reviews:
-                    t =  " ".join(str(x) for x in _t)
-                    list_reviews.append(t)
-                    #reviews = asins[_asin][3] 
 
                 params = data['tech']
                 if len(params) > 0:
@@ -63,9 +70,43 @@ def read_data(file):
 
                         if len(asins[_asin]) == 5:
                             break
-                    asins[_asin].append(list_reviews)
+                    
+                    reviews = data['reviews']
+                    num_words = 0
+                    for _t in reviews:
+                        t =  " ".join(x.decode("utf-8")  for x in _t)
+                        #t =  " ".join(x  for x in _t)
+                        num_words = num_words + len(_t)
+                        list_reviews.append(t)
+                        #reviews = asins[_asin][3] 
 
-    return asins
+                    asins[_asin].append(list_reviews)
+                    #num of reviews
+                    asins[_asin].append(len(reviews))
+                    # num of words
+                    asins[_asin].append(num_words)
+
+                # 
+                df[_asin] = asins[_asin]
+
+    #return asins
+    return df
+
+def analyze_data(df):
+    # num of reviews and num of words
+
+    reviews = df.loc[6:7, :]
+    #for t in reviews:
+    #x_laptops = df #116
+    x_reviews = df.loc[6, :].sum() #7227
+    y_words = df.loc[7, :].sum()  #520942
+
+    reviews.plot(kind='hist', bins = 120)
+    plt.xlabel('num of words')
+
+
+
+    return
 
 def main():
     """
@@ -80,10 +121,24 @@ def main():
         f.write(txt["reviewText"] + '\n')
     """
 
+    
     dir = "C:/Users/raymondzhao/myproject/dev.dplearning/data/"
     #dir = "/data/raymond/workspace/exp2/"
     file = dir + 'amazon_reviews.json'
-    asins = read_data(file)
+    
+    df = get_data(file)
+    #save to the csv
+    file1 = dir + 'amazon_tech_0803.csv'
+    df.to_csv(file1)
+    
+
+    #load data
+    #file1 = dir + 'amazon_tech_0803.csv'
+    #data = pd.read_csv(file1)
+
+    # data statistics
+    analyze_data(df)
+
 
     #import pdb
     # pdb.set_trace()
