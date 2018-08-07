@@ -21,6 +21,7 @@ import ast
 # data frame in pandas
 df = pd.DataFrame()
 
+
 def parse(path):
     g = gzip.open(path, 'r')
     for l in g:
@@ -30,6 +31,8 @@ def parse(path):
 def get_data(file):
     list_reviews = []
     asins = {}
+
+    len_reviews = []
 
     with open(file, "r", encoding="utf-8") as f:
         for line in f:
@@ -53,15 +56,15 @@ def get_data(file):
                 if len(params) > 0:
                     #asins[_asin] = [screensize,cpu, ram]
                     asins[_asin] = []
-                    
+
                     for key, value in params.items():
                         if 'processor' in key.lower():
                             asins[_asin].append(value)
                         if 'ram' in key.lower():
-                            asins[_asin].append(value)    
+                            asins[_asin].append(value)
                         if 'screen size' in key.lower():
                             asins[_asin].append(value)
-                        #hard drive
+                        # hard drive
                         if 'hard' in key.lower():
                             asins[_asin].append(value)
                         #
@@ -70,43 +73,60 @@ def get_data(file):
 
                         if len(asins[_asin]) == 5:
                             break
-                    
+
                     reviews = data['reviews']
                     num_words = 0
                     for _t in reviews:
-                        t =  " ".join(x.decode("utf-8")  for x in _t)
+                        t = " ".join(x.decode("utf-8") for x in _t)
                         #t =  " ".join(x  for x in _t)
                         num_words = num_words + len(_t)
                         list_reviews.append(t)
-                        #reviews = asins[_asin][3] 
+                        #reviews = asins[_asin][3]
+
+                        len_reviews.append(len(_t))
 
                     asins[_asin].append(list_reviews)
-                    #num of reviews
+                    # num of reviews
                     asins[_asin].append(len(reviews))
                     # num of words
                     asins[_asin].append(num_words)
 
-                # 
+                #
                 df[_asin] = asins[_asin]
 
-    #return asins
-    return df
+    # return asins
+    return df, len_reviews
 
-def analyze_data(df):
+
+def analyze_data(df, len_reviews):
     # num of reviews and num of words
 
     reviews = df.loc[6:7, :]
-    #for t in reviews:
-    #x_laptops = df #116
-    x_reviews = df.loc[6, :].sum() #7227
-    y_words = df.loc[7, :].sum()  #520942
+    # for t in reviews:
+    # x_laptops = df #116
+    # x_reviews = df.loc[6, :].sum()  # 7227
+    # y_words = df.loc[7, :].sum()  # 520942
 
-    reviews.plot(kind='hist', bins = 120)
-    plt.xlabel('num of words')
+    x_words = df.loc[7, :].tolist()
+    y_reviews = df.loc[6, :].tolist()
 
+    # Todo use pandas
+    #reviews.plot(kind='hist', bins=120)
 
+    # pdb.set_trace()
+
+    #plt.hist(len_reviews, bins=20, color='g')
+    plt.hist(y_reviews, bins=20, color="green")
+
+    plt.xlabel('number of reviews for one laptop')
+    plt.ylabel('number of laptops')
+    plt.show()
+
+    import pdb
+    pdb.set_trace()
 
     return
+
 
 def main():
     """
@@ -121,24 +141,22 @@ def main():
         f.write(txt["reviewText"] + '\n')
     """
 
-    
-    dir = "C:/Users/raymondzhao/myproject/dev.dplearning/data/"
+    #dir = "C:/Users/raymondzhao/myproject/dev.dplearning/data/"
     #dir = "/data/raymond/workspace/exp2/"
+    dir = "/Users/zhaowenlong/workspace/proj/dev.deeplearning/data/"
     file = dir + 'amazon_reviews.json'
-    
-    df = get_data(file)
-    #save to the csv
+
+    df, len_reviews = get_data(file)
+    # save to the csv
     file1 = dir + 'amazon_tech_0803.csv'
     df.to_csv(file1)
-    
 
-    #load data
+    # load data
     #file1 = dir + 'amazon_tech_0803.csv'
     #data = pd.read_csv(file1)
 
     # data statistics
-    analyze_data(df)
-
+    analyze_data(df, len_reviews)
 
     #import pdb
     # pdb.set_trace()
