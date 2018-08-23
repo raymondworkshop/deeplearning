@@ -37,10 +37,10 @@ import ast
 import math
 
 MAX_NUM_WORDS = 20000
-MAX_SEQUENCE_LENGTH = 108  #300
+MAX_SEQUENCE_LENGTH = 54 * 2 #300
 EMBEDDING_DIM = 100
 
-VALIDATION_SPLIT = 0.3
+VALIDATION_SPLIT = 0.2
 
 
 def get_cpu_label(_str):
@@ -48,9 +48,9 @@ def get_cpu_label(_str):
     _cpu_map = {
         "amd": 0,
         "1.1 Intel":1,
-        "2.0-2.9 Intel": 2,
-        "3.0-3.9 Intel":3,
-        "4 Intel":4,
+        "1.5-2.5 Intel": 2,
+        "2.6-3.5 Intel":3,
+        "3.6 - 4 Intel":4,
         "others":5
          
     }
@@ -113,26 +113,37 @@ def get_ram_label(_str):
         "others":7,
     }
 
-    _ram_label = 7 #unknown
+    _ram_map_update = {
+        "2 GB SDRAM": 0,
+        "4 GB SDRAM DDR3": 0,
+        "6 GB DDR SDRAM":1,
+        "8 GB SDRAM DDR3": 2,
+        "8 GB SDRAM DDR4": 3,
+        "12 GB DDR SDRAM":4,
+        "16 GB DDR4":4,
+        "others":5,
+    }
+
+    _ram_label = 5 #unknown
     if 'GB'  in _str:
         _ram_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
         if _ram_size == 2:
             _ram_label = 0
         elif _ram_size == 4:
-            _ram_label = 1
+            _ram_label = 0
         elif _ram_size  == 6:
-            _ram_label = 2
+            _ram_label = 1
         elif _ram_size == 8:
             if 'DDR3' in _str:
-                _ram_label = 3
+                _ram_label = 2
             if 'DDR4' in _str:
-                _ram_label = 4
+                _ram_label = 3
         elif _ram_size  == 12:
-            _ram_label = 5
+            _ram_label = 4
         elif _ram_size  == 16:
-            _ram_label = 6
+            _ram_label = 4
         else:
-            pass
+            _ram_label = 5
 
     return _ram_label
 
@@ -204,38 +215,43 @@ def get_graphprocessor_label(_str):
         "AMD Radeon R4" :6,
         "NVIDIA GeForce GTX 1050": 7,
         "NVIDIA GeForce 940MX" :  8,
-        "Integrated" : 10,
-        "others| PC | FirePro W4190M ": 9
+        "Integrated" : 9,
+        "others| PC | FirePro W4190M ": 10
     }
 
-    _graphprocessor_label = 9 #unknown
+    _graphprocessor_label = 10 #unknown
     if 'intel' in _str.lower():
         if num_there(_str):
-            """
             _graphprocessor_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
             if _graphprocessor_size == 500:
                 _graphprocessor_label = 0
             elif _graphprocessor_size == 505:
-                _graphprocessor_label = 1
+                _graphprocessor_label = 0
             elif _graphprocessor_size  == 620:
-                _graphprocessor_label = 2
-            """
-            _graphprocessor_label = 0
+                _graphprocessor_label = 1  
         else:
-            _graphprocessor_label = 0
+            _graphprocessor_label = 2
 
     if 'amd' in _str.lower():
-        _graphprocessor_label = 1
+        if 'r2' in _str.lower():
+            _graphprocessor_label = 3
+        if 'r5' in _str.lower():
+            _graphprocessor_label = 4
+        if 'r7' in _str.lower():
+            _graphprocessor_label = 5
+        if 'r4' in _str.lower():
+            _graphprocessor_label = 6
+
     if 'nvidia' in _str.lower():
-        _graphprocessor_label  = 2
-    if 'gtx' in _str.lower():
-        _graphprocessor_label  = 3
-    if 'pc' in _str.lower():
-        _graphprocessor_label  = 4
-    if 'firepro' in _str.lower():
-        _graphprocessor_label  = 5
+        if num_there(_str):
+            _graphprocessor_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
+            if _graphprocessor_size == 1050:
+                _graphprocessor_label = 7
+            if _graphprocessor_size == 940:
+                _graphprocessor_label = 8
+
     if 'integrated' in _str.lower():
-        _graphprocessor_label  = 6
+        _graphprocessor_label  = 9
     
 
     return _graphprocessor_label
@@ -409,13 +425,13 @@ def train():
         #reviews
         reviews = asins[_asin][5] 
         for _t in reviews:
-            t =  " ".join(str(x) for x in _t)
+            t =  " ".join(x.decode("utf-8") for x in _t) #bytes to str
             texts.append(t)
             #labels.append(_cpu_id)
             #labels.append(_sscreen_id)
             #labels.append(_ram_id)
-            labels.append(_harddrive_id)
-            #labels.append(_graphprocessor_id)
+            #labels.append(_harddrive_id)
+            labels.append(_graphprocessor_id)
     """
     _cpus = df.loc[1, :].tolist()
     for _cpu in _cpus[1:]:
@@ -479,7 +495,7 @@ def train():
     sequences = tokenizer.texts_to_sequences(texts)
 
     word_index = tokenizer.word_index
-    _word_index = dict((v, k) for k, v in word_index.items())
+    #_word_index = dict((v, k) for k, v in word_index.items())
     #
     print('Found %s unique tokens.' % len(word_index))
 
@@ -531,20 +547,35 @@ def train():
             embedding_matrix[i] = embedding_vector
          
     # pad documents to a max length of 108 words
-    # TODO - max_emb_encoder(x_emb, x_mask)
-    data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
-    #indices = numpy.arange(data.shape[0])
+    # TODO - max_emb_encoder(x_emb, x_mask) - padding the end
+    # data (838332, 108)
+    data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH, padding='post',truncating='post')
     """
-    for i in indices:
+    indices = numpy.arange(data.shape[0]) 
+    #_data = numpy.random.uniform(-0.001, 0.001, (data.shape))
+
+    
+    for i in indices: 
+        # for each review
+
         # aver
         #numpy.average(data[i])
 
         #max_pooling - get the max index
-        
-        index_max = numpy.argmax(data[i])
-        value_max = numpy.max(data[i])
-        data[i] = numpy.zeros((1,MAX_SEQUENCE_LENGTH))
-        data[i,index_max] = value_max    
+        # (108, 100)
+        max_matrix = numpy.random.uniform(-0.001, 0.001, (MAX_SEQUENCE_LENGTH, EMBEDDING_DIM))
+        for j in range(len(data[i])):
+            #word = _word_index[ind]
+            ind = data[i,j]
+            max_matrix[j] = embedding_matrix[ind]
+
+        #data[i] = max_matrix.max(0)
+        _data[i] = numpy.amax(max_matrix, axis=1)
+
+        #index_max = numpy.argmax(data[i])
+        #value_max = numpy.max(data[i])
+        #data[i] = numpy.zeros((1,MAX_SEQUENCE_LENGTH))
+        #data[i,index_max] = value_max    
     """
 
     labels = to_categorical(numpy.asarray(labels))
@@ -565,12 +596,13 @@ def train():
 
     # load pre-trained word embeddings into an Embedding layer
     # note that we set trainable = False so as to keep the embeddings fixed
+    # embedding_layer (num_words, EMBEDDING_DIM)
     embedding_layer = Embedding(num_words,
                             EMBEDDING_DIM,
                             #embeddings_initializer=Constant(embedding_matrix),
                             weights=[embedding_matrix],
                             input_length=MAX_SEQUENCE_LENGTH,
-                            trainable=False,
+                            trainable=True,
                             name="embedding_layer")
 
     print('Training model.')
@@ -578,8 +610,8 @@ def train():
 
     # create model
     
-    sequence_input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
-    embedded_sequences = embedding_layer(sequence_input)
+    #sequence_input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
+    #embedded_sequences = embedding_layer(sequence_input)
     
     """
     x = Conv1D(128, 3, activation='relu')(embedded_sequences)
@@ -620,17 +652,74 @@ def train():
     #model = Model(sequence_input, preds)
     
     
-    model = Sequential()
-    model.add(embedding_layer)
-    model.add(Flatten())
-    model.add(Dense(7, activation='softmax'))
+    sequence_input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int64')
+    #embedded_sequences = embedding_layer(sequence_input)
+
+    #model = Sequential()
+    #model.add(embedding_layer)
+
+    def max_emb(input_seq):
+
+        H_enc = tf.reduce_max(input_seq, axis=1)  # batch 1 emb
+        #H_enc = np.amax(input_seq, axis=1)
+
+        embedded_sequences = H_enc
+        return embedded_sequences
     
+    def average_emb(input_seq):
+        H_enc = tf.reduce_mean(input_seq, axis=1)  # batch 1 emb
+        #H_enc = np.amax(input_seq, axis=1)
+
+        embedded_sequences = H_enc
+        return embedded_sequences
+
+    def concat_emb(input_seq):
+        H_enc_1 = max_emb(input_seq)
+        H_enc_2 = average_emb(input_seq)
+
+        embedded_sequences = tf.concat([H_enc_2, H_enc_1], 1)
+        return embedded_sequences
+
+    embedded_sequences = embedding_layer(sequence_input) # (batch , 54, 100)
+
+    #max_emb_encoder(sequence_input, )
+    xx = Lambda(max_emb)(embedded_sequences)  #(?, 100)
+    #xx = Lambda(average_emb)(embedded_sequences)  #(?, 100)
+    #xx = Lambda(concat_emb)(embedded_sequences)
+
+    #xx = Dense(EMBEDDING_DIM, activation='relu')(xx)
+    #xx = Flatten()(embedded_sequences)
+    #model.add(Dense(labels.shape[1], activation='softmax'))
+    preds = Dense(labels.shape[1], activation='softmax')(xx)
+
+    model = Model(sequence_input, preds)
+
+    """
+    # train a 1D convnet with global maxpooling
+    sequence_input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
+    embedded_sequences = embedding_layer(sequence_input)
+x = Conv1D(128, 5, activation='relu')(embedded_sequences)
+x = MaxPooling1D(5)(x)
+x = Conv1D(128, 5, activation='relu')(x)
+x = MaxPooling1D(5)(x)
+x = Conv1D(128, 5, activation='relu')(x)
+x = GlobalMaxPooling1D()(x)
+x = Dense(128, activation='relu')(x)
+preds = Dense(len(labels_index), activation='softmax')(x)
+    """
 
     #_precision = keras_metrics.precision()
     #_recall = keras_metrics.recall()
     #_metrics = Metrics()
 
-    #model = Model(sequence_input, preds)
+    """
+    sequence_input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='float32')
+    embedded_sequences = embedding_layer(sequence_input)
+    preds = Dense(labels.shape[1], activation='softmax')(embedded_sequences)
+
+    model = Model(sequence_input, preds)
+    """
+
     model.compile(loss='categorical_crossentropy',
               optimizer='rmsprop',
               metrics=['acc', keras_metrics.precision(), keras_metrics.recall()])
@@ -642,15 +731,14 @@ def train():
     hist = model.fit(x_train, y_train,
           batch_size=128,
           epochs=5,
-          shuffle=True,
-          validation_split=.1)
+          validation_data=(x_val, y_val))
 
     print(hist.history)
 
     # evaluate the model
     #print('recall + precision: %s' % (_metrics.get_data() * 100))
     
-    loss, accuracy = model.evaluate(x_val, y_val, verbose=0)
+    loss, accuracy, precision, recall = model.evaluate(x_val, y_val, verbose=0)
     print('metrics: %f' % accuracy)
 
     return 0
