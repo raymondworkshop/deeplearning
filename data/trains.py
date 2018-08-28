@@ -36,11 +36,15 @@ import re
 import ast
 import math
 
+#import nltk
+import string
+from nltk.stem import PorterStemmer
+
 MAX_NUM_WORDS = 20000
 MAX_SEQUENCE_LENGTH = 54 * 2 #300
 EMBEDDING_DIM = 100
 
-VALIDATION_SPLIT = 0.2
+VALIDATION_SPLIT = 0.1
 
 
 def get_cpu_label(_str):
@@ -51,15 +55,15 @@ def get_cpu_label(_str):
         "1.5-2.5 Intel": 2,
         "2.6-3.5 Intel":3,
         "3.6 - 4 Intel":4,
-        "others":5
+        "others":4
          
     }
 
-    _cpu_label = 5 #unknown
-    if 'AMD|amd' in _str:
+    _cpu_label = 4 #unknown
+    if 'amd' in _str.lower():
         _cpu_label = 0
-    else: #Intel
-        _cpu_frequency = round(float(re.search('[\d]+[.\d]*', _str).group()))
+    if 'intel' in _str.lower(): #Intel
+        _cpu_frequency = int(float(re.search('[\d]+[.\d]*', _str).group()))
         if _cpu_frequency == 1:
             _cpu_label = 1
         elif _cpu_frequency == 2:
@@ -69,7 +73,7 @@ def get_cpu_label(_str):
         elif _cpu_frequency == 4:
             _cpu_label = 4
         else:
-            pass
+            _cpu_label = 4
 
     return _cpu_label
 
@@ -84,7 +88,7 @@ def get_sscreen_label(_str):
     }
 
     _sscreen_label = 4 #unknown
-    if 'inches' in _str:
+    if 'inches' in _str.lower():
         _sscreen_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
         if _sscreen_size <= 12:
             _sscreen_label = 0
@@ -103,47 +107,38 @@ def get_sscreen_label(_str):
 def get_ram_label(_str):
     # [ "4 GB SDRAM DDR3", "4 GB DDR3 SDRAM","8 GB",4 GB SDRAM DDR4","16 GB DDR4" ,"2 GB SDRAM","6 GB DDR SDRAM", "12 GB DDR SDRAM" ]
     _ram_map = {
-        "2 GB SDRAM": 0,
+        "2 GB SDRAM": 1,
         "4 GB SDRAM DDR3": 1,
         "6 GB DDR SDRAM":2,
-        "8 GB SDRAM DDR3": 3,
-        "8 GB SDRAM DDR4": 3,
-        "12 GB DDR SDRAM":5,
-        "16 GB DDR4":6,
-        "others":7,
-    }
-
-    _ram_map_update = {
-        "2 GB SDRAM": 0,
-        "4 GB SDRAM DDR3": 0,
-        "6 GB DDR SDRAM":1,
         "8 GB SDRAM DDR3": 2,
-        "8 GB SDRAM DDR4": 3,
-        "12 GB DDR SDRAM":4,
-        "16 GB DDR4":4,
-        "others":5,
+        "8 GB SDRAM DDR4": 2,
+        "12 GB DDR SDRAM":3,
+        "16 GB DDR4" :3,
+        "others":4,
     }
 
-    _ram_label = 5 #unknown
-    if 'GB'  in _str:
+    _ram_label = 4 #unknown
+    if 'gb'  in _str.lower():
         _ram_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
         if _ram_size == 2:
-            _ram_label = 0
-        elif _ram_size == 4:
-            _ram_label = 0
-        elif _ram_size  == 6:
             _ram_label = 1
+        elif _ram_size == 4:
+            _ram_label = 1
+        elif _ram_size  == 6:
+            _ram_label = 2
         elif _ram_size == 8:
-            if 'DDR3' in _str:
+            if 'ddr3' in _str.lower():
                 _ram_label = 2
-            if 'DDR4' in _str:
-                _ram_label = 3
+            elif 'ddr4' in _str.lower():
+                _ram_label = 2
+            else:
+                _ram_label = 2
         elif _ram_size  == 12:
-            _ram_label = 4
+            _ram_label = 3
         elif _ram_size  == 16:
-            _ram_label = 4
+            _ram_label = 3
         else:
-            _ram_label = 5
+            _ram_label = 4
 
     return _ram_label
 
@@ -158,9 +153,9 @@ def get_harddrive_label(_str):
         "SSD <= 128": 0,
         "SSD > 128": 1,
         "HDD > 1T" :2,
-        "HDD ~= 1T" :3,
+        "HDD ~= 1T" :2,
         "HDD ~= 500G" :4,
-        "HDD < 500G" :5,
+        "HDD < 500G" :4,
         "others": 6
     }
 
@@ -171,7 +166,9 @@ def get_harddrive_label(_str):
             if _harddrive_size <= 128:
                 _harddrive_label = 0
             else:
-                _harddrive_label = 1
+                _harddrive_label = 0
+        else:
+            _harddrive_label = 0
 
     if 'hdd' in _str.lower():
         #_harddrive_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
@@ -181,14 +178,18 @@ def get_harddrive_label(_str):
                 if _harddrive_size > 1:
                     _harddrive_label = 2
                 else:
-                    _harddrive_label = 3
+                    _harddrive_label = 2
+            else:
+                _harddrive_label = 2
         else:
             if num_there(_str):
                 _harddrive_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
                 if _harddrive_size >= 500:
                     _harddrive_label = 4
                 else:
-                    _harddrive_label = 5
+                    _harddrive_label = 4
+            else:
+                _harddrive_label = 4
 
     return _harddrive_label
 
@@ -208,18 +209,18 @@ def get_graphprocessor_label(_str):
         "Intel HD Graphics 50X": 0,
         "Intel HD Graphics 505": 0,
         "Intel UHD Graphics 620":1,
-        "Intel HD Graphics" :2,
-        "AMD Radeon R2": 3,
-        "AMD Radeon R5": 4,
-        "AMD Radeon R7": 5,
-        "AMD Radeon R4" :6,
-        "NVIDIA GeForce GTX 1050": 7,
-        "NVIDIA GeForce 940MX" :  8,
-        "Integrated" : 9,
-        "others| PC | FirePro W4190M ": 10
+        "Intel HD Graphics" :1,
+        "AMD Radeon R2": 2,
+        "AMD Radeon R5": 3,
+        "AMD Radeon R7": 3,
+        "AMD Radeon R4" :2,
+        "NVIDIA GeForce GTX 1050": 4,
+        "NVIDIA GeForce 940MX" :  4,
+        "Integrated" : 5,
+        "others| PC | FirePro W4190M ": 6
     }
 
-    _graphprocessor_label = 10 #unknown
+    _graphprocessor_label = 6 #unknown
     if 'intel' in _str.lower():
         if num_there(_str):
             _graphprocessor_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
@@ -229,29 +230,31 @@ def get_graphprocessor_label(_str):
                 _graphprocessor_label = 0
             elif _graphprocessor_size  == 620:
                 _graphprocessor_label = 1  
+            else:
+                _graphprocessor_label = 1
         else:
-            _graphprocessor_label = 2
+            _graphprocessor_label = 1
 
     if 'amd' in _str.lower():
         if 'r2' in _str.lower():
-            _graphprocessor_label = 3
+            _graphprocessor_label = 2
         if 'r5' in _str.lower():
-            _graphprocessor_label = 4
+            _graphprocessor_label = 3
         if 'r7' in _str.lower():
-            _graphprocessor_label = 5
+            _graphprocessor_label = 3
         if 'r4' in _str.lower():
-            _graphprocessor_label = 6
+            _graphprocessor_label = 2
 
     if 'nvidia' in _str.lower():
         if num_there(_str):
             _graphprocessor_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
             if _graphprocessor_size == 1050:
-                _graphprocessor_label = 7
+                _graphprocessor_label = 4
             if _graphprocessor_size == 940:
-                _graphprocessor_label = 8
+                _graphprocessor_label = 4
 
     if 'integrated' in _str.lower():
-        _graphprocessor_label  = 9
+        _graphprocessor_label  = 5
     
 
     return _graphprocessor_label
@@ -424,14 +427,25 @@ def train():
         
         #reviews
         reviews = asins[_asin][5] 
+        table = str.maketrans('', '', string.punctuation)
+        #porter = PorterStemmer()
         for _t in reviews:
-            t =  " ".join(x.decode("utf-8") for x in _t) #bytes to str
-            texts.append(t)
-            #labels.append(_cpu_id)
+            # t =  " ".join(x.decode("utf-8") for x in _t) #bytes to str
+            #words = text.split()
+            # remove punctuation from each word , and stemming
+
+            stripped = [w.decode("utf-8").lower().translate(table) for w in _t]  
+            #stripped = [w.decode("utf-8").translate(table) for w in _t] 
+            #stripped = [w.decode("utf-8").lower().translate(table) for w in _t] 
+            s = " ".join(x for x in stripped)
+
+            #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
+            texts.append(s)
+            labels.append(_cpu_id)
             #labels.append(_sscreen_id)
             #labels.append(_ram_id)
             #labels.append(_harddrive_id)
-            labels.append(_graphprocessor_id)
+            #labels.append(_graphprocessor_id)
     """
     _cpus = df.loc[1, :].tolist()
     for _cpu in _cpus[1:]:
@@ -549,7 +563,7 @@ def train():
     # pad documents to a max length of 108 words
     # TODO - max_emb_encoder(x_emb, x_mask) - padding the end
     # data (838332, 108)
-    data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH, padding='post',truncating='post')
+    data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
     """
     indices = numpy.arange(data.shape[0]) 
     #_data = numpy.random.uniform(-0.001, 0.001, (data.shape))
@@ -602,7 +616,7 @@ def train():
                             #embeddings_initializer=Constant(embedding_matrix),
                             weights=[embedding_matrix],
                             input_length=MAX_SEQUENCE_LENGTH,
-                            trainable=True,
+                            trainable=False,
                             name="embedding_layer")
 
     print('Training model.')
@@ -683,12 +697,12 @@ def train():
     embedded_sequences = embedding_layer(sequence_input) # (batch , 54, 100)
 
     #max_emb_encoder(sequence_input, )
-    xx = Lambda(max_emb)(embedded_sequences)  #(?, 100)
-    #xx = Lambda(average_emb)(embedded_sequences)  #(?, 100)
+    xx = Lambda(average_emb)(embedded_sequences)  #(?, 100)
+    ##xx = Lambda(max_emb)(embedded_sequences)  #(?, 100)
     #xx = Lambda(concat_emb)(embedded_sequences)
 
     #xx = Dense(EMBEDDING_DIM, activation='relu')(xx)
-    #xx = Flatten()(embedded_sequences)
+    ##xx = Flatten()(embedded_sequences)
     #model.add(Dense(labels.shape[1], activation='softmax'))
     preds = Dense(labels.shape[1], activation='softmax')(xx)
 
@@ -730,7 +744,7 @@ preds = Dense(len(labels_index), activation='softmax')(x)
     # fit the model
     hist = model.fit(x_train, y_train,
           batch_size=128,
-          epochs=5,
+          epochs=8,
           validation_data=(x_val, y_val))
 
     print(hist.history)
