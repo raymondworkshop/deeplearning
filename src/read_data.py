@@ -118,8 +118,9 @@ def analyze_data(df, len_reviews):
     #plt.hist(len_reviews, bins=20, color='g')
     plt.hist(y_reviews, bins=20, color="green")
 
-    plt.xlabel('number of reviews for one laptop')
-    plt.ylabel('number of laptops')
+    plt.xlabel('Number of words in one review')
+    plt.ylabel('Number of reviews')
+    plt.title('The distribution of the number of words in the review')
     plt.show()
 
     import pdb
