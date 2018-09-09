@@ -26,6 +26,7 @@ from keras import regularizers
 
 from engine_training import ExtendedModel
 #from engine_training import ThetaPrime
+import keras_metrics
 
 
 import pickle
@@ -34,10 +35,11 @@ import ast
 import math
 
 MAX_NUM_WORDS = 20000
-MAX_SEQUENCE_LENGTH = 300  #300
+MAX_SEQUENCE_LENGTH = 108  #300
 EMBEDDING_DIM = 100
 
 VALIDATION_SPLIT = 0.3
+
 
 def get_cpu_label(_str):
     # [ 2 GHz AMD A Series, 1.1 GHz Intel Celeron, 2.16 GHz Intel Celeron,3 GHz 8032,1.6 GHz,3.5 GHz 8032,4 GHz Intel Core i7]
@@ -47,7 +49,8 @@ def get_cpu_label(_str):
         "2.0-2.9 Intel": 2,
         "3.0-3.9 Intel":3,
         "4 Intel":4,
-        "others":5 
+        "others":5
+         
     }
 
     _cpu_label = 5 #unknown
@@ -107,7 +110,7 @@ def get_ram_label(_str):
         "16 GB DDR4":6
     }
 
-    _ram_label = 7 #unknown
+    _ram_label = 6 #unknown
     if 'GB'  in _str:
         _ram_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
         if _ram_size == 2:
@@ -126,7 +129,7 @@ def get_ram_label(_str):
         elif _ram_size  == 16:
             _ram_label = 6
         else:
-            _ram_label = 7
+            pass
 
     return _ram_label
     
@@ -190,6 +193,35 @@ def aver_emb_encoder(x_emb, x_mask): # emb / L
 
     return H_enc
 
+def max_emb_encoder(x_emb, x_mask, opt):
+    """ compute the max over every dimension of word embeddings """
+    x_mask_1 = tf.expand_dims(x_mask, axis=-1)
+    x_mask_1 = tf.expand_dims(x_mask_1, axis=-1)
+    H_enc = tf.nn.max_pool(tf.multiply(x_emb, x_mask_1), [1, opt.maxlen, 1, 1], [1, 1, 1, 1], 'VALID')
+    H_enc = tf.squeeze(H_enc)
+
+    return H_enc
+
+def concat_emb_encoder(x_emb, x_mask, opt):
+    """ concat both the average and max over all word embeddings """
+    x_mask = tf.expand_dims(x_mask, axis=-1)
+    x_mask = tf.expand_dims(x_mask, axis=-1)  # batch L 1 1
+
+    x_sum = tf.multiply(x_emb, x_mask)  # batch L emb 1
+    H_enc = tf.reduce_sum(x_sum, axis=1, keep_dims=True)  # batch 1 emb 1
+    H_enc = tf.squeeze(H_enc, [1, 3])  # batch emb
+    x_mask_sum = tf.reduce_sum(x_mask, axis=1, keep_dims=True)  # batch 1 1 1
+    x_mask_sum = tf.squeeze(x_mask_sum, [2, 3])  # batch 1
+
+    H_enc_1 = H_enc / x_mask_sum  # batch emb
+
+    H_enc_2 = tf.nn.max_pool(x_emb, [1, opt.maxlen, 1, 1], [1, 1, 1, 1], 'VALID')
+    H_enc_2 = tf.squeeze(H_enc_2, [1, 3])
+
+    H_enc = tf.concat([H_enc_1, H_enc_2], 1)
+
+    return H_enc
+
 def train():
     # get documents
     """
@@ -246,11 +278,10 @@ def train():
         for _t in reviews:
             t =  " ".join(str(x) for x in _t)
             texts.append(t)
-            #labels.append(_cpu_id)
+            labels.append(_cpu_id)
             #labels.append(_sscreen_id)
-            labels.append(_ram_id)
+            #labels.append(_ram_id)
             
-
     #Found 838332 reviews
     print('Found %s reviews.' % len(texts))
     # define class labels
@@ -270,7 +301,7 @@ def train():
     #
     print('Found %s unique tokens.' % len(word_index))
 
-    # pad documents to a max length of 300 words
+    # pad documents to a max length of 50 words
     data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
 
     labels = to_categorical(numpy.asarray(labels))
@@ -313,8 +344,8 @@ def train():
         if embedding_vector is not None:
             # words not found in embedding index will be all-zeros.
             embedding_matrix[i] = embedding_vector
-        else:
-            embedding_matrix[i] = tf.random_uniform_initializer(-0.001, 0.001)
+        #else:
+        #    embedding_matrix[i] = tf.random_uniform_initializer(-0.001, 0.001)
 
     # load pre-trained word embeddings into an Embedding layer
     # note that we set trainable = False so as to keep the embeddings fixed
@@ -329,31 +360,26 @@ def train():
     # define model
 
     # create model
-    """
-    # train a 1D convnet with global maxpooling
+    
     sequence_input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
     embedded_sequences = embedding_layer(sequence_input)
     
-    # a 1D convolutional neural network (CNN)
-    x = Conv1D(128, 5, activation='relu')(embedded_sequences)
-    x = MaxPooling1D(5)(x)
-    x = Conv1D(128, 5, activation='relu')(x)
-    x = MaxPooling1D(5)(x)
-    x = Conv1D(128, 5, activation='relu')(x)
+    """
+    x = Conv1D(128, 3, activation='relu')(embedded_sequences)
+    
+    x = MaxPooling1D(3)(x)
+    x = Conv1D(128, 3, activation='relu')(x)
+    x = MaxPooling1D(3)(x)
+    x = Conv1D(128, 3, activation='relu')(x)
     x = GlobalMaxPooling1D()(x)
     x = Dense(128, activation='relu')(x)
-    preds = Dense(6, activation='softmax')(x)
+    preds = Dense(7, activation='softmax')(x)
+    #x = Dense(1, activation='relu')(embedded_sequences)
+    #preds = Dense(6, activation='softmax')(x)
+    """
+    
 
     """
-    """
-    x = Dense(1, activation='relu',input_dim=300)(embedded_sequences)
-    preds = Dense(6, activation='softmax')(x)
-    """
-    #vsize = 100
-    #vv = ThetaPrime(vsize)
-
-    model = Sequential()
-
     def average_emb(input_seq):
         # the mean
         H_enc = tf.reduce_mean(input_seq, axis=1)  # batch 1 emb
@@ -361,6 +387,7 @@ def train():
 
         embedded_sequences = H_enc
         return embedded_sequences
+    """
 
     #input_sequences = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int64')
     #xx = embedding_layer(input_sequences)
@@ -373,21 +400,24 @@ def train():
     #model = ExtendedModel(input=input_sequences, output=preds)
 
     #model.add_extra_trainable_weight(tf.Variable(numpy.zeros((vsize), dtype='float32')))
-    #model = Model(input_sequences, preds)
+    #model = Model(sequence_input, preds)
     
-    """
-    model.add(xx)
-    model.add(Flatten())
-    model.add(Dense(6, activation='sigmoid'))
-    """
-
+    
+    model = Sequential()
     model.add(embedding_layer)
     model.add(Flatten())
-    model.add(Dense(8, activation='sigmoid'))
+    model.add(Dense(6, activation='softmax'))
+    
+    
 
+    #_precision = keras_metrics.precision()
+    #_recall = keras_metrics.recall()
+    #_metrics = Metrics()
+
+    #model = Model(sequence_input, preds)
     model.compile(loss='categorical_crossentropy',
               optimizer='rmsprop',
-              metrics=['acc'])
+              metrics=['acc', keras_metrics.precision(), keras_metrics.recall()])
 
     # summarize the model
     print(model.summary())
@@ -398,8 +428,10 @@ def train():
           validation_split=.1)
 
     # evaluate the model
+    #print('recall + precision: %s' % (_metrics.get_data() * 100))
+    
     loss, accuracy = model.evaluate(x_val, y_val, verbose=0)
-    print('Accuracy: %f' % (accuracy*100))
+    print('metrics: %f' % accuracy)
 
     return 0
 
