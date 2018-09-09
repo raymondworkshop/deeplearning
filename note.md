@@ -1,5 +1,57 @@
 ### work notes
 
+####
+
+#### 2018-08-24 
+  * modify the classifier
+
+  * remove Punctuation 
+    - todo: stemming
+    - -> acc: 0.4738 - precision: 0.2292 - recall: 0.0311
+      -> acc: 0.4743 - precision: 0.2507 - recall: 0.0301
+
+
+#### 2018-08-22 
+ * re-code SWEM-max 
+   - L patch ?
+
+ * re-code SWEM-aver + SWEM-conct 
+ *  
+
+#### 2018-08-15 
+ * SWEM alg improvements
+
+#### 2018-08-06
+ * some about SWEM
+
+ * need to learn PyTorch on fast.ai
+
+
+ * Some on Keras
+   - 符号计算 - 计算图
+   - Model - 
+   - batch - batch_size -> mini-batch gradient descent 
+   - epochs
+
+
+#### 2018-08-03
+  * use Pandas lib for data
+
+  * todo
+    - PyTorch
+
+
+#### 2018-08-01
+  * research
+    - 学会找出研究人员和论文的基本出发点 - motivation
+
+  * Pandas
+
+  * todo:
+    - Latex
+    - data Visualisation
+
+
 #### 2018-07-18 
  * result
 
@@ -50,7 +102,6 @@ Train on 528149 samples, validate on 58684 samples
 
 #### 2018-07-09 
  * reproduce the paper
-
 
 
 
