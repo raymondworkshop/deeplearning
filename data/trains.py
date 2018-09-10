@@ -61,8 +61,8 @@ def get_cpu_label(_str):
         "1.1 Intel":1,
         "1.5-2.5 Intel": 2,
         "2.5-3.5 Intel":3,
-        "3.5 Intel":3,
-        "others":4
+        "3.5 Intel":4,
+        "others":5
          
     }
 
@@ -70,7 +70,7 @@ def get_cpu_label(_str):
     if 'amd' in _str.lower():
         _cpu_label = 0
     else: #Intel
-        _cpu_frequency = float(re.search('[\d]+[.\d]*', _str).group())
+        _cpu_frequency = float(re.search('[\d]+[.\d]*', _str).group())   
         if _cpu_frequency <= 1.5:
             _cpu_label = 1
         elif _cpu_frequency <= 2.5:
@@ -81,6 +81,8 @@ def get_cpu_label(_str):
             _cpu_label = 4
         elif _cpu_frequency > 3.5:
             _cpu_label = 5
+        
+        #_cpu_label = 1
 
     return _cpu_label
 
@@ -137,13 +139,13 @@ def get_ram_label(_str):
             if 'ddr3' in _str.lower():
                 _ram_label = 3
             elif 'ddr4' in _str.lower():
-                _ram_label = 4
+                _ram_label = 3
             else:
-                _ram_label = 4
+                _ram_label = 3
         elif _ram_size  == 12:
-            _ram_label = 5
+            _ram_label = 4
         elif _ram_size  == 16:
-            _ram_label = 6
+            _ram_label = 5
         else:
             #_ram_label = 7
             pass
@@ -211,20 +213,20 @@ def get_graphprocessor_label(_str):
     """
     _graphprocessor_map = {
         "Intel HD Graphics 50X": 0,
-        "Intel HD Graphics 505": 1,
-        "Intel UHD Graphics 620":2,
-        "Intel HD Graphics" :3,
+        "Intel HD Graphics 505": 0,
+        "Intel UHD Graphics 620":1,
+        "Intel HD Graphics" :2,
         "AMD Radeon R2": 4,
         "AMD Radeon R5": 5,
-        "AMD Radeon R7": 6,
-        "AMD Radeon R4" :7,
+        "AMD Radeon R7": 5,
+        "AMD Radeon R4" :4,
         "NVIDIA GeForce GTX 1050": 8,
         "NVIDIA GeForce 940MX" :  9,
         "Integrated" : 10,
         "others| PC | FirePro W4190M ": 11
     }
 
-    _graphprocessor_label = 11 #unknown
+    _graphprocessor_label = 8 #unknown
     if 'intel' in _str.lower():
         
         if num_there(_str):
@@ -232,36 +234,34 @@ def get_graphprocessor_label(_str):
             if _graphprocessor_size == 500:
                 _graphprocessor_label = 0
             elif _graphprocessor_size == 505:
-                _graphprocessor_label = 1
+                _graphprocessor_label = 0
             elif _graphprocessor_size  == 620:
-                _graphprocessor_label = 2
+                _graphprocessor_label = 1
             else:
-                _graphprocessor_label = 3
-        else:
-            _graphprocessor_label = 3
+                _graphprocessor_label = 2
 
     if 'amd' in _str.lower():        
         if 'r2' in _str.lower():
-            _graphprocessor_label = 4
+            _graphprocessor_label = 3
         if 'r5' in _str.lower():
-            _graphprocessor_label = 5
+            _graphprocessor_label = 4
         if 'r7' in _str.lower():
-            _graphprocessor_label = 6
+            _graphprocessor_label = 4
         if 'r4' in _str.lower():
-            _graphprocessor_label = 7
+            _graphprocessor_label = 3
         
 
     if 'nvidia' in _str.lower():
         if num_there(_str):
             _graphprocessor_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
             if _graphprocessor_size == 1050:
-                _graphprocessor_label = 8
+                _graphprocessor_label = 5
             if _graphprocessor_size == 940:
-                _graphprocessor_label = 9
+                _graphprocessor_label = 6
         
 
     if 'integrated' in _str.lower():
-        _graphprocessor_label  = 10
+        _graphprocessor_label  = 7
 
 
     return _graphprocessor_label
@@ -971,7 +971,6 @@ def train_svm():
 
     print(accuracy_score(y_test, y_pred))
     print(classification_report(y_test, y_pred))
-
 
     return 0
 
