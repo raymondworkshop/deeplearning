@@ -120,10 +120,10 @@ def get_ram_label(_str):
         "4 GB SDRAM DDR3": 1,
         "6 GB DDR SDRAM":2,
         "8 GB SDRAM DDR3": 3,
-        "8 GB SDRAM DDR4": 4,
-        "12 GB DDR SDRAM":5,
-        "16 GB DDR4" :6,
-        "others":7,
+        "8 GB SDRAM DDR4": 3,
+        "12 GB DDR SDRAM":4,
+        "16 GB DDR4" :5,
+        "others":6,
     }
 
     #_ram_label = 7 #unknown
@@ -176,7 +176,7 @@ def get_harddrive_label(_str):
             if _harddrive_size <= 128:
                 _harddrive_label = 0
             else:
-                _harddrive_label = 1
+                _harddrive_label = 0
         else:
             _harddrive_label = 0
 
@@ -186,16 +186,16 @@ def get_harddrive_label(_str):
             if num_there(_str):
                 _harddrive_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
                 if _harddrive_size > 1:
-                    _harddrive_label = 2
+                    _harddrive_label = 1
                 else:
-                    _harddrive_label = 3
+                    _harddrive_label = 2
         else:
             if num_there(_str):
                 _harddrive_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
                 if _harddrive_size >= 500:
-                    _harddrive_label = 4
+                    _harddrive_label = 3
                 else:
-                    _harddrive_label = 5
+                    _harddrive_label = 4
 
     return _harddrive_label
 
@@ -215,18 +215,18 @@ def get_graphprocessor_label(_str):
         "Intel HD Graphics 50X": 0,
         "Intel HD Graphics 505": 0,
         "Intel UHD Graphics 620":1,
-        "Intel HD Graphics" :2,
-        "AMD Radeon R2": 4,
-        "AMD Radeon R5": 5,
-        "AMD Radeon R7": 5,
-        "AMD Radeon R4" :4,
-        "NVIDIA GeForce GTX 1050": 8,
-        "NVIDIA GeForce 940MX" :  9,
-        "Integrated" : 10,
-        "others| PC | FirePro W4190M ": 11
+        "Intel HD Graphics" :1,
+        "AMD Radeon R2": 3,
+        "AMD Radeon R5": 4,
+        "AMD Radeon R7": 4,
+        "AMD Radeon R4" :3,
+        "NVIDIA GeForce GTX 1050": 58,
+        "NVIDIA GeForce 940MX" :  5,
+        "Integrated" : 6,
+        "others| PC | FirePro W4190M ": 7
     }
 
-    _graphprocessor_label = 8 #unknown
+    _graphprocessor_label = 5 #unknown
     if 'intel' in _str.lower():
         
         if num_there(_str):
@@ -236,32 +236,32 @@ def get_graphprocessor_label(_str):
             elif _graphprocessor_size == 505:
                 _graphprocessor_label = 0
             elif _graphprocessor_size  == 620:
-                _graphprocessor_label = 1
+                _graphprocessor_label = 0
             else:
-                _graphprocessor_label = 2
+                _graphprocessor_label = 0
 
     if 'amd' in _str.lower():        
         if 'r2' in _str.lower():
-            _graphprocessor_label = 3
+            _graphprocessor_label = 1
         if 'r5' in _str.lower():
-            _graphprocessor_label = 4
+            _graphprocessor_label = 2
         if 'r7' in _str.lower():
-            _graphprocessor_label = 4
+            _graphprocessor_label =2
         if 'r4' in _str.lower():
-            _graphprocessor_label = 3
+            _graphprocessor_label = 1
         
 
     if 'nvidia' in _str.lower():
         if num_there(_str):
             _graphprocessor_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
             if _graphprocessor_size == 1050:
-                _graphprocessor_label = 5
+                _graphprocessor_label = 3
             if _graphprocessor_size == 940:
-                _graphprocessor_label = 6
+                _graphprocessor_label = 3
         
 
     if 'integrated' in _str.lower():
-        _graphprocessor_label  = 7
+        _graphprocessor_label  = 4
 
 
     return _graphprocessor_label
@@ -794,8 +794,8 @@ def train_svm():
             #labels.append(_cpu_id)
             #labels.append(_sscreen_id)
             #labels.append(_ram_id)
-            labels.append(_harddrive_id)
-            #labels.append(_graphprocessor_id)
+            #labels.append(_harddrive_id)
+            labels.append(_graphprocessor_id)
 
 
     """
@@ -911,12 +911,27 @@ def train_svm():
     # pad documents to a max length of 108 words
     # TODO - max_emb_encoder(x_emb, x_mask) - padding the end
     # data (838332, 108)
-    data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
-    """
-    indices = numpy.arange(data.shape[0]) 
-    #_data = numpy.random.uniform(-0.001, 0.001, (data.shape))
-
+    #data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
     
+    data = numpy.random.uniform(-0.001, 0.001, (len(sequences), EMBEDDING_DIM))
+    indices = numpy.arange(data.shape[0]) 
+    #review_feature_vecs = numpy.zeros((len(reviews), num_features), dtype="float32")
+    
+    for seq in sequences:
+        #for each review
+        seq_ind = 0
+        word_cnt = 0
+        feature_vec = numpy.random.uniform(-0.001, 0.001, (EMBEDDING_DIM))
+        for word_index in seq:
+            word_cnt = word_cnt + 1
+            #ind = seq[word_index]
+            feature_vec += embedding_matrix[word_index]
+
+        feature_vec /= word_cnt
+        data[seq_ind] = feature_vec
+        seq_ind += 1
+
+    """
     for i in indices: 
         # for each review
 
@@ -938,7 +953,8 @@ def train_svm():
         #value_max = numpy.max(data[i])
         #data[i] = numpy.zeros((1,MAX_SEQUENCE_LENGTH))
         #data[i,index_max] = value_max    
-    """
+        """
+    
 
     #labels = to_categorical(numpy.asarray(labels))
     print('Shape of data tensor:', data.shape)
@@ -977,9 +993,9 @@ def train_svm():
 def main():
     #data()
     #
-    #train_wordembedding()
+    train_wordembedding()
     #
-    train_svm()
+    #train_svm()
 
 
 if __name__ == '__main__':
