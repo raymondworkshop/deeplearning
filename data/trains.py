@@ -453,11 +453,11 @@ def train_wordembedding():
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             texts.append(s)
-            labels.append(_cpu_id)
+            #labels.append(_cpu_id)
             #labels.append(_sscreen_id)
             #labels.append(_ram_id)
             #labels.append(_harddrive_id)
-            #labels.append(_graphprocessor_id)
+            labels.append(_graphprocessor_id)
     """
     _cpus = df.loc[1, :].tolist()
     for _cpu in _cpus[1:]:
@@ -792,10 +792,10 @@ def train_svm():
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             texts.append(s)
             #labels.append(_cpu_id)
-            #labels.append(_sscreen_id)
+            labels.append(_sscreen_id)
             #labels.append(_ram_id)
             #labels.append(_harddrive_id)
-            labels.append(_graphprocessor_id)
+            #labels.append(_graphprocessor_id)
 
 
     """
@@ -923,11 +923,14 @@ def train_svm():
         word_cnt = 0
         feature_vec = numpy.random.uniform(-0.001, 0.001, (EMBEDDING_DIM))
         for word_index in seq:
-            word_cnt = word_cnt + 1
+            word_cnt +=  1
             #ind = seq[word_index]
             feature_vec += embedding_matrix[word_index]
 
+        # mean
         feature_vec /= word_cnt
+
+        # max
         data[seq_ind] = feature_vec
         seq_ind += 1
 
@@ -993,9 +996,9 @@ def train_svm():
 def main():
     #data()
     #
-    train_wordembedding()
+    #train_wordembedding()
     #
-    #train_svm()
+    train_svm()
 
 
 if __name__ == '__main__':
