@@ -1,6 +1,88 @@
 ### work notes
 
-####
+#### 2018-10-08 
+ * flipkart
+  Num of brands in Flipkart: %d: 408
+  Num of reviews: %d: 32k
+  Num of words: %d: 1171703 - 1.17M
+
+#### 2018-10-05
+ * flipkart
+  - 408 brands
+
+#### data 
+ * HP
+  - class="bv-content-container"
+
+#### 2018-09-07 
+ * ch6 
+  - 最优化 -> 神经网络学习的目的是找到使损失函数的值尽可能小的参数 
+
+  - 权重的初始值 - 权值衰减 -> 减少权重参数的值可以抑制过拟合的发生  ？
+
+  - 
+
+
+ * more correct labels,  lower metrics 
+
+ * experiments on cpu 
+
+1. Shape of data tensor: (7227, 108)
+[[   0    0   10    0]
+ [   0   26   12    1]
+ [   3    3 1207   20]
+ [   0    0   41  122]]
+0.9377162629757786
+             precision    recall  f1-score   support
+
+          0       0.00      0.00      0.00        10
+          1       0.90      0.67      0.76        39
+          2       0.95      0.98      0.96      1233
+          3       0.85      0.75      0.80       163
+
+avg / total       0.93      0.94      0.93      1445
+
+
+2. Classify ...
+[[   0    0   10    0    0]
+ [   0   28   10    1    0]
+ [   1   13 1200   16    3]
+ [   0    0   39  124    0]
+ [   0    0    0    0    0]]
+0.9356401384083045
+/usr/local/tensorflow/lib/python3.6/site-packages/sklearn/metrics/classification.py:1137: UndefinedMetricWarning: Recall and F-score are ill-defined and being set to 0.0 in labels with no true samples.
+  'recall', 'true', average, warn_for)
+             precision    recall  f1-score   support
+
+          0       0.00      0.00      0.00        10
+          1       0.68      0.72      0.70        39
+          2       0.95      0.97      0.96      1233
+          3       0.88      0.76      0.82       163
+          4       0.00      0.00      0.00         0
+
+avg / total       0.93      0.94      0.93      1445
+
+
+#### 2018-09-07 
+
+##### ch5 
+ * deep learning
+   random mini-batch -> W's gradients -> update W -> repeat
+
+
+ * why to use loss function in deep learning ? 
+   - 
+
+ * backward alg could compute gradients effectively 
+   - 数值微分耗时 -> 确认BP的实现是否正确 
+
+ * TODO - the code
+
+
+
+#### 2018-08-30 
+a fast pc -> 2.16 GHz Intel Celeron -> latop
+
 
 #### 2018-08-24 
   * modify the classifier
