@@ -9,6 +9,7 @@ import json
 
 import ast
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
 df = pd.DataFrame()
@@ -21,12 +22,11 @@ def parse(path):
 
 
 def get_data(file, file2):
-    
+
     list_reviews = []
     asins = {}
 
     len_reviews = []
-
 
     dict = {}
 
@@ -74,7 +74,7 @@ def get_data(file, file2):
                     texts = []
                     num_words = 0
                     for _t in reviews:
-                        t = [w.decode("utf-8") for w in _t]  
+                        t = [w.decode("utf-8") for w in _t]
                         s = " ".join(x for x in t)
                         #t =  " ".join(x  for x in _t)
                         num_words = num_words + len(_t)
@@ -99,7 +99,7 @@ def get_data(file, file2):
                 #
                 #df[_asin] = asins[_asin]
 
-                   #write to excel
+                   # write to excel
                     writer = pd.ExcelWriter(file2, engine='xlsxwriter')
 
                     df1 = pd.DataFrame(dict)
@@ -110,6 +110,7 @@ def get_data(file, file2):
 
     # return asins
     return 0
+
 
 def analyze_data(df, file2):
     dict = {}
@@ -124,6 +125,7 @@ def analyze_data(df, file2):
     df1.to_csv(file2, sep='\t')
 
     return 0
+
 
 def read_data(file):
     #dir = "/data/raymond/workspace/exp2/"
@@ -140,18 +142,19 @@ def read_data(file):
     df.loc[df[5].isin(_asins)]
     reviews = df.loc[5, :].tolist()
     for _t in reviews[1:]:
-        t = [w.decode("utf-8") for w in _t]  
+        t = [w.decode("utf-8") for w in _t]
         s = " ".join(x for x in t)
         #
         texts.append(s)
 
     return 0
 
+
 def _read_data(file):
     #list_reviews = []
     asins = {}
 
-    f1 =  open('amazon_only_reviews.txt', 'w', encoding="utf-8")
+    f1 = open('amazon_only_reviews.txt', 'w', encoding="utf-8")
 
     with open(file, "r", encoding="utf-8") as f:
         for line in f:
@@ -175,11 +178,11 @@ def _read_data(file):
                 reviews = data['reviews']
                 texts = []
                 for review in reviews:
-                    #list_reviews.append(review)
-                    stripped = [w.decode("utf-8") for w in review]  
+                    # list_reviews.append(review)
+                    stripped = [w.decode("utf-8") for w in review]
                     s = " ".join(x for x in stripped)
                     texts.append(s)
-                    #write file in some format
+                    # write file in some format
                     #s.decode("cp950", "ignore")
                     f1.write(s + '\n')
 
@@ -187,18 +190,18 @@ def _read_data(file):
                 if len(params) > 0:
                     #asins[_asin] = [screensize,cpu, ram]
                     asins[_asin] = []
-                    
+
                     for key, value in params.items():
                         if 'processor' in key.lower():
                             asins[_asin].append(value)
                         if 'ram' in key.lower():
-                            asins[_asin].append(value)    
+                            asins[_asin].append(value)
                         if 'screen size' in key.lower():
                             asins[_asin].append(value)
-                        #Hard Drive
+                        # Hard Drive
                         if 'hard' in key.lower():
                             asins[_asin].append(value)
-                        #weight
+                        # weight
                         if 'weight' in key.lower():
                             asins[_asin].append(value)
 
@@ -207,8 +210,9 @@ def _read_data(file):
 
                 asins[_asin] = texts
     f1.close()
-    #return asins
+    # return asins
     return 0
+
 
 def read_hp_data(file3):
     hp_asins = {}
@@ -216,17 +220,18 @@ def read_hp_data(file3):
     sheets = []
     xlsx = pd.ExcelFile(file3)
     for sheet in xlsx.sheet_names[1:]:
-        #sheets.append(xlsx.parse(sheet))
+        # sheets.append(xlsx.parse(sheet))
         content = xlsx.parse(sheet)
         parameters = content[0].split('\n')
         #processor = parameters[0]
         reviews = content[1:]
         hp_asins[sheet].append(parameters)
         hp_asins[sheet].append(reviews)
-        
-        #hp_asins[sheet_names] 
+
+        # hp_asins[sheet_names]
 
     return hp_asins
+
 
 def read_flipkart_data(file):
     flipkart_asins = {}
@@ -234,6 +239,9 @@ def read_flipkart_data(file):
     num_brands = 0
     num_reviews = 0
     num_words = 0
+
+    reviews = []
+    words = []
 
     with open(file, "r", encoding="utf-8") as f:
         for line in f:
@@ -259,14 +267,16 @@ def read_flipkart_data(file):
                 _num_reviews = 0
                 _num_words = 0
                 for review in reviews:
-                    #list_reviews.append(review)
-                    stripped = [w.decode("utf-8") for w in review]  
+                    # list_reviews.append(review)
+                    stripped = [w.decode("utf-8") for w in review]
                     s = " ".join(x for x in stripped)
                     texts.append(s)
 
                     _num_reviews += 1
                     _num_words = _num_words + len(stripped)
-                    #write file in some format
+
+                    reviews.append(_num_words)
+                    # write file in some format
                     #s.decode("cp950", "ignore")
                     #f1.write(s + '\n')
 
@@ -279,11 +289,17 @@ def read_flipkart_data(file):
                 flipkart_asins[_asin] = _num_words
                 flipkart_asins[_asin] = texts
 
+                num_reviews.append(_num_reviews)
+
             num_reviews = num_reviews + _num_reviews
             num_words = num_words + _num_words
             num_brands += 1
-    #f1.close()
-    #return asins
+
+    # hist
+    plt.hist(reviews, bins=20, color="green")
+
+    # f1.close()
+    # return asins
     print("Num of brands in Flipkart: %d:", num_brands)
     print("Num of reviews: %d:", num_reviews)
     print("Num of words: %d:", num_words)
@@ -311,7 +327,7 @@ def main():
 
     #df = get_data(file, file2)
     #file1 = dir + 'amazon_tech_0903.csv'
-    #df.to_csv(file1)
+    # df.to_csv(file1)
 
     #df = pd.read_csv(file1)
 
@@ -322,7 +338,7 @@ def main():
     file4 = dir + 'flipkart_reviews_1005.json'
 
     read_flipkart_data(file4)
-    
+
     #analyze_data(df, file2)
 
     #import pdb
