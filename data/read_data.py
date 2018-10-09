@@ -217,18 +217,64 @@ def _read_data(file):
 def read_hp_data(file3):
     hp_asins = {}
 
+    num_reviews = 0
+    num_words = 0
+    num_brands = 0
+
+    words = []
+    reviews_ = []
+
     sheets = []
     xlsx = pd.ExcelFile(file3)
     for sheet in xlsx.sheet_names[1:]:
         # sheets.append(xlsx.parse(sheet))
         content = xlsx.parse(sheet)
-        parameters = content[0].split('\n')
+        #parameters = content[0].split('\n')
         #processor = parameters[0]
         reviews = content[1:]
-        hp_asins[sheet].append(parameters)
-        hp_asins[sheet].append(reviews)
+        #hp_asins[sheet].append(parameters)
+        #hp_asins[sheet].append(reviews)
+        
+        _reviews = reviews.values.tolist()
+        _num_reviews = 0
+        for review in _reviews:
+            #stripped = [w for w in review[0]]
+            #s = " ".join(x for x in stripped)
+            #texts.append(s)
+
+            num_reviews += 1
+            _num_reviews += 1
+            if not isinstance(review[0] , float):
+                num_words = num_words + len(review[0].split()) 
+                words.append(len(review[0].split()))
+        
+        reviews_.append(_num_reviews)
 
         # hp_asins[sheet_names]
+        num_brands = num_brands + 1
+
+    #num_reviews = num_reviews + _num_reviews
+    #num_words = num_words + _num_words
+    #num_brands += 1
+    # hist
+    """
+    #plt.hist(len_reviews, bins=20, color='g')
+    plt.hist(words,bins=40, color="blue")
+    plt.xlabel('Number of words in one review')
+    plt.ylabel('Number of reviews')
+    plt.title('The distribution of the number of words in the review')
+    plt.show()
+    """
+
+    plt.hist(reviews_, bins=20, color="blue")
+    plt.xlabel('Number of reviews in one laptop')
+    plt.ylabel('Number of laptops')
+    plt.title('The distribution of the number of reviews')
+    plt.show()
+
+    print("Num of brands in HP: %d:", num_brands)
+    print("Num of reviews: %d:", num_reviews)
+    print("Num of words: %d:", num_words)
 
     return hp_asins
 
@@ -262,11 +308,11 @@ def read_flipkart_data(file):
                 value = list(data.values())[0]
                 #f1.write(_asin + ":" + "\t")
 
-                reviews = value['reviews']
+                _reviews = value['reviews']
                 texts = []
                 _num_reviews = 0
                 _num_words = 0
-                for review in reviews:
+                for review in _reviews:
                     # list_reviews.append(review)
                     stripped = [w.decode("utf-8") for w in review]
                     s = " ".join(x for x in stripped)
@@ -275,7 +321,7 @@ def read_flipkart_data(file):
                     _num_reviews += 1
                     _num_words = _num_words + len(stripped)
 
-                    reviews.append(_num_words)
+                    words.append(len(stripped)) # word list
                     # write file in some format
                     #s.decode("cp950", "ignore")
                     #f1.write(s + '\n')
@@ -289,14 +335,31 @@ def read_flipkart_data(file):
                 flipkart_asins[_asin] = _num_words
                 flipkart_asins[_asin] = texts
 
-                num_reviews.append(_num_reviews)
+                reviews.append(_num_reviews) #review list
 
             num_reviews = num_reviews + _num_reviews
             num_words = num_words + _num_words
             num_brands += 1
 
     # hist
-    plt.hist(reviews, bins=20, color="green")
+    #plt.hist(len_reviews, bins=20, color='g')
+
+    #plt.hist(len_reviews, bins=20, color='g')
+    """
+    plt.hist(words,bins=40, color="blue")
+    plt.xlabel('Number of words in one review')
+    plt.ylabel('Number of reviews')
+    plt.title('The distribution of the number of words in the review')
+    plt.show()
+    """
+
+    #
+    plt.hist(reviews, bins=20, color="blue")
+    plt.xlabel('Number of reviews in one laptop')
+    plt.ylabel('Number of laptops')
+    plt.title('The distribution of the number of reviews')
+    plt.show()
+
 
     # f1.close()
     # return asins
