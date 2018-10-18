@@ -8,6 +8,7 @@ import gzip
 import json
 
 import ast
+import re
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -279,7 +280,7 @@ def read_hp_data(file3):
     return hp_asins
 
 
-def read_flipkart_data(file):
+def read_flipkart_data(file, csv_file4):
     flipkart_asins = {}
 
     num_brands = 0
@@ -288,6 +289,9 @@ def read_flipkart_data(file):
 
     reviews = []
     words = []
+
+    dict = {}
+    #writer = pd.ExcelWriter(csv_file4, engine='xlsxwriter')
 
     with open(file, "r", encoding="utf-8") as f:
         for line in f:
@@ -337,9 +341,24 @@ def read_flipkart_data(file):
 
                 reviews.append(_num_reviews) #review list
 
+                dict[_asin] = texts
+
             num_reviews = num_reviews + _num_reviews
             num_words = num_words + _num_words
             num_brands += 1
+
+
+    # write to excel
+    #writer = pd.ExcelWriter(csv_file4, engine='xlsxwriter')
+                           # write to excel
+            writer = pd.ExcelWriter(csv_file4, engine='xlsxwriter')
+
+            df1 = pd.DataFrame.from_dict(dict, orient='index').transpose()
+            df1.to_excel(writer, sheet_name=_asin[13:41])
+            writer.save()
+
+            writer.close()
+    
 
     # hist
     #plt.hist(len_reviews, bins=20, color='g')
@@ -354,11 +373,13 @@ def read_flipkart_data(file):
     """
 
     #
+    """
     plt.hist(reviews, bins=20, color="blue")
     plt.xlabel('Number of reviews in one laptop')
     plt.ylabel('Number of laptops')
     plt.title('The distribution of the number of reviews')
     plt.show()
+    """
 
 
     # f1.close()
@@ -400,7 +421,9 @@ def main():
 
     file4 = dir + 'flipkart_reviews_1005.json'
 
-    read_flipkart_data(file4)
+    csv_file4 = dir + 'flipkart_reviews.xlsx'
+
+    read_flipkart_data(file4,csv_file4)
 
     #analyze_data(df, file2)
 
