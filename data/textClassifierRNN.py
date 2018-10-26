@@ -38,6 +38,7 @@ from keras.engine.topology import Layer, InputSpec
 #from keras import initializations
 from keras import initializers
 
+import matplotlib.pyplot as plt
 
 #from get_data import get_labels
 
@@ -497,15 +498,21 @@ print("model fitting - Bidirectional LSTM")
 print(model.summary())
 
 # fit the model
-hist = model.fit(x_train, y_train, validation_data=(x_val, y_val),
-          nb_epoch=10, batch_size=50)
-print(hist.history)
+epochs = [5, 10, 20, 40, 60, 80, 100]
+fs = []
+for epoch in epochs:
+    hist = model.fit(x_train, y_train, validation_data=(x_val, y_val),
+            nb_epoch=epoch, batch_size=20)
+    print(hist.history)
 
-# evaluate the model    
-loss, accuracy, precision, recall = model.evaluate(x_test, y_test, verbose=0)
-f1 = (precision + recall) / 2
-print('accuracy: %f, precision: %f, recall: %f, f1: %f' % (accuracy, precision, recall, f1))
+    # evaluate the model    
+    loss, accuracy, precision, recall = model.evaluate(x_test, y_test, verbose=0)
+    f1 = (precision + recall) / 2
+    fs.append(f1)
+    print('accuracy: %f, precision: %f, recall: %f, f1: %f' % (accuracy, precision, recall, f1))
 
+print(fs)
+print("Done")
 """
 # Attention GRU network		  
 class AttLayer(Layer):
