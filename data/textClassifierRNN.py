@@ -46,8 +46,8 @@ MAX_SEQUENCE_LENGTH = 54 * 2 #300
 MAX_NB_WORDS = 20000
 EMBEDDING_DIM = 100
 #VALIDATION_SPLIT = 0.2
-VALIDATION_SPLIT = 0.1
-TEST_SPLIT = 0.2
+VALIDATION_SPLIT = 0.2
+TEST_SPLIT = 0.1
 
 def clean_str(string):
     """
@@ -412,14 +412,14 @@ def train():
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             texts.append(s)
             #labels.append(_cpu_id)
-            #labels.append(_sscreen_id)
-            labels.append(_ram_id)
+            labels.append(_sscreen_id)
+            #labels.append(_ram_id)
             #labels.append(_harddrive_id)
             #labels.append(_graphprocessor_id)
     
     return texts, labels
 
-
+#
 texts, labels = train()
     
 #
@@ -440,17 +440,16 @@ indices = np.arange(data.shape[0])
 np.random.shuffle(indices)
 data = data[indices]
 labels = labels[indices]
-nb_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
+nb_validation_samples = int((VALIDATION_SPLIT + TEST_SPLIT) * data.shape[0])
+nb_test_samples = int(TEST_SPLIT * data.shape[0])
 
 x_train = data[:-nb_validation_samples]
 y_train = labels[:-nb_validation_samples]
-x_val = data[-nb_validation_samples:]
-y_val = labels[-nb_validation_samples:]
+x_val = data[-nb_validation_samples:-nb_test_samples]
+y_val = labels[-nb_validation_samples:-nb_test_samples]
 
-nb_test_samples = int(TEST_SPLIT * data.shape[0])
 x_test = data[-nb_test_samples:]
 y_test = labels[-nb_test_samples:]
-
 
 print('Traing and validation set number of positive and negative reviews')
 print(y_train.sum(axis=0))
@@ -504,9 +503,8 @@ print(hist.history)
 
 # evaluate the model    
 loss, accuracy, precision, recall = model.evaluate(x_test, y_test, verbose=0)
-print('accuracy: %f' % accuracy)
-print('precision: %f' % precision)
-print('recall: %f' % recall)
+f1 = (precision + recall) / 2
+print('accuracy: %f, precision: %f, recall: %f, f1: %f' % (accuracy, precision, recall, f1))
 
 """
 # Attention GRU network		  
