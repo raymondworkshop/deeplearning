@@ -1,6 +1,10 @@
 # author - Richard Liao
 # Dec 26 2016
+#
 # updated by Raymond on Oct 22 2018 
+# 
+# add k-fold cross-validation by Raymond on Oct 30 2018
+#  - Use Automatic Verification Datasets 
 #
 import numpy as np
 import pandas as pd
@@ -13,7 +17,6 @@ import math
 import string
 
 import keras_metrics
-
 
 from bs4 import BeautifulSoup
 
@@ -48,7 +51,7 @@ MAX_NB_WORDS = 20000
 EMBEDDING_DIM = 100
 #VALIDATION_SPLIT = 0.2
 VALIDATION_SPLIT = 0.2
-TEST_SPLIT = 0.1
+#TEST_SPLIT = 0.1
 
 def clean_str(string):
     """
@@ -424,7 +427,7 @@ def train():
 texts, labels = train()
     
 #
-tokenizer = Tokenizer(nb_words=MAX_NB_WORDS)
+tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
 tokenizer.fit_on_texts(texts)
 sequences = tokenizer.texts_to_sequences(texts)
 
@@ -441,16 +444,21 @@ indices = np.arange(data.shape[0])
 np.random.shuffle(indices)
 data = data[indices]
 labels = labels[indices]
-nb_validation_samples = int((VALIDATION_SPLIT + TEST_SPLIT) * data.shape[0])
-nb_test_samples = int(TEST_SPLIT * data.shape[0])
+#nb_validation_samples = int((VALIDATION_SPLIT + TEST_SPLIT) * data.shape[0])
+nb_validation_samples = int(VALIDATION_SPLIT *  data.shape[0])
+#nb_test_samples = int(TEST_SPLIT * data.shape[0])
 
 x_train = data[:-nb_validation_samples]
 y_train = labels[:-nb_validation_samples]
+x_val = data[-nb_validation_samples:]
+y_val = labels[-nb_validation_samples:]
+"""
 x_val = data[-nb_validation_samples:-nb_test_samples]
 y_val = labels[-nb_validation_samples:-nb_test_samples]
 
 x_test = data[-nb_test_samples:]
 y_test = labels[-nb_test_samples:]
+"""
 
 print('Traing and validation set number of positive and negative reviews')
 print(y_train.sum(axis=0))
@@ -490,29 +498,86 @@ preds = Dense(labels.shape[1], activation='softmax')(l_lstm)
 
 model = Model(sequence_input, preds)
 model.compile(loss='categorical_crossentropy',
-              optimizer='rmsprop',
-              metrics=['acc', keras_metrics.precision(), keras_metrics.recall()])
+              optimizer='adam',
+              metrics=['accuracy', keras_metrics.precision(), keras_metrics.recall()])
 
 # summarize the model
 print("model fitting - Bidirectional LSTM")
 print(model.summary())
 
 # fit the model
-epochs = [5, 10, 20, 40, 60, 80, 100]
-fs = []
-for epoch in epochs:
-    hist = model.fit(x_train, y_train, validation_data=(x_val, y_val),
-            nb_epoch=epoch, batch_size=20)
+#epochs = [5, 10, 15, 20, 25, 30, 40, 50, 60, 80, 100]
+#epochs = [3, 4,5, 6, 7, 10]
+#ssreen[0.5070845986019322, 0.48973507110125514, 0.48719953534089894, 0.5122896375063295, 0.49724417154941686, 0.4466746164046027, 0.4621094331754684, 0.47069590234449604, 0.4701784171804724, 0.45380365174396087, 0.41863848926220476]
+
+val_f1 = []
+val_acc = []
+val_pre = []
+val_rec = []
+bsize = 32
+#epoch = int(len(x_train) / bsize)
+
+for epoch in range(100):
+    hist = model.fit(x_train, y_train, 
+                     validation_split=VALIDATION_SPLIT,
+                     #validation_data=(x_val, y_val),
+                     epochs=epoch, 
+                     batch_size=bsize)
     print(hist.history)
 
-    # evaluate the model    
-    loss, accuracy, precision, recall = model.evaluate(x_test, y_test, verbose=0)
+    # evaluate the model 
+    if len(hist.history) > 0:
+        val_acc.append(hist.history['val_acc'][-1])
+        val_pre.append(hist.history['val_precision'][-1])
+        val_rec.append(hist.history['val_recall'][-1])
+        val_f1 = (hist.history['val_precision'][-1] + hist.history['val_recall'][-1]) / 2
+    
+    print("The metric \n")
+    print('accuracy: ',val_acc)
+    print('precision: ',val_pre)
+    print('recall: ',val_rec)
+    print('f1: ',val_f1)
+     
+    # 
+"""
+    loss, accuracy, precision, recall = model.evaluate(x_test, y_test, batch_size=bsize, verbose=0)
     f1 = (precision + recall) / 2
     fs.append(f1)
+    acc.append(accuracy)
+    pre.append(precision)
+    rec.append(recall)
     print('accuracy: %f, precision: %f, recall: %f, f1: %f' % (accuracy, precision, recall, f1))
 
-print(fs)
+    print("The metric \n")
+    print('accuracy: ',acc)
+    print('precision: ',pre)
+    print('recall: ',rec)
+    print('f1: ',fs)
+"""
+
+"""
+def plot_history(history):
+    acc = history.history['acc']
+    val_acc = history.history['val_acc']
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    x = range(1, len(acc) + 1)
+
+    plt.figure(figsize=(12, 5))
+    plt.subplot(1, 2, 1)
+    plt.plot(x, acc, 'b', label='Training acc')
+    plt.plot(x, val_acc, 'r', label='Validation acc')
+    plt.title('Training and validation accuracy')
+    plt.legend()
+    plt.subplot(1, 2, 2)
+    plt.plot(x, loss, 'b', label='Training loss')
+    plt.plot(x, val_loss, 'r', label='Validation loss')
+    plt.title('Training and validation loss')
+    plt.legend()
+"""
+
 print("Done")
+
 """
 # Attention GRU network		  
 class AttLayer(Layer):
