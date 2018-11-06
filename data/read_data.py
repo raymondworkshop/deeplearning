@@ -381,7 +381,6 @@ def read_flipkart_data(file, csv_file4):
     plt.show()
     """
 
-
     # f1.close()
     # return asins
     print("Num of brands in Flipkart: %d:", num_brands)

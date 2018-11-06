@@ -3,8 +3,11 @@
 #
 # updated by Raymond on Oct 22 2018 
 # 
-# add k-fold cross-validation by Raymond on Oct 30 2018
+#  TODO:
+#   add k-fold cross-validation by Raymond on Oct 30 2018
 #  - Use Automatic Verification Datasets 
+#  - Multi-GPU and distributed training
+#    - (https://blog.keras.io/keras-as-a-simplified-interface-to-tensorflow-tutorial.html#exporting-a-model-with-tensorflow-serving)
 #
 import numpy as np
 import pandas as pd
@@ -25,7 +28,6 @@ import os
 
 #os.environ['KERAS_BACKEND']='theano'
 os.environ['KERAS_BACKEND']='tensorflow'
-
 
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
@@ -51,7 +53,7 @@ MAX_NB_WORDS = 20000
 EMBEDDING_DIM = 100
 #VALIDATION_SPLIT = 0.2
 VALIDATION_SPLIT = 0.2
-#TEST_SPLIT = 0.1
+TEST_SPLIT = 0.1
 
 def clean_str(string):
     """
@@ -446,7 +448,7 @@ data = data[indices]
 labels = labels[indices]
 #nb_validation_samples = int((VALIDATION_SPLIT + TEST_SPLIT) * data.shape[0])
 nb_validation_samples = int(VALIDATION_SPLIT *  data.shape[0])
-#nb_test_samples = int(TEST_SPLIT * data.shape[0])
+nb_test_samples = int(TEST_SPLIT * data.shape[0])
 
 x_train = data[:-nb_validation_samples]
 y_train = labels[:-nb_validation_samples]
@@ -510,50 +512,44 @@ print(model.summary())
 #epochs = [3, 4,5, 6, 7, 10]
 #ssreen[0.5070845986019322, 0.48973507110125514, 0.48719953534089894, 0.5122896375063295, 0.49724417154941686, 0.4466746164046027, 0.4621094331754684, 0.47069590234449604, 0.4701784171804724, 0.45380365174396087, 0.41863848926220476]
 
-val_f1 = []
-val_acc = []
-val_pre = []
-val_rec = []
+fs = []
+acc = []
+pre = []
+rec = []
 bsize = 32
 #epoch = int(len(x_train) / bsize)
-
-for epoch in range(100):
-    hist = model.fit(x_train, y_train, 
+epoch = 4
+hist = model.fit(x_train, y_train, 
                      validation_split=VALIDATION_SPLIT,
                      #validation_data=(x_val, y_val),
                      epochs=epoch, 
                      batch_size=bsize)
-    print(hist.history)
+print(hist.history)
 
     # evaluate the model 
+"""
     if len(hist.history) > 0:
         val_acc.append(hist.history['val_acc'][-1])
         val_pre.append(hist.history['val_precision'][-1])
         val_rec.append(hist.history['val_recall'][-1])
-        val_f1 = (hist.history['val_precision'][-1] + hist.history['val_recall'][-1]) / 2
-    
-    print("The metric \n")
-    print('accuracy: ',val_acc)
-    print('precision: ',val_pre)
-    print('recall: ',val_rec)
-    print('f1: ',val_f1)
-     
-    # 
+        #val_f1 = (hist.history['val_precision'][-1] + hist.history['val_recall'][-1]) / 2
+        val_f1.append((hist.history['val_precision'][-1] + hist.history['val_recall'][-1]) / 2)
 """
-    loss, accuracy, precision, recall = model.evaluate(x_test, y_test, batch_size=bsize, verbose=0)
-    f1 = (precision + recall) / 2
-    fs.append(f1)
-    acc.append(accuracy)
-    pre.append(precision)
-    rec.append(recall)
-    print('accuracy: %f, precision: %f, recall: %f, f1: %f' % (accuracy, precision, recall, f1))
 
-    print("The metric \n")
-    print('accuracy: ',acc)
-    print('precision: ',pre)
-    print('recall: ',rec)
-    print('f1: ',fs)
-"""
+loss, accuracy, precision, recall = model.evaluate(x_val, y_val, batch_size=bsize, verbose=0)
+    
+f1 = (precision + recall) / 2
+fs.append(f1)
+acc.append(accuracy)
+pre.append(precision)
+rec.append(recall)
+print('accuracy: %f, precision: %f, recall: %f, f1: %f' % (accuracy, precision, recall, f1))
+
+print("The metric \n")
+print('accuracy: ',acc)
+print('precision: ',pre)
+print('recall: ',rec)
+print('f1: ',fs)
 
 """
 def plot_history(history):
