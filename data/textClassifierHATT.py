@@ -18,6 +18,7 @@ import os
 os.environ['KERAS_BACKEND']='tensorflow'
 
 import string
+import keras_metrics
 
 from keras.preprocessing.text import Tokenizer, text_to_word_sequence
 from keras.preprocessing.sequence import pad_sequences
@@ -283,17 +284,46 @@ preds = Dense(labels.shape[1], activation='softmax')(l_att)
 model = Model(sentence_input, preds)
 model.compile(loss='categorical_crossentropy',
               optimizer='rmsprop',
-              metrics=['acc'])
+              metrics=['accuracy', keras_metrics.precision(), keras_metrics.recall()])
 
 print("model fitting - Hierachical attention network")
-bsize = 50
-hist = model.fit(x_train, y_train, 
-                 #validation_data=(x_test, y_test),
-                 validation_split=VALIDATION_SPLIT,
-                 epochs=10, 
-                 batch_size=bsize)
-print(hist.history)
 
+fs = []
+acc = []
+pre = []
+rec = []
+bsize = 64
+#epoch = int(len(x_train) / bsize)
+#epoch = 12
+for epoch in range(10):
+    hist = model.fit(x_train, y_train, 
+                     validation_split=VALIDATION_SPLIT,
+                     #validation_data=(x_val, y_val),
+                     epochs=epoch,
+                     batch_size=bsize)
+    print(hist.history)
 
-loss, accuracy, precision, recall = model.evaluate(x_test, y_test, batch_size=bsize, verbose=0)
-print('accuracy: %f, precision: %f, recall: %f' % (accuracy, precision, recall))
+    # evaluate the model 
+    """
+    if len(hist.history) > 0:
+        val_acc.append(hist.history['val_acc'][-1])
+        val_pre.append(hist.history['val_precision'][-1])
+        val_rec.append(hist.history['val_recall'][-1])
+        #val_f1 = (hist.history['val_precision'][-1] + hist.history['val_recall'][-1]) / 2
+        val_f1.append((hist.history['val_precision'][-1] + hist.history['val_recall'][-1]) / 2)
+    """
+
+    loss, accuracy, precision, recall = model.evaluate(x_test, y_test, batch_size=bsize, verbose=0)
+    
+    f1 = (precision + recall) / 2
+    fs.append(f1)
+    acc.append(accuracy)
+    pre.append(precision)
+    rec.append(recall)
+    print('accuracy: %f, precision: %f, recall: %f, f1: %f' % (accuracy, precision, recall, f1))
+
+print("The metric \n")
+print('accuracy: ',acc)
+print('precision: ',pre)
+print('recall: ',rec)
+print('f1: ',fs)
