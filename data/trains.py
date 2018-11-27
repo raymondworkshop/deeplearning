@@ -51,7 +51,8 @@ MAX_NUM_WORDS = 20000
 MAX_SEQUENCE_LENGTH = 54 * 2 #300
 EMBEDDING_DIM = 100
 
-VALIDATION_SPLIT = 0.1
+VALIDATION_SPLIT = 0.2
+TEST_SPLIT = 0.1
 
 
 def get_cpu_label(_str):
@@ -455,9 +456,9 @@ def train_wordembedding():
             texts.append(s)
             #labels.append(_cpu_id)
             #labels.append(_sscreen_id)
-            #labels.append(_ram_id)
+            labels.append(_ram_id)
             #labels.append(_harddrive_id)
-            labels.append(_graphprocessor_id)
+            #labels.append(_graphprocessor_id)
     """
     _cpus = df.loc[1, :].tolist()
     for _cpu in _cpus[1:]:
@@ -563,7 +564,8 @@ def train_wordembedding():
 
     # create a weight matrix for words in training docs
     num_words = min(MAX_NUM_WORDS, len(word_index) + 1)
-    embedding_matrix = numpy.random.uniform(-0.001, 0.001, (num_words, EMBEDDING_DIM))
+    #embedding_matrix = numpy.random.uniform(-0.001, 0.001, (num_words, EMBEDDING_DIM))
+    embedding_matrix = numpy.random.random((len(word_index) + 1, EMBEDDING_DIM))
     for word, i in word_index.items():
         if i >= MAX_NUM_WORDS:
             continue
@@ -613,12 +615,16 @@ def train_wordembedding():
     numpy.random.shuffle(indices)
     data = data[indices]
     labels = labels[indices]
-    num_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
+    num_validation_samples = int((VALIDATION_SPLIT + TEST_SPLIT) * data.shape[0])
+    num_test_samples = int(TEST_SPLIT * data.shape[0])
 
     x_train = data[:-num_validation_samples]
     y_train = labels[:-num_validation_samples]
-    x_val = data[-num_validation_samples:]
-    y_val = labels[-num_validation_samples:]
+    x_val = data[-num_validation_samples:-num_test_samples]
+    y_val = labels[-num_validation_samples:-num_test_samples]
+
+    x_test = data[-num_test_samples:]
+    y_test = labels[-num_test_samples:]
 
 
     ## word embeddings
@@ -670,9 +676,9 @@ def train_wordembedding():
     embedded_sequences = embedding_layer(sequence_input) # (batch , 54, 100)
 
     #max_emb_encoder(sequence_input, )
-    xx = Lambda(average_emb)(embedded_sequences)  #(?, 100)
+    #xx = Lambda(average_emb)(embedded_sequences)  #(?, 100)
     #xx = Lambda(max_emb)(embedded_sequences)  #(?, 100)
-    #xx = Lambda(concat_emb)(embedded_sequences)
+    xx = Lambda(concat_emb)(embedded_sequences)
 
     #xx = Dense(EMBEDDING_DIM, activation='relu')(xx)
     #xx = Flatten()(embedded_sequences)
@@ -705,17 +711,19 @@ def train_wordembedding():
 
     # fit the model
     hist = model.fit(x_train, y_train,
-          batch_size=32,
-          epochs=8,
-          validation_split=0.1)
+          batch_size=50,
+          epochs=10,
+          validation_data=(x_val, y_val))
 
     print(hist.history)
 
     # evaluate the model
     #print('recall + precision: %s' % (_metrics.get_data() * 100))
     
-    loss, accuracy, precision, recall = model.evaluate(x_val, y_val, verbose=0)
-    print('metrics: %f' % accuracy)
+    loss, accuracy, precision, recall = model.evaluate(x_test, y_test, verbose=0)
+    print('accuracy: %f, precision: %f, recall: %f' % (accuracy, precision, recall))
+    #print('precision: %f' % precision)
+    #print('recall: %f' % recall)
    
     
     return 0
@@ -996,9 +1004,9 @@ def train_svm():
 def main():
     #data()
     #
-    #train_wordembedding()
+    train_wordembedding()
     #
-    train_svm()
+    #train_svm()
 
 
 if __name__ == '__main__':
