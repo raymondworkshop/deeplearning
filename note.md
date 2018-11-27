@@ -1,10 +1,28 @@
 ### work notes
 
+#### 2018-11-01 
+ * todo 
+   - RNN-LSTM ?
+ * 
+
+#### 2018-10-11 
+ * summary
+  - 
+ * todo 
+  - pre-processing 
+  - 
+
 #### 2018-10-08 
- * flipkart
+ * summary
+  - flipkart
   Num of brands in Flipkart: %d: 408
-  Num of reviews: %d: 32k
+  Num of reviews: %d: 32434 - 32k
   Num of words: %d: 1171703 - 1.17M
+
+  - HP
+  Num of brands in HP: %d: 59
+  Num of reviews: %d: 950 - 1k
+  Num of words: %d: 78173 - 18k
 
 #### 2018-10-05
  * flipkart
@@ -178,7 +196,7 @@ Train on 528149 samples, validate on 58684 samples
 #### 2018-07-11
  * notes on the server
    - source /usr/local/tensorflow/bin/activate
-   - GPU: export CUDA_VISIBLE_DEVICES=1
+   - GPU: export CUDA_VISIBLE_DEVICES=0
    - check gpu process : nvidiva-smi
 
 
