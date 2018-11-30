@@ -888,6 +888,21 @@ def get_amazon_data(file):
     return asins
 
 
+def sort_frequency(item, lst):
+    """
+    Sort the lst according to the distance with item
+    """
+    _lst = lst
+
+    def dist(x, item):
+        return x - item
+
+    sorted(_lst, key=dist)
+
+
+    return 0
+
+
 def map_params_prices(file):
     #dir = 'C:/Users/raymondzhao/myproject/dev.dplearning/data/'
     #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
@@ -960,7 +975,8 @@ def map_params_prices(file):
 
     # screen size
 
-    # map params to prices
+    # map params to prices -> frequency ?
+    
 
     return tech_dict, cpu_lst
 
