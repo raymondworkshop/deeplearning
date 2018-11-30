@@ -353,8 +353,8 @@ def train():
     f1.close()
     """
     #dir = 'C:/Users/raymondzhao/myproject/dev.dplearning/data/'
-    #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
-    dir = "/data/raymond/workspace/exp2/"
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    #dir = "/data/raymond/workspace/exp2/"
     file = dir + 'amazon_reviews.json'
     asins = read_data(file)
 
