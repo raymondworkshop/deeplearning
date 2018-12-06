@@ -20,6 +20,14 @@ import pandas as pd
 
 df = pd.DataFrame()
 
+
+# refurbished goods?
+
+amazon_refurbished_goods_index = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+                     21, 22, 23, 24, 26, 28, 31, 32, 33, 34, 38, 40, 42, 43, 44, 45,
+                     48, 50, 51, 53, 56, 57, 58, 59, 60, 62, 65, 69,70, 72,
+                     75, 76, 78, 79, 81, 82, 83, 84, 85, 87, 89, 90, 91, 93,
+                     94, 95, 96, 97, 99, 102, 103, 105, 106]
 #---------------------------
 # The below is to label data  
 
@@ -153,7 +161,7 @@ Celeron N3060
 2.16 GHz Intel Celeron
 """
 
-def get_labels(lst):
+def get_cpu_label(lst):
     dict = {}
     #
     ind = 0
@@ -205,7 +213,30 @@ def _get_cpu_label(_str):
         #_cpu_label = 1
     return _cpu_label
 
-def get_sscreen_label(_str):
+
+def get_sscreen_label(lst):
+    dict = {}
+    #
+    ind = 0
+    for item in lst:
+        if item not in dict:
+            dict[item] = ind
+            ind += 1
+        else:
+            pass
+
+    #
+    _lst = []
+    for item in lst:
+        _dict = {}
+        if item in dict.keys():
+            _dict[item] = dict[item]
+            _lst.append(_dict)
+
+    return _lst
+
+
+def _get_sscreen_label(_str):
     # [ 11.6 inches, 13.3 inches, 14 inches, 15.6 inches, 17.3 inches ]
     _sscreen_map = {
         "<= 12 inches": 0,
@@ -386,7 +417,7 @@ def get_graphprocessor_label(_str):
 
 
 def get_text_labels():
-        # get documents
+    # get documents
     """
     f1 = open('C:/Users/raymondzhao/myproject/dev.dplearning/data/amazon_data_0719.p', 'r')
     asins = pickle.load(f1)
@@ -888,20 +919,67 @@ def get_amazon_data(file):
     return asins
 
 
-def sort_frequency(item, lst):
+def get_inds(item, lst):
     """
-    Sort the lst according to the distance with item
+    get the list according to the min-distance with item
     """
-    _lst = lst
+    #_lst = lst
+    #_dict = {}
 
+    """
     def dist(x, item):
         return x - item
+    """
 
-    sorted(_lst, key=dist)
+    # amazon_refurbished_goods_index
+    _lst = [ abs(x - item) for x in lst ]
 
+    #ind = _lst.index(min(_lst))
+    prices = [x for _, x in sorted(zip(_lst, lst))]
+
+    return prices
+
+#
+def sort_items(lst):
+    # sort item 
+
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    cpu_tech_file = dir + 'amazon_tech_cpus.json'
+    price_lst = []
+    #label_lst = []
+    ind_map_price = {}
+    ind = 0  # label
+    with open(cpu_tech_file, 'rU') as f1:
+        for line in f1:
+            if '+' in line:
+                ind += 1
+                price = int(line.split(':')[2].strip())
+                #label = int(line.split(':')[1].strip())
+                price_lst.append(price)
+                #label_lst.append(label)
+
+                # ind is the label now, use the price as class
+                ind_map_price[ind] = price # the duplication
+            #print(ind)
+            #print("Done")
+        #json.dump(tech_dict, f)
+
+    # map params to prices 
+    # get amazon_refurbished_goods_index
+    _dict = {} # sort according to the price
+    for i in amazon_refurbished_goods_index:
+        ind = i - 1
+        # in amazon_refurbished_goods_index  
+        price = ind_map_price[ind]
+
+        _dict[ind] = get_inds(price, price_lst) 
+    #
+
+    return _dict
+
+def map_cpus_prices(file):
 
     return 0
-
 
 def map_params_prices(file):
     #dir = 'C:/Users/raymondzhao/myproject/dev.dplearning/data/'
@@ -970,15 +1048,17 @@ def map_params_prices(file):
         tech_dict[str(_asin)] = [_cpu,_sscreen,_ram,_harddrive,_graphprocessor]
 
     #cpu
-    cpu_lst = get_labels(_cpus)
+    cpu_lst = get_cpu_label(_cpus)
     print(cpu_lst)
 
+    # get the class list according to the dist
+    cpu_labels_dict = sort_items(cpu_lst)
+
     # screen size
+    #sscreen_lst = get_sscreen_label(_sscreens)
+    #print(sscreen_lst)
 
-    # map params to prices -> frequency ?
-    
-
-    return tech_dict, cpu_lst
+    return cpu_labels_dict
 
 
 def get_amazon_texts_labels(file):
@@ -1001,6 +1081,7 @@ def get_amazon_texts_labels(file):
     texts = []  #list of text samples
     #labels = array([])
     labels = [] #list of label ids
+    labels_matrix = []
     labels_index = {}  # dictionary mapping label name to numeric id
 
     # ['14 inches', '2.16 GHz Intel Celeron', '4 GB SDRAM DDR3', 
@@ -1008,13 +1089,16 @@ def get_amazon_texts_labels(file):
         # [screensize,cpu, ram, Hard Drive,Graphics Coprocessor, reviews]
     
     #_sscreens = []
+    _cpus = []
     for _asin in asins:
         print("The asin %s:", _asin)
         # [screensize,cpu, ram, reviews]
         _cpu = asins[_asin][1]
         if _cpu:
            _cpu_id = _get_cpu_label(_cpu)
-           labels_index[_cpu] = _cpu_id
+           _cpus.append(_cpu)
+
+           #labels_index[_cpu] = _cpu_id
            #
            #_cpus.append(_cpu)
 
@@ -1064,7 +1148,7 @@ def get_amazon_texts_labels(file):
             #labels.append(_harddrive_id)
             #labels.append(_graphprocessor_id)
     
-    return texts, labels
+    return texts, labels_matrix
 
 
 def main():
@@ -1103,20 +1187,16 @@ def main():
     #dir = "/data/raymond/workspace/exp2/"
     #file = dir + 'amazon_reviews.json'
 
-    tech_dict, cpu_lst= map_params_prices(file)
+    cpu_dict = map_params_prices(file)
 
     tech_file =  dir + 'amazon_tech_params_.json'
     cpu_tech_file =  dir + 'amazon_tech_cpus_.json'
+    """
     with open(tech_file, 'w') as f:
         for key in tech_dict:
         #json.dump(tech_dict, f)
             f.write(key + " : " + ', '.join(tech_dict[key]) + '\n')
-
-    with open(cpu_tech_file, 'w') as f1:
-        for item in cpu_lst:
-        #json.dump(tech_dict, f)
-            for key in item:
-                f1.write(key +  " : " + str(item[key]) + '\n')
+    """
 
  
     #asins = read_data(file)
