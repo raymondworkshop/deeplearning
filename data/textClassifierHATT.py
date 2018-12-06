@@ -87,7 +87,7 @@ dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
 #dir = '/data/raymond/workspace/exp2/'
 file = 'amazon_reviews.json'
 reviews = []
-texts, labels = read_data.get_amazon_texts_labels(file)
+texts, label_inds = read_data.get_amazon_texts_labels(file)
 
 #
 tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
