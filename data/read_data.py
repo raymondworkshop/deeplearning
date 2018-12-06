@@ -1080,23 +1080,89 @@ def get_amazon_texts_labels(file):
     # The text samples and their labels
     texts = []  #list of text samples
     #labels = array([])
-    labels = [] #list of label ids
-    labels_matrix = []
+    labels = [] # list of label ids
+    #labels_inds = []
     labels_index = {}  # dictionary mapping label name to numeric id
 
     # ['14 inches', '2.16 GHz Intel Celeron', '4 GB SDRAM DDR3', 
     # [[b'I', b'placed', b'my', b'order', b'on', b'December', b'19th', b'and', b'was', b'under', b'the', b'impression', b'it', b'would', b'arrive', b'on', b'the', b'22nd']]
         # [screensize,cpu, ram, Hard Drive,Graphics Coprocessor, reviews]
     
+    tech_dict = {}
+
+    _sscreens = []
+    _cpus = []
+    _rams = []
+    _harddrives = []
+    _graphprocessors = []
+    for _asin in asins:
+        print("The asin %s:", _asin)
+        # [screensize,cpu, ram, reviews]
+        _cpu = asins[_asin][1]
+        _cpus.append(_cpu)
+        """
+        if _cpu:
+           #_cpu_id = get_cpu_label(_cpu)
+           #labels_index[_cpu] = _cpu_id
+           #
+           #_cpus.append(_cpu)
+           _cpus.append(_cpu)
+        """
+
+        _sscreen = asins[_asin][0]
+        _sscreens.append(_sscreen)
+        """
+        if _sscreen:
+            #_sscreen_id = get_sscreen_label(_sscreen)
+            #labels_index[_sscreen] = _sscreen_id
+            #
+            _sscreens.append(_sscreen)
+        """
+
+        _ram = asins[_asin][2]
+        _rams.append(_ram)
+        """
+        if _ram:
+            _ram_id = get_ram_label(_ram)
+            labels_index[_ram] = _ram_id
+        """
+        
+        _harddrive = asins[_asin][3]
+        _harddrives.append(_harddrive)
+        """
+        if _harddrive:
+            _harddrive_id = get_harddrive_label(_harddrive)
+            labels_index[_harddrive] = _harddrive_id
+        """
+    
+        #Graphics Coprocessor
+        _graphprocessor = asins[_asin][4]
+        _graphprocessors.append(_graphprocessor)
+        """
+        if _graphprocessor:
+            _graphprocessor_id = get_graphprocessor_label(_graphprocessor)
+            labels_index[_graphprocessor] = _graphprocessor_id
+        """
+
+       # tech_dict[str(_asin)] = [_cpu,_sscreen,_ram,_harddrive,_graphprocessor]
+
+    #cpu
+    cpu_lst = get_cpu_label(_cpus)
+    print(cpu_lst)
+
+    # get the class list according to the dist
+    cpu_labels_dict = sort_items(cpu_lst)
+
     #_sscreens = []
     _cpus = []
+    ind = 0
     for _asin in asins:
         print("The asin %s:", _asin)
         # [screensize,cpu, ram, reviews]
         _cpu = asins[_asin][1]
         if _cpu:
            _cpu_id = _get_cpu_label(_cpu)
-           _cpus.append(_cpu)
+           #_cpus.append(_cpu)
 
            #labels_index[_cpu] = _cpu_id
            #
@@ -1142,13 +1208,16 @@ def get_amazon_texts_labels(file):
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             texts.append(s)
-            labels.append(_cpu_id)
+            #labels.append(_cpu_id)
+            labels.append(cpu_labels_dict[ind])
+            
+
             #labels.append(_sscreen_id)
             #labels.append(_ram_id)
             #labels.append(_harddrive_id)
             #labels.append(_graphprocessor_id)
     
-    return texts, labels_matrix
+    return texts, labels_inds
 
 
 def main():
