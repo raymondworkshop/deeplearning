@@ -944,22 +944,23 @@ def sort_items(lst):
     # sort item 
 
     dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
-    cpu_tech_file = dir + 'amazon_tech_cpus.json'
+    cpu_tech_file = dir + 'amazon_tech_cpus_1207.json'
     price_lst = []
     #label_lst = []
-    ind_map_price = {}
-    ind = 0  # label
+    asin_map_price = {}
+    #ind = 0  # label
     with open(cpu_tech_file, 'rU') as f1:
         for line in f1:
             if '+' in line:
-                ind += 1
-                price = int(line.split(':')[2].strip())
+                #ind += 1
+                asin = line.split(':')[0].strip()
+                price = int(line.split(':')[3].strip())
                 #label = int(line.split(':')[1].strip())
                 price_lst.append(price)
                 #label_lst.append(label)
 
                 # ind is the label now, use the price as class
-                ind_map_price[ind] = price # the duplication
+                asin_map_price[asin] = price # the duplication
             #print(ind)
             #print("Done")
         #json.dump(tech_dict, f)
@@ -967,12 +968,18 @@ def sort_items(lst):
     # map params to prices 
     # get amazon_refurbished_goods_index
     _dict = {} # sort according to the price
+    """
     for i in amazon_refurbished_goods_index:
         ind = i - 1
         # in amazon_refurbished_goods_index  
         price = ind_map_price[ind]
 
         _dict[ind] = get_inds(price, price_lst) 
+    """
+
+    for asin in asin_map_price:
+        price = asin_map_price[asin]
+        _dict[asin] = get_inds(price, price_lst) 
     #
 
     return _dict
@@ -1156,12 +1163,14 @@ def get_amazon_texts_labels(file):
     #_sscreens = []
     _cpus = []
     ind = 0
-    for _asin in asins:
+    #for ind in cpu_labels_dict.items():
+    for _asin in cpu_labels_dict:
         print("The asin %s:", _asin)
         # [screensize,cpu, ram, reviews]
         _cpu = asins[_asin][1]
         if _cpu:
-           _cpu_id = _get_cpu_label(_cpu)
+           #_cpu_id = _get_cpu_label(_cpu)
+           _cpu_id = cpu_labels_dict[_asin]
            #_cpus.append(_cpu)
 
            #labels_index[_cpu] = _cpu_id
@@ -1208,16 +1217,14 @@ def get_amazon_texts_labels(file):
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             texts.append(s)
-            #labels.append(_cpu_id)
-            labels.append(cpu_labels_dict[ind])
+            labels.append(_cpu_id)
             
-
             #labels.append(_sscreen_id)
             #labels.append(_ram_id)
             #labels.append(_harddrive_id)
             #labels.append(_graphprocessor_id)
     
-    return texts, labels_inds
+    return texts, labels
 
 
 def main():
@@ -1236,6 +1243,7 @@ def main():
     dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
     #dir = "/data/raymond/workspace/exp2/"
     file = dir + 'amazon_reviews_copy.json'
+    #file = dir + 'amazon_reviews.json'
 
     file2 = dir + 'reviews.xls'
 
@@ -1256,7 +1264,7 @@ def main():
     #dir = "/data/raymond/workspace/exp2/"
     #file = dir + 'amazon_reviews.json'
 
-    cpu_dict = map_params_prices(file)
+    #cpu_dict = map_params_prices(file)
 
     tech_file =  dir + 'amazon_tech_params_.json'
     cpu_tech_file =  dir + 'amazon_tech_cpus_.json'
@@ -1266,6 +1274,14 @@ def main():
         #json.dump(tech_dict, f)
             f.write(key + " : " + ', '.join(tech_dict[key]) + '\n')
     """
+
+    # get texts and labels
+    #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    #dir = '/data/raymond/workspace/exp2/'
+    #file = 'amazon_reviews.json'
+    #file = 'amazon_reviews_copy.json'
+    reviews = []
+    texts, labels = get_amazon_texts_labels(file)
 
  
     #asins = read_data(file)

@@ -86,8 +86,9 @@ for idx in range(data_train.review.shape[0]):
 dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
 #dir = '/data/raymond/workspace/exp2/'
 file = 'amazon_reviews.json'
+#file = 'amazon_reviews_copy.json'
 reviews = []
-texts, label_inds = read_data.get_amazon_texts_labels(file)
+texts, labels = read_data.get_amazon_texts_labels(file)
 
 #
 tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
