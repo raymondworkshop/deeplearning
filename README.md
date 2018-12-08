@@ -3,7 +3,6 @@
 
 
 #### reference
-* [PyTorch Tutorials](https://pytorch.org/tutorials/)
 * [Machine Learning: 2014-2015](https://www.cs.ox.ac.uk/people/nando.defreitas/machinelearning/)
 * [100-nlp-papers](https://github.com/mhagiwara/100-nlp-papers)
 * [NLP](https://github.com/muyun/dev.nlp)
