@@ -1,3 +1,6 @@
 .gitignore
 .idea
 geckodriver.log
+data/.DS_Store
+data/venv/*
+.DS_Store
