@@ -48,7 +48,7 @@ import matplotlib.pyplot as plt
 #from get_data import get_labels
 
 #MAX_SEQUENCE_LENGTH = 1000
-MAX_SEQUENCE_LENGTH = 54 * 2 #300
+MAX_SEQUENCE_LENGTH = 100 #54 * 2 #300
 MAX_NB_WORDS = 20000
 EMBEDDING_DIM = 100
 #VALIDATION_SPLIT = 0.2
@@ -281,8 +281,7 @@ def get_graphprocessor_label(_str):
             if _graphprocessor_size == 1050:
                 _graphprocessor_label = 3
             if _graphprocessor_size == 940:
-                _graphprocessor_label = 3
-        
+                _graphprocessor_label = 3  
 
     if 'integrated' in _str.lower():
         _graphprocessor_label  = 4
@@ -354,8 +353,8 @@ def train():
     f1.close()
     """
     #dir = 'C:/Users/raymondzhao/myproject/dev.dplearning/data/'
-    #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
-    dir = "/data/raymond/workspace/exp2/"
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    #dir = "/data/raymond/workspace/exp2/"
     file = dir + 'amazon_reviews.json'
     asins = read_data(file)
 
@@ -452,8 +451,8 @@ nb_test_samples = int(TEST_SPLIT * data.shape[0])
 
 x_train = data[:-nb_validation_samples]
 y_train = labels[:-nb_validation_samples]
-x_val = data[-nb_validation_samples:]
-y_val = labels[-nb_validation_samples:]
+x_test = data[-nb_validation_samples:]
+y_test = labels[-nb_validation_samples:]
 """
 x_val = data[-nb_validation_samples:-nb_test_samples]
 y_val = labels[-nb_validation_samples:-nb_test_samples]
@@ -464,7 +463,7 @@ y_test = labels[-nb_test_samples:]
 
 print('Traing and validation set number of positive and negative reviews')
 print(y_train.sum(axis=0))
-print(y_val.sum(axis=0))
+print(y_test.sum(axis=0))
 
 #GLOVE_DIR = "~/Testground/data/glove"
 GLOVE_DIR = "/data/raymond/workspace/exp2/"
@@ -516,34 +515,35 @@ fs = []
 acc = []
 pre = []
 rec = []
-bsize = 32
+bsize = 64
 #epoch = int(len(x_train) / bsize)
-epoch = 4
-hist = model.fit(x_train, y_train, 
+#epoch = 12
+for epoch in range(5):
+    hist = model.fit(x_train, y_train, 
                      validation_split=VALIDATION_SPLIT,
                      #validation_data=(x_val, y_val),
-                     epochs=epoch, 
+                     epochs=epoch,
                      batch_size=bsize)
-print(hist.history)
+    print(hist.history)
 
     # evaluate the model 
-"""
+    """
     if len(hist.history) > 0:
         val_acc.append(hist.history['val_acc'][-1])
         val_pre.append(hist.history['val_precision'][-1])
         val_rec.append(hist.history['val_recall'][-1])
         #val_f1 = (hist.history['val_precision'][-1] + hist.history['val_recall'][-1]) / 2
         val_f1.append((hist.history['val_precision'][-1] + hist.history['val_recall'][-1]) / 2)
-"""
+    """
 
-loss, accuracy, precision, recall = model.evaluate(x_val, y_val, batch_size=bsize, verbose=0)
+    loss, accuracy, precision, recall = model.evaluate(x_test, y_test, batch_size=bsize, verbose=0)
     
-f1 = (precision + recall) / 2
-fs.append(f1)
-acc.append(accuracy)
-pre.append(precision)
-rec.append(recall)
-print('accuracy: %f, precision: %f, recall: %f, f1: %f' % (accuracy, precision, recall, f1))
+    f1 = (precision + recall) / 2
+    fs.append(f1)
+    acc.append(accuracy)
+    pre.append(precision)
+    rec.append(recall)
+    print('accuracy: %f, precision: %f, recall: %f, f1: %f' % (accuracy, precision, recall, f1))
 
 print("The metric \n")
 print('accuracy: ',acc)

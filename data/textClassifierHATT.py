@@ -3,7 +3,8 @@
 #
 # updated by raymond
 # - data-preprocessing 
-# - 
+# 
+# 
 # 
 import numpy as np
 import pandas as pd
@@ -82,8 +83,10 @@ for idx in range(data_train.review.shape[0]):
 """
 
 # get texts and labels
-
-file = '/data/raymond/workspace/exp2/amazon_reviews.json'
+dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+#dir = '/data/raymond/workspace/exp2/'
+file = 'amazon_reviews.json'
+#file = 'amazon_reviews_copy.json'
 reviews = []
 texts, labels = read_data.get_amazon_texts_labels(file)
 
@@ -126,7 +129,8 @@ print(y_train.sum(axis=0))
 print(y_test.sum(axis=0))
 
 #GLOVE_DIR = "~/Testground/data/glove"
-GLOVE_DIR = "/data/raymond/workspace/exp2/"
+GLOVE_DIR = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+#GLOVE_DIR = "/data/raymond/workspace/exp2/"
 embeddings_index = {}
 f = open(os.path.join(GLOVE_DIR, 'glove.6B.100d.txt'))
 for line in f:
