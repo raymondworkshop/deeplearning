@@ -30,7 +30,6 @@ from engine_training import ExtendedModel
 #from engine_training import ThetaPrime
 import keras_metrics
 
-
 import pickle
 import pandas as pd
 
@@ -47,11 +46,16 @@ from sklearn.metrics import accuracy_score
 #from sklearn.metrics import make_scorer
 from sklearn.metrics import classification_report, confusion_matrix
 
+#
+import read_data
+
+#
 MAX_NUM_WORDS = 20000
 MAX_SEQUENCE_LENGTH = 54 * 2 #300
 EMBEDDING_DIM = 100
 
-VALIDATION_SPLIT = 0.1
+VALIDATION_SPLIT = 0.2
+TEST_SPLIT = 0.1
 
 
 def get_cpu_label(_str):
@@ -267,7 +271,7 @@ def get_graphprocessor_label(_str):
     return _graphprocessor_label
 
 
-def read_data(file):
+def _read_data(file):
     list_reviews = []
     asins = {}
 
@@ -294,7 +298,6 @@ def read_data(file):
                 for review in reviews:
                     list_reviews.append(review)
                 
-
                 params = data['tech']
                 if len(params) > 0:
                     #asins[_asin] = [screensize,cpu, ram]
@@ -378,7 +381,7 @@ def train_wordembedding():
     #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
     dir = "/data/raymond/workspace/exp2/"
     file = dir + 'amazon_reviews.json'
-    asins = read_data(file)
+    asins = _read_data(file)
 
     file = dir + 'amazon_tech_all_5.csv'
     #df = pd.read_csv(file)
@@ -455,9 +458,9 @@ def train_wordembedding():
             texts.append(s)
             #labels.append(_cpu_id)
             #labels.append(_sscreen_id)
-            #labels.append(_ram_id)
+            labels.append(_ram_id)
             #labels.append(_harddrive_id)
-            labels.append(_graphprocessor_id)
+            #labels.append(_graphprocessor_id)
     """
     _cpus = df.loc[1, :].tolist()
     for _cpu in _cpus[1:]:
@@ -563,7 +566,8 @@ def train_wordembedding():
 
     # create a weight matrix for words in training docs
     num_words = min(MAX_NUM_WORDS, len(word_index) + 1)
-    embedding_matrix = numpy.random.uniform(-0.001, 0.001, (num_words, EMBEDDING_DIM))
+    #embedding_matrix = numpy.random.uniform(-0.001, 0.001, (num_words, EMBEDDING_DIM))
+    embedding_matrix = numpy.random.random((len(word_index) + 1, EMBEDDING_DIM))
     for word, i in word_index.items():
         if i >= MAX_NUM_WORDS:
             continue
@@ -613,12 +617,16 @@ def train_wordembedding():
     numpy.random.shuffle(indices)
     data = data[indices]
     labels = labels[indices]
-    num_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
+    num_validation_samples = int((VALIDATION_SPLIT + TEST_SPLIT) * data.shape[0])
+    num_test_samples = int(TEST_SPLIT * data.shape[0])
 
     x_train = data[:-num_validation_samples]
     y_train = labels[:-num_validation_samples]
-    x_val = data[-num_validation_samples:]
-    y_val = labels[-num_validation_samples:]
+    x_val = data[-num_validation_samples:-num_test_samples]
+    y_val = labels[-num_validation_samples:-num_test_samples]
+
+    x_test = data[-num_test_samples:]
+    y_test = labels[-num_test_samples:]
 
 
     ## word embeddings
@@ -670,9 +678,9 @@ def train_wordembedding():
     embedded_sequences = embedding_layer(sequence_input) # (batch , 54, 100)
 
     #max_emb_encoder(sequence_input, )
-    xx = Lambda(average_emb)(embedded_sequences)  #(?, 100)
+    #xx = Lambda(average_emb)(embedded_sequences)  #(?, 100)
     #xx = Lambda(max_emb)(embedded_sequences)  #(?, 100)
-    #xx = Lambda(concat_emb)(embedded_sequences)
+    xx = Lambda(concat_emb)(embedded_sequences)
 
     #xx = Dense(EMBEDDING_DIM, activation='relu')(xx)
     #xx = Flatten()(embedded_sequences)
@@ -705,20 +713,52 @@ def train_wordembedding():
 
     # fit the model
     hist = model.fit(x_train, y_train,
-          batch_size=32,
-          epochs=8,
-          validation_split=0.1)
+          batch_size=50,
+          epochs=10,
+          validation_data=(x_val, y_val))
 
     print(hist.history)
 
     # evaluate the model
     #print('recall + precision: %s' % (_metrics.get_data() * 100))
     
-    loss, accuracy, precision, recall = model.evaluate(x_val, y_val, verbose=0)
-    print('metrics: %f' % accuracy)
+    loss, accuracy, precision, recall = model.evaluate(x_test, y_test, verbose=0)
+    print('accuracy: %f, precision: %f, recall: %f' % (accuracy, precision, recall))
+    #print('precision: %f' % precision)
+    #print('recall: %f' % recall)
    
-    
     return 0
+
+
+
+def accuracy_score(y_test, y_pred):
+    accuracy = 0
+
+    """
+    # Number of relevant and recommended items in top k
+    n_rel_and_rec_k = sum(((true_r >= threshold) and (est >= threshold))
+                              for (est, true_r) in user_ratings[:k])
+
+    # Precision@K: Proportion of recommended items that are relevant
+    precisions[uid] = n_rel_and_rec_k / n_rec_k if n_rec_k != 0 else 1
+
+    # Recall@K: Proportion of relevant items that are recommended
+    recalls[uid] = n_rel_and_rec_k / n_rel if n_rel != 0 else 1
+    """
+
+    num = 0
+    i = 0
+    while i < len(y_test):
+        lst = y_test[i].tolist()
+        if y_pred[i] in lst:
+            num = num + 1
+
+        i = i + 1
+    
+    accuracy = num / len(y_pred)
+
+    return accuracy
+
 
 def train_svm():
         # get documents
@@ -727,13 +767,14 @@ def train_svm():
     asins = pickle.load(f1)
     f1.close()
     """
+    """
     #dir = 'C:/Users/raymondzhao/myproject/dev.dplearning/data/'
     #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
     dir = "/data/raymond/workspace/exp2/"
     file = dir + 'amazon_reviews.json'
-    asins = read_data(file)
+    asins = _read_data(file)
 
-    file = dir + 'amazon_tech_all_5.csv'
+    #file = dir + 'amazon_tech_all_5.csv'
     #df = pd.read_csv(file)
 
     # The text samples and their labels
@@ -791,12 +832,12 @@ def train_svm():
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             texts.append(s)
-            #labels.append(_cpu_id)
-            labels.append(_sscreen_id)
+            labels.append(_cpu_id)
+            #labels.append(_sscreen_id)
             #labels.append(_ram_id)
             #labels.append(_harddrive_id)
             #labels.append(_graphprocessor_id)
-
+    """
 
     """
     _cpus = df.loc[1, :].tolist()
@@ -844,7 +885,21 @@ def train_svm():
         labels.append(_harddrive_id)
         #labels.append(_graphprocessor_id)
     """
-            
+
+    # get texts and labels
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+
+    #dir = '/data/raymond/workspace/exp2/'
+    #file = 'amazon_reviews.json'
+    file = dir + 'amazon_reviews_copy.json'
+    reviews = []
+    texts, labels_lst = read_data.get_amazon_texts_labels(file)
+
+    #
+    labels_matrix = numpy.array(labels_lst)
+    labels = labels_matrix[:, 0].tolist()
+    
+        
     #Found  reviews
     print('Found %s reviews.' % len(texts))
 
@@ -974,9 +1029,11 @@ def train_svm():
     x_train = data[:-num_validation_samples]
     y_train = labels[:-num_validation_samples]
     x_test = data[-num_test_samples:]
-    y_test = labels[-num_test_samples:]
+    y_test_1 = labels[-num_test_samples:]
     x_val = data[-num_validation_samples:]
-    y_val = labels[-num_validation_samples:]
+    y_val_1 = labels[-num_validation_samples:]
+
+    y_test_k = labels_matrix[ (len(labels_matrix)  - num_test_samples) : (len(labels_matrix) + 1), : ]
 
     #
     #C = 1.0  # SVM regularization parameter
@@ -986,10 +1043,25 @@ def train_svm():
     svm_classifier.fit(x_train,y_train)
 
     y_pred = svm_classifier.predict(x_test)
-    print(confusion_matrix(y_test, y_pred))
+    
+    K = 70
 
-    print(accuracy_score(y_test, y_pred))
-    print(classification_report(y_test, y_pred))
+    num = 0
+    y_test = y_test_k[:, 1]
+    num = numpy.sum(y_test == y_pred)
+
+    acc1 = num/len(y_pred)
+    print(acc1)
+
+    i = 1
+    while i < K:
+        i = i+1
+        y_test = y_test_k[:, 0:i]
+
+        #print(confusion_matrix(y_test, y_pred))
+
+        print(accuracy_score(y_test, y_pred))
+        #print(classification_report(y_test, y_pred))
 
     return 0
 

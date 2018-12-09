@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 read the data
+# update by Raymond
+  - top-K alg 
+
 
 """
 
@@ -17,6 +20,14 @@ import pandas as pd
 
 df = pd.DataFrame()
 
+
+# refurbished goods?
+
+amazon_refurbished_goods_index = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+                     21, 22, 23, 24, 26, 28, 31, 32, 33, 34, 38, 40, 42, 43, 44, 45,
+                     48, 50, 51, 53, 56, 57, 58, 59, 60, 62, 65, 69,70, 72,
+                     75, 76, 78, 79, 81, 82, 83, 84, 85, 87, 89, 90, 91, 93,
+                     94, 95, 96, 97, 99, 102, 103, 105, 106]
 #---------------------------
 # The below is to label data  
 
@@ -31,7 +42,148 @@ def clean_str(string):
     return string.strip().lower()
 
 
-def get_cpu_label(_str):
+""" map
+2.16 GHz Intel Celeron : 1
+2.2 GHz Intel Core i5  : 2
+2.5 GHz Intel Core i5  : 3
+3 GHz 8032             : 4
+1.6 GHz                 
+2 GHz AMD A Series
+2.5 GHz Pentium
+3.5 GHz 8032 
+2.7 GHz Intel Core i7
+1.6 GHz Intel Celeron 
+2.8 GHz Intel Core i7
+2 GHz AMD A Series
+2.8 GHz Intel Core i7 
+2.5 GHz AMD A Series 
+1.6 GHz Intel Core i5
+3.8 GHz Core i7 Family
+2.5 GHz Intel Core i5
+2.7 GHz Intel Core i7
+1.8 GHz Intel Core i7 
+1.1 GHz Pentium
+3 GHz AMD A Series 
+2.5 GHz Intel Core i5 
+2.3 GHz Intel Core i5 
+Intel Core i5
+2.4 GHz Intel Core i3
+2.4 GHz Intel Core i3 
+3.1 GHz Intel Core i5
+3.8 GHz Intel Core i7 
+1.6 GHz Intel Celeron 
+4 GHz Intel Core i7 
+1.6 GHz Intel Core 2 Du
+2.9 GHz Intel Celeron 
+3.6 GHz AMD A Series 
+1.1 GHz Intel Celeron
+1.6 GHz Intel Celeron
+2 GHz 
+2.4 GHz Intel Core i3
+1.6 GHz Intel Core i5
+2.5 GHz Intel Core i5 
+2.4 GHz Intel Core i3 
+2.48 GHz Intel Celeron
+1.6 GHz Intel Celeron
+1.6 GHz Intel Celeron
+2.2 GHz Intel Core i3 
+2.3 GHz Intel Core i3 
+Intel 4 Core 
+1.6 GHz AMD E Series
+3.5 GHz 8032
+3.5 GHz Intel Core i5 
+2.4 GHz Intel Core i3
+2.7 GHz AMD A Series
+2.7 GHz Intel Core i7 
+2.5 GHz Intel Core i5 
+2.5 GHz Core i5 7200U
+1.6 GHz Intel Mobile CP
+1.6 GHz Intel Celeron 
+2.8 GHz Intel Core i7
+1.8 GHz Intel Core i7
+Celeron N3060 
+3 GHz AMD A Series
+1.6 GHz Intel Celeron 
+2.5 GHz Intel Core i5 
+2.1 GHz Intel Core i7 
+1.1 GHz Intel Celeron 
+2.7 GHz Core i7 7500U 
+1.8 GHz AMD E Series
+1.5 GHz
+1.7 GHz Exynos 5000 Ser
+1.8 GHz 8032 
+2 GHz AMD A Series
+8032
+2.7 GHz Core i7 2.7 GHz
+1.7 GHz
+3.8 GHz Intel Core i7
+1.6 GHz Intel Core i5
+2.5 GHz Intel Core i5
+2.16 GHz Athlon 2650e
+2.3 GHz Intel Core i5
+2.5 GHz Intel Core i5
+2.5 GHz Pentium
+2.4 GHz Intel Core i3
+1.6 GHz Celeron N3050
+3.4 GHz Intel Core i5
+3.5 GHz Intel Core i5
+2.7 GHz AMD A Series
+3.5 GHz Intel Core i7
+2.5 GHz Intel Core i5
+3 GHz
+2.4 GHz Core i3-540
+2.8 GHz 8032
+2.7 GHz Intel Core i3 
+2.6 GHz Intel Core i5 
+1.1 GHz Pentium
+3.4 GHz Intel Core i5 
+3.4 GHz Intel Core i5 
+2.8 GHz Intel Core i7 
+2.5 GHz Intel Core i5 
+1.6 GHz
+2.7 GHz 8032
+2.5 GHz Athlon 2650e
+1.8 GHz Intel Core i7 
+2.4 GHz Intel Core i3
+2.5 GHz Intel Core Duo
+1.6 GHz Celeron N3060 
+2.7 GHz Intel Core i7 
+1.1 GHz Intel Celeron 
+2.5 GHz Intel Core i5 
+2.4 GHz AMD A Series
+1.6 GHz Intel Celeron
+2.3 GHz Intel Core i5
+2.7 GHz Intel Core i7
+1.1 GHz Intel Celeron
+2 GHz Celeron D Process
+1.6 GHz Intel Core i5
+2.4 GHz AMD A Series
+2.16 GHz Intel Celeron
+"""
+
+def get_cpu_label(lst):
+    dict = {}
+    #
+    ind = 0
+    for item in lst:
+        if item not in dict:
+            dict[item] = ind
+            ind += 1
+        else:
+            pass
+
+    #
+    _lst = []
+    for item in lst:
+        _dict = {}
+        if item in dict.keys():
+            _dict[item] = dict[item]
+            _lst.append(_dict)
+
+    return _lst
+
+
+def _get_cpu_label(_str):
     # [ 2 GHz AMD A Series, 1.1 GHz Intel Celeron, 2.16 GHz Intel Celeron,3 GHz 8032,1.6 GHz,3.5 GHz 8032,4 GHz Intel Core i7]
     _cpu_map = {
         "amd": 0,
@@ -59,11 +211,33 @@ def get_cpu_label(_str):
             _cpu_label = 5
         
         #_cpu_label = 1
-
     return _cpu_label
 
-def get_sscreen_label(_str):
-    # [ 11.6 inches, 13.3 inches,14 inches,15.6 inches, 17.3 inches ]
+
+def get_sscreen_label(lst):
+    dict = {}
+    #
+    ind = 0
+    for item in lst:
+        if item not in dict:
+            dict[item] = ind
+            ind += 1
+        else:
+            pass
+
+    #
+    _lst = []
+    for item in lst:
+        _dict = {}
+        if item in dict.keys():
+            _dict[item] = dict[item]
+            _lst.append(_dict)
+
+    return _lst
+
+
+def _get_sscreen_label(_str):
+    # [ 11.6 inches, 13.3 inches, 14 inches, 15.6 inches, 17.3 inches ]
     _sscreen_map = {
         "<= 12 inches": 0,
         "<= 13 inches":1,
@@ -243,7 +417,7 @@ def get_graphprocessor_label(_str):
 
 
 def get_text_labels():
-        # get documents
+    # get documents
     """
     f1 = open('C:/Users/raymondzhao/myproject/dev.dplearning/data/amazon_data_0719.p', 'r')
     asins = pickle.load(f1)
@@ -253,7 +427,7 @@ def get_text_labels():
     #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
     dir = "/data/raymond/workspace/exp2/"
     file = dir + 'amazon_reviews.json'
-    asins = read_data(file)
+    asins = _read_data(file)
 
     file = dir + 'amazon_tech_all_5.csv'
     #df = pd.read_csv(file)
@@ -322,7 +496,6 @@ def get_text_labels():
     return texts, labels
 
 
-
 def parse(path):
     g = gzip.open(path, 'r')
     for l in g:
@@ -330,7 +503,6 @@ def parse(path):
 
 
 def get_data(file, file2):
-
     list_reviews = []
     asins = {}
 
@@ -518,9 +690,9 @@ def _read_data(file):
 
                 asins[_asin] = texts
     f1.close()
-    # return asins
-    return 0
 
+    return asins
+    #return 0
 
 def read_hp_data(file3):
     hp_asins = {}
@@ -654,7 +826,6 @@ def read_flipkart_data(file, csv_file4):
             num_words = num_words + _num_words
             num_brands += 1
 
-
     # write to excel
     #writer = pd.ExcelWriter(csv_file4, engine='xlsxwriter')
                            # write to excel
@@ -665,7 +836,6 @@ def read_flipkart_data(file, csv_file4):
             writer.save()
 
             writer.close()
-    
 
     # hist
     #plt.hist(len_reviews, bins=20, color='g')
@@ -678,7 +848,6 @@ def read_flipkart_data(file, csv_file4):
     plt.title('The distribution of the number of words in the review')
     plt.show()
     """
-
     #
     """
     plt.hist(reviews, bins=20, color="blue")
@@ -750,6 +919,154 @@ def get_amazon_data(file):
     return asins
 
 
+def get_inds(item, lst):
+    """
+    get the list according to the min-distance with item
+    """
+    #_lst = lst
+    #_dict = {}
+
+    """
+    def dist(x, item):
+        return x - item
+    """
+
+    # amazon_refurbished_goods_index
+    _lst = [ abs(x - item) for x in lst ]
+
+    #ind = _lst.index(min(_lst))
+    prices = [x for _, x in sorted(zip(_lst, lst))]
+
+    return prices
+
+#
+def sort_items(lst):
+    # sort item 
+
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    cpu_tech_file = dir + 'amazon_tech_cpus_1207.json'
+    price_lst = []
+    #label_lst = []
+    asin_map_price = {}
+    #ind = 0  # label
+    with open(cpu_tech_file, 'rU') as f1:
+        for line in f1:
+            if '+' in line:
+                #ind += 1
+                asin = line.split(':')[0].strip()
+                price = int(line.split(':')[3].strip())
+                #label = int(line.split(':')[1].strip())
+                price_lst.append(price)
+                #label_lst.append(label)
+
+                # ind is the label now, use the price as class
+                asin_map_price[asin] = price # the duplication
+            #print(ind)
+            #print("Done")
+        #json.dump(tech_dict, f)
+
+    # map params to prices 
+    # get amazon_refurbished_goods_index
+    _dict = {} # sort according to the price
+    """
+    for i in amazon_refurbished_goods_index:
+        ind = i - 1
+        # in amazon_refurbished_goods_index  
+        price = ind_map_price[ind]
+
+        _dict[ind] = get_inds(price, price_lst) 
+    """
+
+    for asin in asin_map_price:
+        price = asin_map_price[asin]
+        _dict[asin] = get_inds(price, price_lst) 
+    #
+
+    return _dict
+
+def map_cpus_prices(file):
+
+    return 0
+
+def map_params_prices(file):
+    #dir = 'C:/Users/raymondzhao/myproject/dev.dplearning/data/'
+    #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    #dir = "/data/raymond/workspace/exp2/"
+    #file = dir + 'amazon_reviews.json'
+
+    asins = get_amazon_data(file)
+
+    tech_dict = {}
+
+    _sscreens = []
+    _cpus = []
+    _rams = []
+    _harddrives = []
+    _graphprocessors = []
+    for _asin in asins:
+        print("The asin %s:", _asin)
+        # [screensize,cpu, ram, reviews]
+        _cpu = asins[_asin][1]
+        _cpus.append(_cpu)
+        """
+        if _cpu:
+           #_cpu_id = get_cpu_label(_cpu)
+           #labels_index[_cpu] = _cpu_id
+           #
+           #_cpus.append(_cpu)
+           _cpus.append(_cpu)
+        """
+
+        _sscreen = asins[_asin][0]
+        _sscreens.append(_sscreen)
+        """
+        if _sscreen:
+            #_sscreen_id = get_sscreen_label(_sscreen)
+            #labels_index[_sscreen] = _sscreen_id
+            #
+            _sscreens.append(_sscreen)
+        """
+
+        _ram = asins[_asin][2]
+        _rams.append(_ram)
+        """
+        if _ram:
+            _ram_id = get_ram_label(_ram)
+            labels_index[_ram] = _ram_id
+        """
+        
+        _harddrive = asins[_asin][3]
+        _harddrives.append(_harddrive)
+        """
+        if _harddrive:
+            _harddrive_id = get_harddrive_label(_harddrive)
+            labels_index[_harddrive] = _harddrive_id
+        """
+    
+        #Graphics Coprocessor
+        _graphprocessor = asins[_asin][4]
+        _graphprocessors.append(_graphprocessor)
+        """
+        if _graphprocessor:
+            _graphprocessor_id = get_graphprocessor_label(_graphprocessor)
+            labels_index[_graphprocessor] = _graphprocessor_id
+        """
+
+        tech_dict[str(_asin)] = [_cpu,_sscreen,_ram,_harddrive,_graphprocessor]
+
+    #cpu
+    cpu_lst = get_cpu_label(_cpus)
+    print(cpu_lst)
+
+    # get the class list according to the dist
+    cpu_labels_dict = sort_items(cpu_lst)
+
+    # screen size
+    #sscreen_lst = get_sscreen_label(_sscreens)
+    #print(sscreen_lst)
+
+    return cpu_labels_dict
+
 
 def get_amazon_texts_labels(file):
         # get documents
@@ -770,24 +1087,102 @@ def get_amazon_texts_labels(file):
     # The text samples and their labels
     texts = []  #list of text samples
     #labels = array([])
-    labels = [] #list of label ids
+    labels = [] # list of label ids
+    #labels_inds = []
     labels_index = {}  # dictionary mapping label name to numeric id
 
     # ['14 inches', '2.16 GHz Intel Celeron', '4 GB SDRAM DDR3', 
     # [[b'I', b'placed', b'my', b'order', b'on', b'December', b'19th', b'and', b'was', b'under', b'the', b'impression', b'it', b'would', b'arrive', b'on', b'the', b'22nd']]
         # [screensize,cpu, ram, Hard Drive,Graphics Coprocessor, reviews]
+    
+    tech_dict = {}
+
+    _sscreens = []
+    _cpus = []
+    _rams = []
+    _harddrives = []
+    _graphprocessors = []
     for _asin in asins:
         print("The asin %s:", _asin)
         # [screensize,cpu, ram, reviews]
         _cpu = asins[_asin][1]
+        _cpus.append(_cpu)
+        """
         if _cpu:
-           _cpu_id = get_cpu_label(_cpu)
-           labels_index[_cpu] = _cpu_id
+           #_cpu_id = get_cpu_label(_cpu)
+           #labels_index[_cpu] = _cpu_id
+           #
+           #_cpus.append(_cpu)
+           _cpus.append(_cpu)
+        """
+
+        _sscreen = asins[_asin][0]
+        _sscreens.append(_sscreen)
+        """
+        if _sscreen:
+            #_sscreen_id = get_sscreen_label(_sscreen)
+            #labels_index[_sscreen] = _sscreen_id
+            #
+            _sscreens.append(_sscreen)
+        """
+
+        _ram = asins[_asin][2]
+        _rams.append(_ram)
+        """
+        if _ram:
+            _ram_id = get_ram_label(_ram)
+            labels_index[_ram] = _ram_id
+        """
+        
+        _harddrive = asins[_asin][3]
+        _harddrives.append(_harddrive)
+        """
+        if _harddrive:
+            _harddrive_id = get_harddrive_label(_harddrive)
+            labels_index[_harddrive] = _harddrive_id
+        """
+    
+        #Graphics Coprocessor
+        _graphprocessor = asins[_asin][4]
+        _graphprocessors.append(_graphprocessor)
+        """
+        if _graphprocessor:
+            _graphprocessor_id = get_graphprocessor_label(_graphprocessor)
+            labels_index[_graphprocessor] = _graphprocessor_id
+        """
+
+       # tech_dict[str(_asin)] = [_cpu,_sscreen,_ram,_harddrive,_graphprocessor]
+
+    #cpu
+    cpu_lst = get_cpu_label(_cpus)
+    print(cpu_lst)
+
+    # get the class list according to the dist
+    cpu_labels_dict = sort_items(cpu_lst)
+
+    #_sscreens = []
+    _cpus = []
+    ind = 0
+    #for ind in cpu_labels_dict.items():
+    for _asin in cpu_labels_dict:
+        print("The asin %s:", _asin)
+        # [screensize,cpu, ram, reviews]
+        _cpu = asins[_asin][1]
+        if _cpu:
+           #_cpu_id = _get_cpu_label(_cpu)
+           _cpu_id = cpu_labels_dict[_asin]
+           #_cpus.append(_cpu)
+
+           #labels_index[_cpu] = _cpu_id
+           #
+           #_cpus.append(_cpu)
 
         _sscreen = asins[_asin][0]
         if _sscreen:
             _sscreen_id = get_sscreen_label(_sscreen)
             labels_index[_sscreen] = _sscreen_id
+            #
+            #_sscreens.append(_sscreen)
 
         _ram = asins[_asin][2]
         if _ram:
@@ -822,14 +1217,14 @@ def get_amazon_texts_labels(file):
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             texts.append(s)
-            #labels.append(_cpu_id)
+            labels.append(_cpu_id)
+            
             #labels.append(_sscreen_id)
             #labels.append(_ram_id)
             #labels.append(_harddrive_id)
-            labels.append(_graphprocessor_id)
+            #labels.append(_graphprocessor_id)
     
     return texts, labels
-
 
 
 def main():
@@ -848,6 +1243,7 @@ def main():
     dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
     #dir = "/data/raymond/workspace/exp2/"
     file = dir + 'amazon_reviews_copy.json'
+    #file = dir + 'amazon_reviews.json'
 
     file2 = dir + 'reviews.xls'
 
@@ -865,10 +1261,30 @@ def main():
 
     csv_file4 = dir + 'flipkart_reviews.xlsx'
 
-    dir = "/data/raymond/workspace/exp2/"
-    file = dir + 'amazon_reviews.json'
-    
-    asins = read_data(file)
+    #dir = "/data/raymond/workspace/exp2/"
+    #file = dir + 'amazon_reviews.json'
+
+    #cpu_dict = map_params_prices(file)
+
+    tech_file =  dir + 'amazon_tech_params_.json'
+    cpu_tech_file =  dir + 'amazon_tech_cpus_.json'
+    """
+    with open(tech_file, 'w') as f:
+        for key in tech_dict:
+        #json.dump(tech_dict, f)
+            f.write(key + " : " + ', '.join(tech_dict[key]) + '\n')
+    """
+
+    # get texts and labels
+    #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    #dir = '/data/raymond/workspace/exp2/'
+    #file = 'amazon_reviews.json'
+    #file = 'amazon_reviews_copy.json'
+    reviews = []
+    texts, labels = get_amazon_texts_labels(file)
+
+ 
+    #asins = read_data(file)
 
     #read_flipkart_data(file4,csv_file4)
 
