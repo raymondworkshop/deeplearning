@@ -3,6 +3,7 @@
 
 
 #### reference
+* [DATA130006: Introduction to Natural Language Processing](http://www.sdspeople.fudan.edu.cn/zywei/DATA130006/index.html)
 * [Machine Learning: 2014-2015](https://www.cs.ox.ac.uk/people/nando.defreitas/machinelearning/)
 * [100-nlp-papers](https://github.com/mhagiwara/100-nlp-papers)
 * [NLP](https://github.com/muyun/dev.nlp)
