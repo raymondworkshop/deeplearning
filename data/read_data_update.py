@@ -17,6 +17,7 @@ import string
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 
 df = pd.DataFrame()
 
@@ -487,8 +488,8 @@ def get_text_labels():
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             texts.append(s)
-            #labels.append(_cpu_id)
-            labels.append(_sscreen_id)
+            labels.append(_cpu_id)
+            #labels.append(_sscreen_id)
             #labels.append(_ram_id)
             #labels.append(_harddrive_id)
             #labels.append(_graphprocessor_id)
@@ -693,6 +694,79 @@ def _read_data(file):
 
     return asins
     #return 0
+
+def _plit():
+
+    lst = [0.2,
+0.2,
+0.2,
+0.2,
+0.2,
+0.2,
+0.2,
+0.2,
+0.26990291262135924,
+0.26990291262135924,
+0.26990291262135924,
+0.26990291262135924,
+0.26990291262135924,
+0.2912621359223301,
+0.5786407766990291,
+0.5786407766990291,
+0.5786407766990291,
+0.5786407766990291,
+0.5786407766990291,
+0.5786407766990291,
+0.5786407766990291,
+0.5786407766990291,
+0.5786407766990291,
+0.5786407766990291,
+0.5786407766990291,
+0.5786407766990291,
+0.6330097087378641,
+0.6330097087378641,
+0.6330097087378641,
+0.6330097087378641,
+0.6330097087378641,
+0.6330097087378641,
+0.6330097087378641,
+0.6330097087378641,
+0.6330097087378641,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0,
+1.0
+]
+
+    t = np.arange(0, len(lst))
+    plt.plot(t, lst, 'bs')
+    plt.xlim(0, len(lst))
+    plt.ylim(0.2, 1.0)
+
+    #plt.hist(len(lst), lst, color="blue")
+    plt.ylabel('Accuracy (%)')
+    plt.xlabel('TOP-N')
+    plt.title('The Performance')
+    plt.show()
+
+#    print("Num of brands in HP: %d:", num_brands)
+#    print("Num of reviews: %d:", num_reviews)
+#    print("Num of words: %d:", num_words)
+
+    return 0
 
 def read_hp_data(file3):
     hp_asins = {}
@@ -1281,7 +1355,9 @@ def main():
     #file = 'amazon_reviews.json'
     #file = 'amazon_reviews_copy.json'
     reviews = []
-    texts, labels = get_amazon_texts_labels(file)
+    #texts, labels = get_amazon_texts_labels(file)
+
+    _plit()
 
  
     #asins = read_data(file)
