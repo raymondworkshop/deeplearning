@@ -266,9 +266,9 @@ Train on 528149 samples, validate on 58684 samples
 > cd dev.dplearning  
 
   * create an env 
-> <del>mkvirtualenv tfenv -> including the Python executable files, and a copy of the pip lib  </del>
+> <del>mkvirtualenv tfenv -> including the Python executable files, and a copy of the pip lib  </del>  
 > python3 -m venv ~/.env/isightenv 
-
+> 
   * use the env
 > workon tfenv  -> using the virtual env  
 > pip install * 
