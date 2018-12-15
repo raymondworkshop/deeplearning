@@ -42,12 +42,12 @@ import string
 from nltk.stem import PorterStemmer
 
 from sklearn import svm 
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, recall_score
 #from sklearn.metrics import make_scorer
 from sklearn.metrics import classification_report, confusion_matrix
 
 #
-import read_data
+import read_data_update
 
 #
 MAX_NUM_WORDS = 20000
@@ -890,10 +890,10 @@ def train_svm():
     dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
 
     #dir = '/data/raymond/workspace/exp2/'
-    #file = 'amazon_reviews.json'
+    #file = dir +  'amazon_reviews.json'
     file = dir + 'amazon_reviews_copy.json'
     reviews = []
-    texts, labels_lst = read_data.get_amazon_texts_labels(file)
+    texts, labels_lst = read_data_update.get_amazon_texts_labels(file)
 
     #
     labels_matrix = numpy.array(labels_lst)
@@ -1061,6 +1061,9 @@ def train_svm():
         #print(confusion_matrix(y_test, y_pred))
 
         print(accuracy_score(y_test, y_pred))
+        #print(recall_score(y_test, y_pred))
+        #print(f1_score(y_test, y_pred))
+
         #print(classification_report(y_test, y_pred))
 
     return 0
