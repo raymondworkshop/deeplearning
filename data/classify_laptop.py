@@ -13,8 +13,9 @@ import matplotlib.pyplot as plt
 
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split, cross_validate, cross_val_predict
-from sklearn.metrics import recall_score
+#from sklearn.metrics import recall_score
 #from sklearn.metrics.scorer import make_scorer
+from sklearn import metrics
 
 #from sklearn.model_selection import cross_val_score
 
@@ -58,8 +59,8 @@ def sort_items():
     return _dict
 
 
-def accuracy_score(y_test, y_pred):
-    accuracy = 0
+def _precision_score(y_test, y_pred):
+    precision = 0
 
     num = 0
     i = 0
@@ -70,9 +71,26 @@ def accuracy_score(y_test, y_pred):
 
         i = i + 1
     
-    accuracy = num / len(y_pred)
+    precision = num / len(y_pred)
 
-    return accuracy
+    return precision
+
+
+def _recall_score(y_test, y_pred):
+    recall = 0
+
+    num = 0
+    i = 0
+    while i < len(y_test):
+        lst = y_test[i].tolist()
+        if y_pred[i] in lst:
+            num = num + 1
+
+        i = i + 1
+    
+    recall = num / len(y_test)
+
+    return recall
 
 
 def train(file):
@@ -127,11 +145,11 @@ def train(file):
     K = 11
 
     num = 0
-    y_test = y_lst[:, 0]
-    num = np.sum(y_test == y_pred)
+    y_test_0 = y_lst[:, 0]
+    num = np.sum(y_test_0 == y_pred)
 
-    acc1 = num/len(y_pred)
-    print(acc1)
+    pre1 = num/len(y_pred)
+    print(pre1)
 
     i = 1
     while i < K:
@@ -140,20 +158,18 @@ def train(file):
 
         #print(confusion_matrix(y_test, y_pred))
 
-        print(accuracy_score(y_test, y_pred))
+        print(_precision_score(y_test, y_pred))
         #print(recall_score(y_test, y_pred))
         #print(f1_score(y_test, y_pred))
 
         #print(classification_report(y_test, y_pred))
 
-    
     """
     print(scores.keys())
     print(scores['test_precision_macro'])
     print(scores['test_recall_macro'])
-    """
 
-    #
+    """
 
     return 0
 
