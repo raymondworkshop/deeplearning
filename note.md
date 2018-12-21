@@ -1,5 +1,9 @@
 ### work notes
 
+#### 2018-12-18 
+ * top-N alg
+   - top-N multi-classifier
+
 #### 2018-11-01 
  * todo 
    - RNN-LSTM ?
