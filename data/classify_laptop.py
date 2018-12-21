@@ -16,11 +16,17 @@ from sklearn.model_selection import train_test_split, cross_validate, cross_val_
 #from sklearn.metrics import recall_score
 #from sklearn.metrics.scorer import make_scorer
 from sklearn import metrics
+from sklearn.multiclass import OneVsRestClassifier
+
+from sklearn.metrics import precision_recall_fscore_support as score
+from sklearn.metrics import confusion_matrix
+
 
 #from sklearn.model_selection import cross_val_score
 
 values = {'cpu': 1, 'RAM':3, 'HDD':3, 'monitor':2, 'graphical':5}
 asin_map_price = {1:10999, 2:7799, 3:5399, 4:6999, 5:9999, 6:6799, 7:8199, 8:9099, 9:7599, 10:12999, 11:3599}
+price_map_asin = {10999:1, 7799:2, 5399:3, 6999:4, 9999:5, 6799:6, 8199:7, 9099:8, 7599:9, 12999:10, 3599:11}
 
 def get_inds(item, lst):
     """
@@ -32,7 +38,12 @@ def get_inds(item, lst):
     #ind = _lst.index(min(_lst))
     prices = [x for _, x in sorted(zip(_lst, lst))]
 
-    return prices
+    inds = []
+    for price in prices:
+        inds.append(price_map_asin[price])
+
+
+    return inds
 
 
 def sort_items():
@@ -60,6 +71,7 @@ def sort_items():
 
 
 def _precision_score(y_test, y_pred):
+    """
     precision = 0
 
     num = 0
@@ -72,11 +84,18 @@ def _precision_score(y_test, y_pred):
         i = i + 1
     
     precision = num / len(y_pred)
+    """
 
-    return precision
+    i = set(y_test).intersection(y_pred)
+    len1 = len(y_pred)
+    if len1 == 0:
+        return 0
+    else:
+        return len(i) / len1
 
 
-def _recall_score(y_test, y_pred):
+
+def _acc_score(y_test, y_pred):
     recall = 0
 
     num = 0
@@ -89,6 +108,10 @@ def _recall_score(y_test, y_pred):
         i = i + 1
     
     recall = num / len(y_test)
+
+
+    #i = set(y_test).intersection(y_pred)
+    #return len(i) / len(y_test)
 
     return recall
 
@@ -117,6 +140,7 @@ def train(file):
         print(_dict[_y])
         _y_lst.append(_dict[_y])
 
+    # lst according to inds
     y_lst = np.array(_y_lst)
 
     X = df.iloc[:, [1, 2, 3, 4, 5]]
@@ -137,32 +161,63 @@ def train(file):
     print(acc)
     print(cm)
     """
-
-    classifier = SVC(kernel='linear', C=1, random_state=0)
+    classifier = OneVsRestClassifier(SVC(kernel='linear', C=1, probability=True, random_state=0))
     #scoring = ['precision_macro', 'recall_macro']
-    y_pred = cross_val_predict(classifier, X, y_price, cv=10)
-
+    y_pred = cross_val_predict(classifier, X, y, cv=10)
+    _y_proba = cross_val_predict(classifier, X, y, cv=10, method='predict_proba')
+    #classifier.fit(X_train, y_train)
+    #y_pred = classifier.predict(X_test)
+    #_y_proba = classifier.predict_proba(X_test)
+    y_proba = np.argsort(-_y_proba,axis=1) + 1
+    
     K = 11
 
-    num = 0
-    y_test_0 = y_lst[:, 0]
-    num = np.sum(y_test_0 == y_pred)
+    #num = 0
+    y_test = y_lst[:, 0]
+    y_pred_max = y_proba[:, 0]
+        
+    #recall = []
+    recall_1 = metrics.recall_score(y_test, y_pred_max, average='micro')
+    #recall.append(recall_1)
+    print("recall_1: %f" % recall_1)
 
-    pre1 = num/len(y_pred)
-    print(pre1)
+    precision_1 = metrics.precision_score(y_test, y_pred_max, average='macro')
+    print("precision_n: %f" % precision_1)
+
+    #num_lst = []
+ 
+    num = np.sum(y_test == y_pred_max)
+    #num_lst.append(num)
 
     i = 1
     while i < K:
         y_test = y_lst[:, 0:i+1]
+        #y_pred = y_proba[:, 0:i+1]
+
         i = i+1
+
+        #precision, recall, fscore, support = score(y_test, y_pred_max)
+        #precision_n = metrics.precision_score(y_test, y_pred, average='macro')
+        #print("precision_n: %f" % precision_n)
+
+        _num = np.sum(y_test == y_pred)
+        #num_lst.append(_num)
+        #num = _num + num
+
+        #recall = num/len(y_pred)
+        #print(recall)
+
+        #precision = num/len(y_pred)
+        #print(precision)
 
         #print(confusion_matrix(y_test, y_pred))
 
-        print(_precision_score(y_test, y_pred))
-        #print(recall_score(y_test, y_pred))
+        print(_acc_score(y_test, y_pred_max))
+        #print(_precision_score(_y_proba, y_pred))
         #print(f1_score(y_test, y_pred))
 
         #print(classification_report(y_test, y_pred))
+    
 
     """
     print(scores.keys())
