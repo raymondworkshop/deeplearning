@@ -32,6 +32,7 @@ amazon_refurbished_goods_index = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 #---------------------------
 # The below is to label data  
 
+
 def clean_str(string):
     """
     Tokenization/string cleaning for dataset
@@ -161,6 +162,7 @@ Celeron N3060
 2.4 GHz AMD A Series
 2.16 GHz Intel Celeron
 """
+
 
 def get_cpu_label(lst):
     dict = {}
@@ -695,7 +697,7 @@ def _read_data(file):
     return asins
     #return 0
 
-def _plit():
+def _plt():
 
     lst = [0.2,
 0.2,
@@ -1357,7 +1359,7 @@ def main():
     reviews = []
     #texts, labels = get_amazon_texts_labels(file)
 
-    _plit()
+    _plt()
 
  
     #asins = read_data(file)

@@ -26,7 +26,7 @@ from keras import regularizers
 
 from keras import backend as K
 
-from engine_training import ExtendedModel
+#from engine_training import ExtendedModel
 #from engine_training import ThetaPrime
 import keras_metrics
 
@@ -42,11 +42,12 @@ import string
 from nltk.stem import PorterStemmer
 
 from sklearn import svm 
-from sklearn.metrics import accuracy_score, recall_score
+from sklearn.metrics import recall_score
 #from sklearn.metrics import make_scorer
 from sklearn.metrics import classification_report, confusion_matrix
 
 #
+#from . import read_data_update
 import read_data_update
 
 #
@@ -942,14 +943,14 @@ def train_svm():
     embeddings_index = dict()
     f = open(dir + 'glove.6B.100d.txt',  "r", encoding="utf-8")
     for line in f:
-	    values = line.split()
-	    word = values[0]
-	    coefs = asarray(values[1:], dtype='float32')
-	    embeddings_index[word] = coefs
+        values = line.split()
+        word = values[0]
+        coefs = asarray(values[1:], dtype='float32')
+        embeddings_index[word] = coefs
     f.close()
     print('Loaded %s word vectors.' % len(embeddings_index))
     
-    ## prepare embedding matrix
+    # prepare embedding matrix
     print('Preparing embedding matrix.')
 
     # create a weight matrix for words in training docs
@@ -978,8 +979,8 @@ def train_svm():
         word_cnt = 0
         feature_vec = numpy.random.uniform(-0.001, 0.001, (EMBEDDING_DIM))
         for word_index in seq:
-            word_cnt +=  1
-            #ind = seq[word_index]
+            word_cnt += 1
+            # ind = seq[word_index]
             feature_vec += embedding_matrix[word_index]
 
         # mean
@@ -1038,7 +1039,7 @@ def train_svm():
     #
     #C = 1.0  # SVM regularization parameter
     print('Classify ... ')
-    #svm_classifier = svm.SVC(kernel='linear', gamma=2, C=1.0)
+    # svm_classifier = svm.SVC(kernel='linear', gamma=2, C=1.0)
     svm_classifier = svm.SVC(kernel='rbf', gamma=2, C=1.0) #Gaussian Kernel
     svm_classifier.fit(x_train,y_train)
 

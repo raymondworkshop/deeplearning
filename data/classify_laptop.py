@@ -28,6 +28,125 @@ values = {'cpu': 1, 'RAM':3, 'HDD':3, 'monitor':2, 'graphical':5}
 asin_map_price = {1:10999, 2:7799, 3:5399, 4:6999, 5:9999, 6:6799, 7:8199, 8:9099, 9:7599, 10:12999, 11:3599}
 price_map_asin = {10999:1, 7799:2, 5399:3, 6999:4, 9999:5, 6799:6, 8199:7, 9099:8, 7599:9, 12999:10, 3599:11}
 
+""" map
+2.16 GHz Intel Celeron : 1
+2.2 GHz Intel Core i5  : 2
+2.5 GHz Intel Core i5  : 3
+3 GHz 8032             : 4
+1.6 GHz                 
+2 GHz AMD A Series
+2.5 GHz Pentium
+3.5 GHz 8032 
+2.7 GHz Intel Core i7
+1.6 GHz Intel Celeron 
+2.8 GHz Intel Core i7
+2 GHz AMD A Series
+2.8 GHz Intel Core i7 
+2.5 GHz AMD A Series 
+1.6 GHz Intel Core i5
+3.8 GHz Core i7 Family
+2.5 GHz Intel Core i5
+2.7 GHz Intel Core i7
+1.8 GHz Intel Core i7 
+1.1 GHz Pentium
+3 GHz AMD A Series 
+2.5 GHz Intel Core i5 
+2.3 GHz Intel Core i5 
+Intel Core i5
+2.4 GHz Intel Core i3
+2.4 GHz Intel Core i3 
+3.1 GHz Intel Core i5
+3.8 GHz Intel Core i7 
+1.6 GHz Intel Celeron 
+4 GHz Intel Core i7 
+1.6 GHz Intel Core 2 Du
+2.9 GHz Intel Celeron 
+3.6 GHz AMD A Series 
+1.1 GHz Intel Celeron
+1.6 GHz Intel Celeron
+2 GHz 
+2.4 GHz Intel Core i3
+1.6 GHz Intel Core i5
+2.5 GHz Intel Core i5 
+2.4 GHz Intel Core i3 
+2.48 GHz Intel Celeron
+1.6 GHz Intel Celeron
+1.6 GHz Intel Celeron
+2.2 GHz Intel Core i3 
+2.3 GHz Intel Core i3 
+Intel 4 Core 
+1.6 GHz AMD E Series
+3.5 GHz 8032
+3.5 GHz Intel Core i5 
+2.4 GHz Intel Core i3
+2.7 GHz AMD A Series
+2.7 GHz Intel Core i7 
+2.5 GHz Intel Core i5 
+2.5 GHz Core i5 7200U
+1.6 GHz Intel Mobile CP
+1.6 GHz Intel Celeron 
+2.8 GHz Intel Core i7
+1.8 GHz Intel Core i7
+Celeron N3060 
+3 GHz AMD A Series
+1.6 GHz Intel Celeron 
+2.5 GHz Intel Core i5 
+2.1 GHz Intel Core i7 
+1.1 GHz Intel Celeron 
+2.7 GHz Core i7 7500U 
+1.8 GHz AMD E Series
+1.5 GHz
+1.7 GHz Exynos 5000 Ser
+1.8 GHz 8032 
+2 GHz AMD A Series
+8032
+2.7 GHz Core i7 2.7 GHz
+1.7 GHz
+3.8 GHz Intel Core i7
+1.6 GHz Intel Core i5
+2.5 GHz Intel Core i5
+2.16 GHz Athlon 2650e
+2.3 GHz Intel Core i5
+2.5 GHz Intel Core i5
+2.5 GHz Pentium
+2.4 GHz Intel Core i3
+1.6 GHz Celeron N3050
+3.4 GHz Intel Core i5
+3.5 GHz Intel Core i5
+2.7 GHz AMD A Series
+3.5 GHz Intel Core i7
+2.5 GHz Intel Core i5
+3 GHz
+2.4 GHz Core i3-540
+2.8 GHz 8032
+2.7 GHz Intel Core i3 
+2.6 GHz Intel Core i5 
+1.1 GHz Pentium
+3.4 GHz Intel Core i5 
+3.4 GHz Intel Core i5 
+2.8 GHz Intel Core i7 
+2.5 GHz Intel Core i5 
+1.6 GHz
+2.7 GHz 8032
+2.5 GHz Athlon 2650e
+1.8 GHz Intel Core i7 
+2.4 GHz Intel Core i3
+2.5 GHz Intel Core Duo
+1.6 GHz Celeron N3060 
+2.7 GHz Intel Core i7 
+1.1 GHz Intel Celeron 
+2.5 GHz Intel Core i5 
+2.4 GHz AMD A Series
+1.6 GHz Intel Celeron
+2.3 GHz Intel Core i5
+2.7 GHz Intel Core i7
+1.1 GHz Intel Celeron
+2 GHz Celeron D Process
+1.6 GHz Intel Core i5
+2.4 GHz AMD A Series
+2.16 GHz Intel Celeron
+"""
+
 def get_inds(item, lst):
     """
     get the list according to the min-distance with item
@@ -71,7 +190,6 @@ def sort_items():
 
 
 def _precision_score(y_test, y_pred):
-    """
     precision = 0
 
     num = 0
@@ -83,19 +201,22 @@ def _precision_score(y_test, y_pred):
 
         i = i + 1
     
-    precision = num / len(y_pred)
+    precision = num / (len(y_pred) * y_test.shape[1])
+    
+    
     """
-
     i = set(y_test).intersection(y_pred)
     len1 = len(y_pred)
     if len1 == 0:
         return 0
     else:
         return len(i) / len1
+    """
+
+    return precision
 
 
-
-def _acc_score(y_test, y_pred):
+def _recall_score(y_test, y_pred):
     recall = 0
 
     num = 0
@@ -175,15 +296,10 @@ def train(file):
     #num = 0
     y_test = y_lst[:, 0]
     y_pred_max = y_proba[:, 0]
-        
-    #recall = []
-    recall_1 = metrics.recall_score(y_test, y_pred_max, average='micro')
-    #recall.append(recall_1)
-    print("recall_1: %f" % recall_1)
 
     precision_1 = metrics.precision_score(y_test, y_pred_max, average='macro')
-    print("precision_n: %f" % precision_1)
-
+    print("precision_1: %f" % precision_1)
+        
     #num_lst = []
  
     num = np.sum(y_test == y_pred_max)
@@ -191,8 +307,8 @@ def train(file):
 
     i = 1
     while i < K:
-        y_test = y_lst[:, 0:i+1]
-        #y_pred = y_proba[:, 0:i+1]
+        #y_test = y_lst[:, 0:i+1]
+        y_pred = y_proba[:, 0:i+1]
 
         i = i+1
 
@@ -200,7 +316,7 @@ def train(file):
         #precision_n = metrics.precision_score(y_test, y_pred, average='macro')
         #print("precision_n: %f" % precision_n)
 
-        _num = np.sum(y_test == y_pred)
+        #_num = np.sum(y_test == y_pred)
         #num_lst.append(_num)
         #num = _num + num
 
@@ -212,12 +328,25 @@ def train(file):
 
         #print(confusion_matrix(y_test, y_pred))
 
-        print(_acc_score(y_test, y_pred_max))
-        #print(_precision_score(_y_proba, y_pred))
+        print(_precision_score(y_pred, y_test))
+        #print(_recall_score(y_pred, y_test))
         #print(f1_score(y_test, y_pred))
 
         #print(classification_report(y_test, y_pred))
+
+    print("recall:")
+    #recall = []
+    recall_1 = metrics.recall_score(y_test, y_pred_max, average='micro')
+    #recall.append(recall_1)
+    print("recall_1: %f" % recall_1)
     
+    i = 1
+    while i < K:
+        #y_test = y_lst[:, 0:i+1]
+        y_pred = y_proba[:, 0:i+1]
+
+        i = i+1
+        print(_recall_score(y_pred, y_test))
 
     """
     print(scores.keys())
