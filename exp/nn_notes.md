@@ -12,6 +12,10 @@
     - Packages
         + "__init__.py" -> share operations, any variable, function, or class
 
+    - Object-oriented programming
+        + pure functions -> no context or side-effects
+        
+
 
 #### Notes on deep learning
     * ch2
@@ -37,6 +41,8 @@
 
     - **梯度法** - 以梯度的信息为线索，决定前进的方向
     - **学习率** 由人工设定 - 在一次学习中，在多大程度上更新参数
+
+    * ch5
 
 
 #### reference

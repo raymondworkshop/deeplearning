@@ -2,9 +2,6 @@
 
 """
 The core foucs of the repository
-
-@author raymond
-
       28-12-2018 creation By Raymond
 """
 
@@ -14,7 +11,7 @@ import os
 import numpy as np
 import functions
 
-# z = x * W
+# y <- z = x * W
 class simpleNet:
     def __init__(self):
         self.W = np.random.randn(2,3)
