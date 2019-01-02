@@ -371,6 +371,52 @@ def concat_emb_encoder(x_emb, x_mask, opt):
     return H_enc
 
 
+def _precision_score(y_test, y_pred):
+    precision = 0
+
+    num = 0
+    i = 0
+    while i < len(y_test):
+        lst = y_test[i].tolist()
+        if y_pred[i] in lst:
+            num = num + 1
+
+        i = i + 1
+    
+    precision = num / (len(y_pred) * y_test.shape[1])
+    
+    """
+    i = set(y_test).intersection(y_pred)
+    len1 = len(y_pred)
+    if len1 == 0:
+        return 0
+    else:
+        return len(i) / len1
+    """
+
+    return precision
+
+
+def _recall_score(y_test, y_pred):
+    recall = 0
+
+    num = 0
+    i = 0
+    while i < len(y_test):
+        lst = y_test[i].tolist()
+        if y_pred[i] in lst:
+            num = num + 1
+
+        i = i + 1
+    
+    recall = num / len(y_test)
+
+    #i = set(y_test).intersection(y_pred)
+    #return len(i) / len(y_test)
+
+    return recall
+
+
 def train_wordembedding():
     # get documents
     """
@@ -458,8 +504,8 @@ def train_wordembedding():
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             texts.append(s)
             #labels.append(_cpu_id)
-            #labels.append(_sscreen_id)
-            labels.append(_ram_id)
+            labels.append(_sscreen_id)
+            #labels.append(_ram_id)
             #labels.append(_harddrive_id)
             #labels.append(_graphprocessor_id)
     """
@@ -727,6 +773,12 @@ def train_wordembedding():
     print('accuracy: %f, precision: %f, recall: %f' % (accuracy, precision, recall))
     #print('precision: %f' % precision)
     #print('recall: %f' % recall)
+
+    #predict
+    y_proba = model.predict(x_test)
+    print("y_proba: ", y_proba)
+
+    print("y_test: ", y_test)
    
     return 0
 
@@ -1072,9 +1124,9 @@ def train_svm():
 def main():
     #data()
     #
-    #train_wordembedding()
+    train_wordembedding()
     #
-    train_svm()
+    #train_svm()
 
 
 if __name__ == '__main__':
