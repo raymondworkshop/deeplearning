@@ -22,6 +22,7 @@ from keras.models import Model
 import tensorflow as tf
 from keras.layers import Lambda
 
+
 from keras import regularizers
 
 from keras import backend as K
@@ -45,6 +46,8 @@ from sklearn import svm
 from sklearn.metrics import recall_score
 #from sklearn.metrics import make_scorer
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn import metrics
+
 
 #
 #from . import read_data_update
@@ -425,9 +428,10 @@ def train_wordembedding():
     f1.close()
     """
     #dir = 'C:/Users/raymondzhao/myproject/dev.dplearning/data/'
-    #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
-    dir = "/data/raymond/workspace/exp2/"
-    file = dir + 'amazon_reviews.json'
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    #dir = "/data/raymond/workspace/exp2/"
+    #file = dir + 'amazon_reviews.json'
+    file = dir + 'amazon_reviews_copy.json'
     asins = _read_data(file)
 
     file = dir + 'amazon_tech_all_5.csv'
@@ -451,7 +455,7 @@ def train_wordembedding():
     # The text samples and their labels
     texts = []  #list of text samples
     #labels = array([])
-    labels = [] #list of label ids
+    _labels = [] #list of label ids
     labels_index = {}  # dictionary mapping label name to numeric id
 
     # ['14 inches', '2.16 GHz Intel Celeron', '4 GB SDRAM DDR3', 
@@ -503,11 +507,11 @@ def train_wordembedding():
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             texts.append(s)
-            #labels.append(_cpu_id)
-            labels.append(_sscreen_id)
-            #labels.append(_ram_id)
-            #labels.append(_harddrive_id)
-            #labels.append(_graphprocessor_id)
+            _labels.append(_cpu_id)
+            #_labels.append(_sscreen_id)
+            #_labels.append(_ram_id)
+            #_labels.append(_harddrive_id)
+            #_labels.append(_graphprocessor_id)
     """
     _cpus = df.loc[1, :].tolist()
     for _cpu in _cpus[1:]:
@@ -655,7 +659,7 @@ def train_wordembedding():
         #data[i,index_max] = value_max    
     """
 
-    labels = to_categorical(numpy.asarray(labels))
+    labels = to_categorical(numpy.asarray(_labels))
     print('Shape of data tensor:', data.shape)
     print('Shape of label tensor:', labels.shape)
 
@@ -674,6 +678,7 @@ def train_wordembedding():
 
     x_test = data[-num_test_samples:]
     y_test = labels[-num_test_samples:]
+    _y_test = _labels[-num_test_samples:]
 
 
     ## word embeddings
@@ -776,9 +781,52 @@ def train_wordembedding():
 
     #predict
     y_proba = model.predict(x_test)
-    print("y_proba: ", y_proba)
+    y_proba_ind = numpy.argsort(-y_proba)
+    print("y_proba: ", y_proba_ind)
 
-    print("y_test: ", y_test)
+    K = 5
+
+    #num = 0
+    #y_test = y_lst[:, 0]
+    y_pred_max = y_proba_ind[:, 0]
+
+    #precision_1 = metrics.precision_score(_y_test, y_pred_max, average='macro')
+    #print("precision_1: %f" % precision_1)
+        
+    #num_lst = []
+ 
+    #num = numpy.sum(y_test == y_pred_max)
+    #num_lst.append(num)
+
+    i = 0
+    while i < K:
+        #y_test = y_lst[:, 0:i+1]
+        y_pred = y_proba_ind[:, 0:i+1]
+
+        i = i+1
+
+        print(_precision_score(y_pred, _y_test))
+
+    print("recall:")
+    #recall = []
+    #recall_1 = metrics.recall_score(_y_test, y_pred_max, average='micro')
+    #recall.append(recall_1)
+    #print("recall_1: %f" % recall_1)
+    
+    i = 0
+    while i < K:
+        #y_test = y_lst[:, 0:i+1]
+        y_pred = y_proba_ind[:, 0:i+1]
+
+        i = i+1
+        print(_recall_score(y_pred, _y_test))
+
+    """
+    print(scores.keys())
+    print(scores['test_precision_macro'])
+    print(scores['test_recall_macro'])
+
+    """
    
     return 0
 

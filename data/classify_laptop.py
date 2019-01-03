@@ -203,7 +203,6 @@ def _precision_score(y_test, y_pred):
     
     precision = num / (len(y_pred) * y_test.shape[1])
     
-    
     """
     i = set(y_test).intersection(y_pred)
     len1 = len(y_pred)
@@ -229,7 +228,6 @@ def _recall_score(y_test, y_pred):
         i = i + 1
     
     recall = num / len(y_test)
-
 
     #i = set(y_test).intersection(y_pred)
     #return len(i) / len(y_test)

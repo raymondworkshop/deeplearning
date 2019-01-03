@@ -697,6 +697,7 @@ def _read_data(file):
     return asins
     #return 0
 
+
 def _plt():
 
     lst = [0.2,
@@ -939,6 +940,7 @@ def read_flipkart_data(file, csv_file4):
     print("Num of reviews: %d:", num_reviews)
     print("Num of words: %d:", num_words)
     return 0
+
 
 def get_amazon_data(file):
     list_reviews = []

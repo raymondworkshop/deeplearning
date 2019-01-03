@@ -1,5 +1,8 @@
 ### work notes
 
+#### 2019-01-03 
+ * metrics - Discounted cumulative gain in information retrieval
+
 #### Notes on deep learning
  * ch2 
    - 通过**与非门**的组合可以实现计算机 ? [The elements of computing systems](http://www1.idc.ac.il/tecs/plan.html) 
