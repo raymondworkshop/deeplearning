@@ -754,13 +754,19 @@ def _plt():
 1.0
 ]
 
-    t = np.arange(0, len(lst))
-    plt.plot(t, lst, 'bs')
-    plt.xlim(0, len(lst))
+    f1 = [0.05058366, 0.0963035,  0.15823606, 0.22616732, 0.29182879, 0.36770428,
+ 0.43135075, 0.46400778, 0.47557285, 0.48365759, 0.48178281, 0.48476005,
+ 0.48608201, 0.5086159,  0.50843061, 0.51264591, 0.52941176, 0.52777778,
+ 0.52631579, 0.525,     0.52380952, 0.52272727, 0.52173913, 0.52083333,
+ 0.52,       0.51923077, 0.51851852, 0.51785714, 0.51724138, 0.51666667]
+
+    t = np.arange(0, len(f1))
+    plt.plot(t, f1, 'bs')
+    plt.xlim(0, len(f1))
     plt.ylim(0.2, 1.0)
 
     #plt.hist(len(lst), lst, color="blue")
-    plt.ylabel('Accuracy (%)')
+    plt.ylabel('f1 (%)')
     plt.xlabel('TOP-N')
     plt.title('The Performance')
     plt.show()
@@ -1026,6 +1032,7 @@ def sort_items(lst):
     price_lst = []
     #label_lst = []
     asin_map_price = {}
+    price_map_label = {}
     #ind = 0  # label
     with open(cpu_tech_file, 'rU') as f1:
         for line in f1:
@@ -1033,12 +1040,13 @@ def sort_items(lst):
                 #ind += 1
                 asin = line.split(':')[0].strip()
                 price = int(line.split(':')[3].strip())
-                #label = int(line.split(':')[1].strip())
+                _label = int(line.split(':')[2].strip())
                 price_lst.append(price)
                 #label_lst.append(label)
 
                 # ind is the label now, use the price as class
                 asin_map_price[asin] = price # the duplication
+                price_map_label[price] = _label
             #print(ind)
             #print("Done")
         #json.dump(tech_dict, f)
@@ -1054,17 +1062,25 @@ def sort_items(lst):
 
         _dict[ind] = get_inds(price, price_lst) 
     """
-
+    
+    # to-update
     for asin in asin_map_price:
         price = asin_map_price[asin]
-        _dict[asin] = get_inds(price, price_lst) 
-    #
+        prices_lst = get_inds(price, price_lst) 
+        ind_lst = []
+        for price in prices_lst:
+            ind_lst.append(price_map_label[price])
 
+        _dict[asin] = ind_lst
+
+    #
     return _dict
+
 
 def map_cpus_prices(file):
 
     return 0
+
 
 def map_params_prices(file):
     #dir = 'C:/Users/raymondzhao/myproject/dev.dplearning/data/'
