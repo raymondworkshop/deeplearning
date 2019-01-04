@@ -61,6 +61,12 @@ EMBEDDING_DIM = 100
 VALIDATION_SPLIT = 0.2
 TEST_SPLIT = 0.1
 
+amazon_refurbished_goods_index = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+                     21, 22, 23, 24, 26, 28, 31, 32, 33, 34, 38, 40, 42, 43, 44, 45,
+                     48, 50, 51, 53, 56, 57, 58, 59, 60, 62, 65, 69,70, 72,
+                     75, 76, 78, 79, 81, 82, 83, 84, 85, 87, 89, 90, 91, 93,
+                     94, 95, 96, 97, 99, 102, 103, 105, 106]
+
 
 def get_cpu_label(_str):
     # [ 2 GHz AMD A Series, 1.1 GHz Intel Celeron, 2.16 GHz Intel Celeron,3 GHz 8032,1.6 GHz,3.5 GHz 8032,4 GHz Intel Core i7]
@@ -374,7 +380,7 @@ def concat_emb_encoder(x_emb, x_mask, opt):
     return H_enc
 
 
-def _precision_score(y_test, y_pred):
+def _precision_score(y_test, y_pred, K):
     precision = 0
 
     num = 0
@@ -427,6 +433,8 @@ def train_wordembedding():
     asins = pickle.load(f1)
     f1.close()
     """
+
+    """
     #dir = 'C:/Users/raymondzhao/myproject/dev.dplearning/data/'
     dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
     #dir = "/data/raymond/workspace/exp2/"
@@ -436,6 +444,7 @@ def train_wordembedding():
 
     file = dir + 'amazon_tech_all_5.csv'
     #df = pd.read_csv(file)
+    """
     
     """
     asins = {}
@@ -450,6 +459,7 @@ def train_wordembedding():
     asins[ "B07BLKT38D"] = lst3
     """
 
+    """
     #'14 inches', '2.16 GHz Intel Celeron', '4 GB SDRAM DDR3', '16 GB SSD', 'Intel HD Graphics', 'Intel HD Graphics',
 
     # The text samples and their labels
@@ -512,6 +522,9 @@ def train_wordembedding():
             #_labels.append(_ram_id)
             #_labels.append(_harddrive_id)
             #_labels.append(_graphprocessor_id)
+
+    """
+
     """
     _cpus = df.loc[1, :].tolist()
     for _cpu in _cpus[1:]:
@@ -558,6 +571,20 @@ def train_wordembedding():
         labels.append(_harddrive_id)
         #labels.append(_graphprocessor_id)
     """
+
+    # get texts and labels
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+
+    #dir = '/data/raymond/workspace/exp2/'
+    #file = dir +  'amazon_reviews.json'
+    file = dir + 'amazon_reviews_copy.json'
+    reviews = []
+    texts, labels_lst = read_data_update.get_amazon_texts_labels(file)
+
+    #
+    labels_matrix = numpy.array(labels_lst)
+    _labels = labels_matrix[:, 0].tolist()
+    
             
     #Found 838332 reviews
     print('Found %s reviews.' % len(texts))
@@ -766,7 +793,7 @@ def train_wordembedding():
     # fit the model
     hist = model.fit(x_train, y_train,
           batch_size=50,
-          epochs=10,
+          epochs=5,
           validation_data=(x_val, y_val))
 
     print(hist.history)
@@ -784,7 +811,7 @@ def train_wordembedding():
     y_proba_ind = numpy.argsort(-y_proba)
     print("y_proba: ", y_proba_ind)
 
-    K = 5
+    K = 30
 
     #num = 0
     #y_test = y_lst[:, 0]
@@ -797,15 +824,19 @@ def train_wordembedding():
  
     #num = numpy.sum(y_test == y_pred_max)
     #num_lst.append(num)
-
+    print("precision:")
     i = 0
+    precisions = []
     while i < K:
         #y_test = y_lst[:, 0:i+1]
         y_pred = y_proba_ind[:, 0:i+1]
 
         i = i+1
 
-        print(_precision_score(y_pred, _y_test))
+        precision = _precision_score(y_pred, _y_test, K)
+        precisions.append(precision)
+
+        print(precision)
 
     print("recall:")
     #recall = []
@@ -814,12 +845,16 @@ def train_wordembedding():
     #print("recall_1: %f" % recall_1)
     
     i = 0
+    recalls = []
     while i < K:
         #y_test = y_lst[:, 0:i+1]
         y_pred = y_proba_ind[:, 0:i+1]
 
         i = i+1
-        print(_recall_score(y_pred, _y_test))
+
+        recall = _recall_score(y_pred, _y_test)
+        recalls.append(recall)
+        print(recall)
 
     """
     print(scores.keys())
@@ -827,6 +862,9 @@ def train_wordembedding():
     print(scores['test_recall_macro'])
 
     """
+
+    print(numpy.mean([precisions, recalls], 0))
+    #print(f1)
    
     return 0
 
