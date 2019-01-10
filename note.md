@@ -1,5 +1,21 @@
 ### work notes
 
+#### 2019-01-10 
+  * how to improve performances in machine learning
+    - add more data 
+    - model complexity -> too complex or not enough
+    - feature space -> right set of features - the scale of features or more new features
+    - change the model -> model is in general not a good fit for the use case
+
+  * biase-variance tradeoff ?
+    - todo 
+
+  
+  * system
+    - jug to manage computations to use multiple cores or multiple machines
+    - AWS E2
+     - StarCluster
+
 #### 2019-01-03 
  * metrics - Discounted cumulative gain in information retrieval
 

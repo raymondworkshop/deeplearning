@@ -811,7 +811,7 @@ def train_wordembedding():
     y_proba_ind = numpy.argsort(-y_proba)
     print("y_proba: ", y_proba_ind)
 
-    K = 30
+    K = 20
 
     #num = 0
     #y_test = y_lst[:, 0]
