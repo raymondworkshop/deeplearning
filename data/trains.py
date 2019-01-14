@@ -385,22 +385,26 @@ def _precision_score(y_test, y_pred, K):
 
     num = 0
     i = 0
-    while i < len(y_test):
-        lst = y_test[i].tolist()
-        if y_pred[i] in lst:
-            num = num + 1
+    
+    while i < y_test.shape[1]:
+        lst = y_test[:, i].tolist()
+        j = 0
+        while  j < len(lst):
+            if lst[j] in y_pred[j].tolist():
+                num = num + 1
+            j = j + 1
 
         i = i + 1
     
     precision = num / (len(y_pred) * y_test.shape[1])
     
     """
-    i = set(y_test).intersection(y_pred)
+    i = set(y_test.flatten()).intersection(y_pred.flatten())
     len1 = len(y_pred)
     if len1 == 0:
-        return 0
+        precision = 0
     else:
-        return len(i) / len1
+        precision =  len(i) / len1
     """
 
     return precision
@@ -583,7 +587,10 @@ def train_wordembedding():
 
     #
     labels_matrix = numpy.array(labels_lst)
+
+    PERCENT = 0.1 # the range between the pred object
     _labels = labels_matrix[:, 0].tolist()
+    _labels_PERCENT = labels_matrix[:, 0 : 7 * 1]
     
             
     #Found 838332 reviews
@@ -706,6 +713,7 @@ def train_wordembedding():
     x_test = data[-num_test_samples:]
     y_test = labels[-num_test_samples:]
     _y_test = _labels[-num_test_samples:]
+    _y_test_PERCENT =_labels_PERCENT[-num_test_samples:]
 
 
     ## word embeddings
@@ -811,7 +819,7 @@ def train_wordembedding():
     y_proba_ind = numpy.argsort(-y_proba)
     print("y_proba: ", y_proba_ind)
 
-    K = 20
+    K = 40
 
     #num = 0
     #y_test = y_lst[:, 0]
@@ -824,16 +832,18 @@ def train_wordembedding():
  
     #num = numpy.sum(y_test == y_pred_max)
     #num_lst.append(num)
+    
     print("precision:")
     i = 0
     precisions = []
+    
     while i < K:
         #y_test = y_lst[:, 0:i+1]
         y_pred = y_proba_ind[:, 0:i+1]
 
         i = i+1
 
-        precision = _precision_score(y_pred, _y_test, K)
+        precision = _precision_score(y_pred, _y_test_PERCENT, K)
         precisions.append(precision)
 
         print(precision)
