@@ -633,6 +633,25 @@ def read_amazon_data(file):
     return 0
 
 
+def read_generated_amazon():
+    """ the generated amazon data
+    """
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    file0 = dir + 'amazon_0.xlsx'
+    file1 = dir + 'amazon_1.xlsx'
+
+    sheets = pd.read_excel(file0, sheet_name=None)
+    asins = {}
+    for name, sheet in sheets.items():
+        #print(sheet)
+        #texts = []
+        text = sheet.keys()[-1]
+        if sheet[text][0]:
+            asins[name].append(sheet[text])
+
+    return 0
+
+
 def _read_data(file):
     #list_reviews = []
     asins = {}
@@ -1273,9 +1292,11 @@ def get_amazon_texts_labels(file):
     #_sscreens = []
     _cpus = []
     ind = 0
+    asins_dict = {}
     #for ind in cpu_labels_dict.items():
     for _asin in cpu_labels_dict:
         print("The asin %s:", _asin)
+        #asins_lst.append(_asin)
         # [screensize,cpu, ram, reviews]
         _cpu = asins[_asin][1]
         if _cpu:
@@ -1314,6 +1335,8 @@ def get_amazon_texts_labels(file):
         reviews = asins[_asin][5] 
         table = str.maketrans('', '', string.punctuation)
         #porter = PorterStemmer()
+        _texts = []
+        _labels = []
         for _t in reviews:
             # t =  " ".join(x.decode("utf-8") for x in _t) #bytes to str
             #words = text.split()
@@ -1326,15 +1349,17 @@ def get_amazon_texts_labels(file):
             #
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
-            texts.append(s)
-            labels.append(_cpu_id)
+            _texts.append(s)
+            _labels.append(_cpu_id)
             
             #labels.append(_sscreen_id)
             #labels.append(_ram_id)
             #labels.append(_harddrive_id)
             #labels.append(_graphprocessor_id)
+
+        asins_dict[_asin] = [_texts, _labels]
     
-    return texts, labels
+    return asins_dict
 
 
 def main():
@@ -1393,7 +1418,9 @@ def main():
     reviews = []
     #texts, labels = get_amazon_texts_labels(file)
 
-    _plt()
+    read_generated_amazon()
+
+    #_plt()
 
  
     #asins = read_data(file)

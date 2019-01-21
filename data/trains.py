@@ -872,12 +872,10 @@ def train_wordembedding():
     print(scores['test_recall_macro'])
 
     """
-
     print(numpy.mean([precisions, recalls], 0))
     #print(f1)
    
     return 0
-
 
 
 def accuracy_score(y_test, y_pred):
@@ -1042,13 +1040,17 @@ def train_svm():
     #file = dir +  'amazon_reviews.json'
     file = dir + 'amazon_reviews_copy.json'
     reviews = []
-    texts, labels_lst = read_data_update.get_amazon_texts_labels(file)
+    asins_dict = read_data_update.get_amazon_texts_labels(file)
+    texts = []
+    labels_lst = []
+    for asin in asins_dict:
+        texts.append(asins_dict[asin][0])
+        labels_lst.append(asins_dict[asin][1])
 
     #
     labels_matrix = numpy.array(labels_lst)
     labels = labels_matrix[:, 0].tolist()
     
-        
     #Found  reviews
     print('Found %s reviews.' % len(texts))
 
@@ -1220,9 +1222,11 @@ def train_svm():
 def main():
     #data()
     #
-    train_wordembedding()
+    #train_wordembedding()
     #
-    #train_svm()
+    train_svm()
+
+    #train_mlp()
 
 
 if __name__ == '__main__':
