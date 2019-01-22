@@ -14,6 +14,7 @@ import ast
 import re
 
 import string
+import math
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -633,23 +634,52 @@ def read_amazon_data(file):
     return 0
 
 
-def read_generated_amazon():
-    """ the generated amazon data
-    """
-    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
-    file0 = dir + 'amazon_0.xlsx'
-    file1 = dir + 'amazon_1.xlsx'
-
-    sheets = pd.read_excel(file0, sheet_name=None)
+def get_repharased_asins(sheets):
     asins = {}
     for name, sheet in sheets.items():
         #print(sheet)
         #texts = []
-        text = sheet.keys()[-1]
-        if sheet[text][0]:
-            asins[name].append(sheet[text])
+        rephrased_reviews = sheet.keys()[-1]
 
-    return 0
+        reviews = sheet[rephrased_reviews]
+        _text = reviews[0]
+        #value = math.isnan(float(_value))
+        if isinstance(_text, str):
+            asins[name] = []
+            for series_val in reviews.items():
+                if isinstance(series_val[1], str) : # # not NaN
+                   asins[name].append(series_val[1])
+                elif np.isnan(series_val[1]):
+                    break
+                else:
+                    pass
+        else:
+            #print(_text)
+            pass
+
+    return asins
+
+
+def read_generated_amazon_reviews():
+    """ get the generated amazon data
+    """
+    generated_asins = {}
+    asins_0 = {}
+    asins_1 = {}
+
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    file0 = dir + 'amazon_0.xlsx'
+    file1 = dir + 'amazon_1.xlsx'
+
+    sheets_0 = pd.read_excel(file0, sheet_name=None)
+    sheets_1 = pd.read_excel(file1, sheet_name=None)
+    
+    asins_0 = get_repharased_asins(sheets_0)
+    asins_1 = get_repharased_asins(sheets_1)
+    generated_asins.update(asins_0)
+    generated_asins.update(asins_1)
+
+    return generated_asins
 
 
 def _read_data(file):
@@ -1418,7 +1448,8 @@ def main():
     reviews = []
     #texts, labels = get_amazon_texts_labels(file)
 
-    read_generated_amazon()
+    #generated_asins = {}
+    generated_asins = read_generated_amazon_reviews()
 
     #_plt()
 
