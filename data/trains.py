@@ -1126,7 +1126,7 @@ def train_svm():
 
     PERCENT = 0.1 # the range between the pred object
     _labels = labels_matrix[:, 0].tolist()
-    _labels_PERCENT = labels_matrix[:, 0 : 7 * 1]
+    _labels_PERCENT = labels_matrix[:, 0 : 7 * 2]
     
     #Found  reviews
     print('Found %s reviews.' % len(texts))
@@ -1291,7 +1291,7 @@ def train_svm():
     #y_proba_ind = numpy.argsort(-y_pred)
     #print("y_proba: ", y_proba_ind)
 
-    K = 15
+    K = 10
 
     #num = 0
     #y_test = y_lst[:, 0]
