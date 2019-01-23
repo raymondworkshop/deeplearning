@@ -668,6 +668,7 @@ def read_generated_amazon_reviews():
     asins_1 = {}
 
     dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    #dir = '/data/raymond/workspace/exp2/'
     file0 = dir + 'amazon_0.xlsx'
     file1 = dir + 'amazon_1.xlsx'
 
@@ -1093,6 +1094,7 @@ def sort_items(lst):
     # sort item 
 
     dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    #dir = '/data/raymond/workspace/exp2/'
     cpu_tech_file = dir + 'amazon_tech_cpus_1207.json'
     price_lst = []
     #label_lst = []
@@ -1318,6 +1320,7 @@ def get_amazon_texts_labels(file):
 
     # get the class list according to the dist
     cpu_labels_dict = sort_items(cpu_lst)
+    #_sscreen_labels_dict =
 
     #_sscreens = []
     _cpus = []
