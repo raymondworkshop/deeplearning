@@ -241,30 +241,55 @@ def get_sscreen_label(lst):
 
 
 def _get_sscreen_label(_str):
-    # [ 11.6 inches, 13.3 inches, 14 inches, 15.6 inches, 17.3 inches ]
+    # [10.1 inches, 11.6 inches, 12.3 inches, 12.5 inches, 13.3 inches, 13.5 inches , 14 inches, 15.6 inches, 17.3 inches ]
+    lst = [10.1, 11.6, 12.3, 12.5, 13.3, 13.5, 14, 15.6, 17.3]
+    
     _sscreen_map = {
-        "<= 12 inches": 0,
-        "<= 13 inches":1,
-        "<= 14 inches": 2,
-        "<= 15 inches":3,
-        "> 15 inches":4
+        10.1 : 0,
+        11.6 : 1,
+        12.3 : 2,
+        12.5 : 3,
+        13.3 : 4,
+        13.5 : 5,
+        14.0 : 6,
+        15.6 : 7,
+        17.3 : 8
     }
+    
+
+    #_sscreen_dict = {}
 
     _sscreen_label = 4 #unknown
     if 'inches' in _str.lower():
-        _sscreen_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
-        if _sscreen_size <= 12:
+        _sscreen_size = float(re.search('[\d]+[.\d]*', _str).group())
+        if _sscreen_size == 10.1:
             _sscreen_label = 0
-        elif _sscreen_size <= 13:
+        if _sscreen_size == 11.6:
             _sscreen_label = 1
-        elif _sscreen_size  <= 14:
+        elif _sscreen_size == 12.3:
             _sscreen_label = 2
-        elif _sscreen_size <= 15:
+        elif _sscreen_size  == 12.5 :
             _sscreen_label = 3
-        else:
+        elif _sscreen_size == 13.3 :
             _sscreen_label = 4
+        elif _sscreen_size == 13.5 :
+            _sscreen_label = 5 
+        elif _sscreen_size == 14 :
+            _sscreen_label = 6   
+        elif _sscreen_size == 15.6 :
+            _sscreen_label = 7   
+        elif _sscreen_size == 17.3 :
+            _sscreen_label = 8 
+        else:
+            pass
 
-    return _sscreen_label
+    _sscreen_lst = get_inds(_sscreen_size, lst)
+    sscreen_lst = []
+    for _sscreen in _sscreen_lst:
+        sscreen_lst.append(_sscreen_map[_sscreen])
+        
+
+    return sscreen_lst
 
 
 def get_ram_label(_str):
@@ -1223,10 +1248,10 @@ def map_params_prices(file):
     cpu_labels_dict = sort_items(cpu_lst)
 
     # screen size
-    #sscreen_lst = get_sscreen_label(_sscreens)
+    sscreen_dict = get_sscreen_label(_sscreens)
     #print(sscreen_lst)
 
-    return cpu_labels_dict
+    return sscreen_dict
 
 
 def get_amazon_texts_labels(file):
@@ -1256,7 +1281,8 @@ def get_amazon_texts_labels(file):
     # [[b'I', b'placed', b'my', b'order', b'on', b'December', b'19th', b'and', b'was', b'under', b'the', b'impression', b'it', b'would', b'arrive', b'on', b'the', b'22nd']]
         # [screensize,cpu, ram, Hard Drive,Graphics Coprocessor, reviews]
     
-    tech_dict = {}
+    #tech_dict = {}
+    asins_dict = {}
 
     _sscreens = []
     _cpus = []
@@ -1278,14 +1304,15 @@ def get_amazon_texts_labels(file):
         """
 
         _sscreen = asins[_asin][0]
-        _sscreens.append(_sscreen)
-        """
         if _sscreen:
+            _sscreen_lst = []
             #_sscreen_id = get_sscreen_label(_sscreen)
             #labels_index[_sscreen] = _sscreen_id
             #
+            #_sscreens.append(_sscreen)
             _sscreens.append(_sscreen)
-        """
+            _sscreen_lst = _get_sscreen_label(_sscreen)
+        
 
         _ram = asins[_asin][2]
         _rams.append(_ram)
@@ -1314,6 +1341,35 @@ def get_amazon_texts_labels(file):
 
        # tech_dict[str(_asin)] = [_cpu,_sscreen,_ram,_harddrive,_graphprocessor]
 
+       #reviews
+        reviews = asins[_asin][5] 
+        table = str.maketrans('', '', string.punctuation)
+        #porter = PorterStemmer()
+        _texts = []
+        _labels = []
+        for _t in reviews:
+            # t =  " ".join(x.decode("utf-8") for x in _t) #bytes to str
+            #words = text.split()
+            # remove punctuation from each word , and stemming
+
+            stripped = [w.decode("utf-8").lower().translate(table) for w in _t]  
+            s = " ".join(x for x in stripped)
+            #stripped = [w.decode("utf-8").translate(table) for w in _t] 
+            #stripped = [w.decode("utf-8").lower().translate(table) for w in _t]
+            #
+
+            #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
+            _texts.append(s)
+            #_labels.append(_cpu_id)
+            
+            _labels.append(_sscreen_lst)
+            #labels.append(_ram_id)
+            #labels.append(_harddrive_id)
+            #labels.append(_graphprocessor_id)
+
+        asins_dict[_asin] = [_texts, _labels]
+
+    """
     #cpu
     cpu_lst = get_cpu_label(_cpus)
     print(cpu_lst)
@@ -1344,7 +1400,7 @@ def get_amazon_texts_labels(file):
         _sscreen = asins[_asin][0]
         if _sscreen:
             _sscreen_id = get_sscreen_label(_sscreen)
-            labels_index[_sscreen] = _sscreen_id
+            #labels_index[_sscreen] = _sscreen_id
             #
             #_sscreens.append(_sscreen)
 
@@ -1391,6 +1447,82 @@ def get_amazon_texts_labels(file):
             #labels.append(_graphprocessor_id)
 
         asins_dict[_asin] = [_texts, _labels]
+    """
+
+    # screen size
+    #sscreen_dict = get_sscreen_label(_sscreens)
+
+    """
+    # about CPUs
+    _cpus = []
+    ind = 0
+    asins_dict = {}
+    #for ind in cpu_labels_dict.items():
+    for _asin in cpu_labels_dict:
+        print("The asin %s:", _asin)
+        #asins_lst.append(_asin)
+        # [screensize,cpu, ram, reviews]
+        _cpu = asins[_asin][1]
+        if _cpu:
+           #_cpu_id = _get_cpu_label(_cpu)
+           _cpu_id = cpu_labels_dict[_asin]
+           #_cpus.append(_cpu)
+
+           #labels_index[_cpu] = _cpu_id
+           #
+           #_cpus.append(_cpu)
+
+        _sscreen = asins[_asin][0]
+        if _sscreen:
+            _sscreen_id = get_sscreen_label(_sscreen)
+            #labels_index[_sscreen] = _sscreen_id
+            #
+            #_sscreens.append(_sscreen)
+
+        _ram = asins[_asin][2]
+        if _ram:
+            _ram_id = get_ram_label(_ram)
+            labels_index[_ram] = _ram_id
+        
+        _harddrive = asins[_asin][3]
+        if _harddrive:
+            _harddrive_id = get_harddrive_label(_harddrive)
+            labels_index[_harddrive] = _harddrive_id
+    
+        #Graphics Coprocessor
+        _graphprocessor = asins[_asin][4]
+        if _graphprocessor:
+            _graphprocessor_id = get_graphprocessor_label(_graphprocessor)
+            labels_index[_graphprocessor] = _graphprocessor_id
+        
+        #reviews
+        reviews = asins[_asin][5] 
+        table = str.maketrans('', '', string.punctuation)
+        #porter = PorterStemmer()
+        _texts = []
+        _labels = []
+        for _t in reviews:
+            # t =  " ".join(x.decode("utf-8") for x in _t) #bytes to str
+            #words = text.split()
+            # remove punctuation from each word , and stemming
+
+            stripped = [w.decode("utf-8").lower().translate(table) for w in _t]  
+            s = " ".join(x for x in stripped)
+            #stripped = [w.decode("utf-8").translate(table) for w in _t] 
+            #stripped = [w.decode("utf-8").lower().translate(table) for w in _t]
+            #
+
+            #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
+            _texts.append(s)
+            _labels.append(_cpu_id)
+            
+            #labels.append(_sscreen_id)
+            #labels.append(_ram_id)
+            #labels.append(_harddrive_id)
+            #labels.append(_graphprocessor_id)
+
+        asins_dict[_asin] = [_texts, _labels]
+    """
     
     return asins_dict
 
@@ -1449,10 +1581,10 @@ def main():
     #file = 'amazon_reviews.json'
     #file = 'amazon_reviews_copy.json'
     reviews = []
-    #texts, labels = get_amazon_texts_labels(file)
+    asins_dict = get_amazon_texts_labels(file)
 
     #generated_asins = {}
-    generated_asins = read_generated_amazon_reviews()
+    #generated_asins = read_generated_amazon_reviews()
 
     #_plt()
 
