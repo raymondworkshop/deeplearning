@@ -294,15 +294,25 @@ def _get_sscreen_label(_str):
 
 def get_ram_label(_str):
     # [ "4 GB SDRAM DDR3", "4 GB DDR3 SDRAM","8 GB",4 GB SDRAM DDR4","16 GB DDR4" ,"2 GB SDRAM","6 GB DDR SDRAM", "12 GB DDR SDRAM" ]
+    lst = [2, 4, 6, 8, 12, 16]
     _ram_map = {
         "2 GB SDRAM": 0,
         "4 GB SDRAM DDR3": 1,
         "6 GB DDR SDRAM":2,
         "8 GB SDRAM DDR3": 3,
-        "8 GB SDRAM DDR4": 3,
-        "12 GB DDR SDRAM":4,
-        "16 GB DDR4" :5,
-        "others":6,
+        "8 GB SDRAM DDR4": 4,
+        "12 GB DDR SDRAM":5,
+        "16 GB DDR4" :6,
+        "others":7,
+    }
+
+    _ram_map = {
+        2 : 0,
+        4 : 1,
+        6 : 2,
+        8 : 3,
+        12 : 4,
+        16 : 5
     }
 
     #_ram_label = 7 #unknown
@@ -318,18 +328,24 @@ def get_ram_label(_str):
             if 'ddr3' in _str.lower():
                 _ram_label = 3
             elif 'ddr4' in _str.lower():
-                _ram_label = 3
+                _ram_label = 4
             else:
-                _ram_label = 3
+                _ram_label = 5
         elif _ram_size  == 12:
-            _ram_label = 4
+            _ram_label = 6
         elif _ram_size  == 16:
-            _ram_label = 5
+            _ram_label = 7
         else:
-            #_ram_label = 7
-            pass
+            _ram_label = 8
+            #pass
 
-    return _ram_label
+    _ram_lst = get_inds(_ram_size, lst)
+    ram_lst = []
+    for _ram in _ram_lst:
+        ram_lst.append(_ram_map[_ram])
+        
+
+    return ram_lst
 
 
 def get_harddrive_label(_str):
@@ -339,20 +355,26 @@ def get_harddrive_label(_str):
     # '2 TB HDD 5400 rpm', '32 GB SSD','64 GB SSD'
     #
     # ]
+    lst = [16, 128, 256, 500, 32, 64, 1000, 2000, 512, 320, 1024]
+
     _harddrive_map = {
-        "SSD <= 128": 0,
-        "SSD > 128": 1,
-        "HDD > 1T" :2,
-        "HDD ~= 1T" :3,
-        "HDD ~= 500G" :4,
-        "HDD < 500G" :5,
-        "others": 5
+        16: 0,
+        128: 1,
+        256 :2,
+        500 :3,
+        32 :4,
+        64 :5,
+        1000 : 5,
+        2000 : 6,
+        512 : 7,
+        320 : 8,
+        1024 : 9
     }
 
     #_harddrive_label = 5 #unknown
     if 'ssd' or 'solid' or 'mechanical' in _str.lower():
         if num_there(_str):
-            _harddrive_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
+            _harddrive_size = float(re.search('[\d]+[.\d]*', _str).group())
             if _harddrive_size <= 128:
                 _harddrive_label = 0
             else:
@@ -364,7 +386,7 @@ def get_harddrive_label(_str):
         #_harddrive_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
         if 'tb' in _str.lower():
             if num_there(_str):
-                _harddrive_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
+                _harddrive_size = float(re.search('[\d]+[.\d]*', _str).group())
                 if _harddrive_size > 1:
                     _harddrive_label = 1
                 else:
@@ -1315,12 +1337,12 @@ def get_amazon_texts_labels(file):
         
 
         _ram = asins[_asin][2]
-        _rams.append(_ram)
-        """
         if _ram:
-            _ram_id = get_ram_label(_ram)
-            labels_index[_ram] = _ram_id
-        """
+            _ram_lst = []
+            #_ram_id = get_ram_label(_ram)
+            #labels_index[_ram] = _ram_id
+            _rams.append(_ram)
+            _ram_lst = get_ram_label(_ram)
         
         _harddrive = asins[_asin][3]
         _harddrives.append(_harddrive)
@@ -1359,25 +1381,27 @@ def get_amazon_texts_labels(file):
             #
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
-            _texts.append(s)
+            #_texts.append(s)
             #_labels.append(_cpu_id)
             
-            _labels.append(_sscreen_lst)
-            #labels.append(_ram_id)
-            #labels.append(_harddrive_id)
-            #labels.append(_graphprocessor_id)
+            #_labels.append(_sscreen_lst)
+            #_labels.append(_ram_lst)
+            #_labels.append(_harddrive_id)
+            #_labels.append(_graphprocessor_id)
 
-        asins_dict[_asin] = [_texts, _labels]
+        #asins_dict[_asin] = [_texts, _labels]
 
-    """
+    
     #cpu
     cpu_lst = get_cpu_label(_cpus)
     print(cpu_lst)
 
     # get the class list according to the dist
     cpu_labels_dict = sort_items(cpu_lst)
-    #_sscreen_labels_dict =
 
+    
+    #_sscreen_labels_dict =
+    
     #_sscreens = []
     _cpus = []
     ind = 0
@@ -1447,7 +1471,7 @@ def get_amazon_texts_labels(file):
             #labels.append(_graphprocessor_id)
 
         asins_dict[_asin] = [_texts, _labels]
-    """
+    
 
     # screen size
     #sscreen_dict = get_sscreen_label(_sscreens)

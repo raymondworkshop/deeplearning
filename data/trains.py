@@ -428,7 +428,7 @@ def _precision_score(y_test, y_pred, K):
     return precision
 
 
-def _recall_score(y_test, y_pred):
+def _recall_score(y_test, y_pred, K):
     recall = 0
 
     num = 0
@@ -453,7 +453,7 @@ def _recall_score(y_test, y_pred):
 
         i = i + 1
     
-    recall = num / len(y_test)
+    recall = num / (len(y_test)  )
     
     """
     i = set(y_test).intersection(y_pred)
@@ -657,7 +657,7 @@ def train_wordembedding():
 
     PERCENT = 0.1 # the range between the pred object
     _labels = labels_matrix[:, 0].tolist()
-    _labels_PERCENT = labels_matrix[:, 0 : 7 * 1]
+    _labels_PERCENT = labels_matrix[:, 0 : 1]
     
     #Found 838332 reviews
     print('Found %s reviews.' % len(texts))
@@ -928,7 +928,7 @@ def train_wordembedding():
 
         i = i+1
 
-        recall = _recall_score(y_pred, _y_test_PERCENT)
+        recall = _recall_score(y_pred, _y_test_PERCENT, K)
         recalls.append(recall)
         print(recall)
 
@@ -1165,7 +1165,7 @@ def train_svm():
 
     PERCENT = 0.1 # the range between the pred object
     _labels = labels_matrix[:, 0].tolist()
-    _labels_PERCENT = labels_matrix[:, 0 : 7 * 1]
+    _labels_PERCENT = labels_matrix[:, 0 : 7 * 2]
     
     #Found  reviews
     print('Found %s reviews.' % len(texts))
@@ -1242,18 +1242,52 @@ def train_svm():
     for seq in sequences:
         #for each review
         seq_ind = 0
-        word_cnt = 0
-        feature_vec = numpy.random.uniform(-0.001, 0.001, (EMBEDDING_DIM))
-        for word_index in seq:
-            word_cnt += 1
-            # ind = seq[word_index]
-            feature_vec += embedding_matrix[word_index]
+        #word_cnt = 0
+        #feature_vec = numpy.random.uniform(-0.001, 0.001, (EMBEDDING_DIM))
 
         # mean
-        feature_vec /= word_cnt
+        def average_emb(input_seq):
+            word_cnt = 0
+            #feature_vec = numpy.random.uniform(-0.001, 0.001, (EMBEDDING_DIM))
+            _feature_vec = []
+            for word_index in input_seq:
+                word_cnt += 1
+                # ind = seq[word_index]
+                _feature_vec.append(embedding_matrix[word_index])
 
-        # max
-        data[seq_ind] = feature_vec
+            # mean
+            feature_vec = numpy.array(_feature_vec)
+            H_enc = feature_vec.mean(axis=0)
+            embedded_sequences = H_enc
+
+            return  embedded_sequences
+
+        # max 
+        def max_emb(input_seq):
+            #feature_vec = numpy.random.uniform(-0.001, 0.001, (EMBEDDING_DIM))
+            _feature_vec = []
+            for word_index in input_seq:
+                _feature_vec.append(embedding_matrix[word_index])
+
+            feature_vec = numpy.array(_feature_vec)
+            H_enc = feature_vec.max(0)  # batch 1 emb
+
+            embedded_sequences = H_enc
+
+            return  embedded_sequences
+
+        # concat
+        def concat_emb(input_seq):
+            H_enc_1 = max_emb(input_seq)
+            H_enc_2 = average_emb(input_seq)
+
+            embedded_sequences = H_enc_2 +  H_enc_1
+            #embedded_sequences = K.concatenate([H_enc_2, H_enc_1], 1)
+            return embedded_sequences
+
+        data[seq_ind] = average_emb(seq)
+        #data[seq_ind] = max_emb(seq)
+        #data[seq_ind] = concat_emb(seq)    
         seq_ind += 1
 
     """
@@ -1315,11 +1349,13 @@ def train_svm():
     #svm_classifier = svm.SVC(kernel='rbf', gamma=2, C=1.0) #Gaussian Kernel
     #svm_classifier.fit(x_train,y_train)
 
-    classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
+    #classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
+    classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
+                     solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
     #scoring = ['precision_macro', 'recall_macro']
     #y_pred = cross_val_predict(classifier, x_train, y_train, cv=10)
     #_y_proba = cross_val_predict(classifier, x_train, y_train, cv=10, method='predict_proba')
-    _y_proba = cross_val_predict(classifier, data, _labels, cv=5, method='predict_proba')
+    _y_proba = cross_val_predict(classifier, data, _labels, cv=10, method='predict_proba')
     #classifier.fit(X_train, y_train)
     #y_pred = classifier.predict(X_test)
     #_y_proba = classifier.predict_proba(X_test)
@@ -1374,7 +1410,7 @@ def train_svm():
 
         i = i+1
 
-        recall = _recall_score(y_pred, _labels_PERCENT)
+        recall = _recall_score(y_pred, _labels_PERCENT, K)
         recalls.append(recall)
 
         print(recall)
@@ -1793,7 +1829,7 @@ def train_mlp():
 
         i = i+1
 
-        recall = _recall_score(y_pred, _labels_PERCENT)
+        recall = _recall_score(y_pred, _labels_PERCENT, K)
         recalls.append(recall)
 
         print(recall)
