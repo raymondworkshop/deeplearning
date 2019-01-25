@@ -562,7 +562,7 @@ def train_RNN():
 #texts, labels = train()
 texts, labels_matrix = train_RNN()
 _labels = labels_matrix[:, 0].tolist()
-_labels_PERCENT = labels_matrix[:, 0 : 7 * 2]
+_labels_PERCENT = labels_matrix[:, 0 : 7]
     
 #
 tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
@@ -692,7 +692,7 @@ for epoch in range(5):
     y_proba_ind = np.argsort(-y_proba)
     print("y_proba: ", y_proba_ind)
 
-    K = 10
+    K = 5
 
     #num = 0
     #y_test = y_lst[:, 0]
