@@ -43,11 +43,17 @@ import string
 from nltk.stem import PorterStemmer
 
 from sklearn import svm 
+from sklearn.neural_network import MLPClassifier
+
+from sklearn import metrics
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.model_selection import train_test_split, cross_validate, cross_val_predict
+
+
 from sklearn.metrics import recall_score
 #from sklearn.metrics import make_scorer
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn import metrics
-
+#from sklearn.svm import SVC
 
 #
 #from . import read_data_update
@@ -385,43 +391,74 @@ def _precision_score(y_test, y_pred, K):
 
     num = 0
     i = 0
+
+    """
     while i < len(y_test):
         lst = y_test[i].tolist()
         if y_pred[i] in lst:
             num = num + 1
 
         i = i + 1
+
+    precision = num / (len(y_pred) * y_test.shape[1])
+    """
+
+    while i < y_test.shape[1]:
+        lst = y_test[:, i].tolist()
+        j = 0
+        while  j < len(lst):
+            if lst[j] in y_pred[j].tolist():
+                num = num + 1
+            j = j + 1
+
+        i = i + 1
     
     precision = num / (len(y_pred) * y_test.shape[1])
+   
     
     """
-    i = set(y_test).intersection(y_pred)
+    i = set(y_test.flatten()).intersection(y_pred.flatten())
     len1 = len(y_pred)
     if len1 == 0:
-        return 0
+        precision = 0
     else:
-        return len(i) / len1
+        precision =  len(i) / len1
     """
 
     return precision
 
 
-def _recall_score(y_test, y_pred):
+def _recall_score(y_test, y_pred, K):
     recall = 0
 
     num = 0
     i = 0
+    """
     while i < len(y_test):
         lst = y_test[i].tolist()
         if y_pred[i] in lst:
             num = num + 1
 
         i = i + 1
-    
-    recall = num / len(y_test)
+    """
 
-    #i = set(y_test).intersection(y_pred)
-    #return len(i) / len(y_test)
+    
+    while i < y_test.shape[1]:
+        lst = y_test[:, i].tolist()
+        j = 0
+        while  j < len(lst):
+            if lst[j] in y_pred[j].tolist():
+                num = num + 1
+            j = j + 1
+
+        i = i + 1
+    
+    recall = num / (len(y_test)  )
+    
+    """
+    i = set(y_test).intersection(y_pred)
+    return len(i) / len(y_test)
+    """
 
     return recall
 
@@ -579,13 +616,49 @@ def train_wordembedding():
     #file = dir +  'amazon_reviews.json'
     file = dir + 'amazon_reviews_copy.json'
     reviews = []
-    texts, labels_lst = read_data_update.get_amazon_texts_labels(file)
+    #texts, labels_lst = read_data_update.get_amazon_texts_labels(file)
+    asins_dict = read_data_update.get_amazon_texts_labels(file)
+    # the generated asins
+    generated_asins = read_data_update.read_generated_amazon_reviews()
+    texts = []
+    #generated_texts = []
+    labels_lst = []
+    for asin in asins_dict:
+        """
+        for text in asins_dict[asin][0]:
+            texts.append(text)
+        """
+        #i = 0
+        if asin in generated_asins:
+            i = 0
+            while i < len(generated_asins[asin]):
+                texts.append(generated_asins[asin][i])
+                labels_lst.append(asins_dict[asin][1][i])
+
+                i = i+1
+
+            """
+            for text in generated_asins[asin]:
+                texts.append(text)
+
+            for label in asins_dict[asin][1]:
+                labels_lst.append(label)
+            """
+        else:
+            for text in asins_dict[asin][0]:
+                texts.append(text)
+        
+        #texts.append(asins_dict[asin][0])
+            for label in asins_dict[asin][1]:
+                labels_lst.append(label)
 
     #
     labels_matrix = numpy.array(labels_lst)
+
+    PERCENT = 0.1 # the range between the pred object
     _labels = labels_matrix[:, 0].tolist()
+    _labels_PERCENT = labels_matrix[:, 0 : 1]
     
-            
     #Found 838332 reviews
     print('Found %s reviews.' % len(texts))
     # define class labels
@@ -706,6 +779,7 @@ def train_wordembedding():
     x_test = data[-num_test_samples:]
     y_test = labels[-num_test_samples:]
     _y_test = _labels[-num_test_samples:]
+    _y_test_PERCENT =_labels_PERCENT[-num_test_samples:]
 
 
     ## word embeddings
@@ -758,8 +832,8 @@ def train_wordembedding():
 
     #max_emb_encoder(sequence_input, )
     #xx = Lambda(average_emb)(embedded_sequences)  #(?, 100)
-    #xx = Lambda(max_emb)(embedded_sequences)  #(?, 100)
-    xx = Lambda(concat_emb)(embedded_sequences)
+    xx = Lambda(max_emb)(embedded_sequences)  #(?, 100)
+    #xx = Lambda(concat_emb)(embedded_sequences)
 
     #xx = Dense(EMBEDDING_DIM, activation='relu')(xx)
     #xx = Flatten()(embedded_sequences)
@@ -811,7 +885,7 @@ def train_wordembedding():
     y_proba_ind = numpy.argsort(-y_proba)
     print("y_proba: ", y_proba_ind)
 
-    K = 20
+    K = 10
 
     #num = 0
     #y_test = y_lst[:, 0]
@@ -824,16 +898,18 @@ def train_wordembedding():
  
     #num = numpy.sum(y_test == y_pred_max)
     #num_lst.append(num)
+    
     print("precision:")
     i = 0
     precisions = []
+    
     while i < K:
         #y_test = y_lst[:, 0:i+1]
         y_pred = y_proba_ind[:, 0:i+1]
 
         i = i+1
 
-        precision = _precision_score(y_pred, _y_test, K)
+        precision = _precision_score(y_pred, _y_test_PERCENT, K)
         precisions.append(precision)
 
         print(precision)
@@ -852,7 +928,7 @@ def train_wordembedding():
 
         i = i+1
 
-        recall = _recall_score(y_pred, _y_test)
+        recall = _recall_score(y_pred, _y_test_PERCENT, K)
         recalls.append(recall)
         print(recall)
 
@@ -862,12 +938,10 @@ def train_wordembedding():
     print(scores['test_recall_macro'])
 
     """
-
     print(numpy.mean([precisions, recalls], 0))
     #print(f1)
    
     return 0
-
 
 
 def accuracy_score(y_test, y_pred):
@@ -1024,6 +1098,25 @@ def train_svm():
         labels.append(_harddrive_id)
         #labels.append(_graphprocessor_id)
     """
+    """
+    # get texts and labels
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+
+    #dir = '/data/raymond/workspace/exp2/'
+    #file = dir +  'amazon_reviews.json'
+    file = dir + 'amazon_reviews_copy.json'
+    reviews = []
+    asins_dict = read_data_update.get_amazon_texts_labels(file)
+    texts = []
+    labels_lst = []
+    for asin in asins_dict:
+        texts.append(asins_dict[asin][0])
+        labels_lst.append(asins_dict[asin][1])
+
+    #
+    labels_matrix = numpy.array(labels_lst)
+    labels = labels_matrix[:, 0].tolist()
+    """
 
     # get texts and labels
     dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
@@ -1032,13 +1125,502 @@ def train_svm():
     #file = dir +  'amazon_reviews.json'
     file = dir + 'amazon_reviews_copy.json'
     reviews = []
-    texts, labels_lst = read_data_update.get_amazon_texts_labels(file)
+    asins_dict = read_data_update.get_amazon_texts_labels(file)
+    # the generated asins
+    generated_asins = read_data_update.read_generated_amazon_reviews()
+    texts = []
+    #generated_texts = []
+    labels_lst = []
+    for asin in asins_dict:
+        """
+        for text in asins_dict[asin][0]:
+            texts.append(text)
+        """
+        #i = 0
+        if asin in generated_asins:
+            i = 0
+            while i < len(generated_asins[asin]):
+                texts.append(generated_asins[asin][i])
+                labels_lst.append(asins_dict[asin][1][i])
+
+                i = i+1
+
+            """
+            for text in generated_asins[asin]:
+                texts.append(text)
+
+            for label in asins_dict[asin][1]:
+                labels_lst.append(label)
+            """
+        else:
+            for text in asins_dict[asin][0]:
+                texts.append(text)
+        
+        #texts.append(asins_dict[asin][0])
+            for label in asins_dict[asin][1]:
+                labels_lst.append(label)
+
+    #
+    labels_matrix = numpy.array(labels_lst)
+
+    PERCENT = 0.1 # the range between the pred object
+    _labels = labels_matrix[:, 0].tolist()
+    _labels_PERCENT = labels_matrix[:, 0 : 7 * 2]
+    
+    #Found  reviews
+    print('Found %s reviews.' % len(texts))
+
+    # prepare tokenizer
+    # finally, vectorize the text samples into a 2D integer tensor
+    tokenizer = Tokenizer(num_words=MAX_NUM_WORDS)
+    tokenizer.fit_on_texts(texts)
+    
+    # integer encode the documents
+    sequences = tokenizer.texts_to_sequences(texts)
+
+    word_index = tokenizer.word_index
+    #_word_index = dict((v, k) for k, v in word_index.items())
+    #
+    print('Found %s unique tokens.' % len(word_index))
+
+    """
+    # pad documents to a max length of 108 words
+    # TODO - max_emb_encoder(x_emb, x_mask)
+    data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
+
+    labels = to_categorical(numpy.asarray(labels))
+    print('Shape of data tensor:', data.shape)
+    print('Shape of label tensor:', labels.shape)
+
+    # split the data into a training set and a validation set
+    indices = numpy.arange(data.shape[0])
+    numpy.random.shuffle(indices)
+    data = data[indices]
+    labels = labels[indices]
+    num_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
+
+    x_train = data[:-num_validation_samples]
+    y_train = labels[:-num_validation_samples]
+    x_val = data[-num_validation_samples:]
+    y_val = labels[-num_validation_samples:]
+    """
+
+    # load the whole glove embedding into memory
+    embeddings_index = dict()
+    f = open(dir + 'glove.6B.100d.txt',  "r", encoding="utf-8")
+    for line in f:
+        values = line.split()
+        word = values[0]
+        coefs = asarray(values[1:], dtype='float32')
+        embeddings_index[word] = coefs
+    f.close()
+    print('Loaded %s word vectors.' % len(embeddings_index))
+    
+    # prepare embedding matrix
+    print('Preparing embedding matrix.')
+
+    # create a weight matrix for words in training docs
+    num_words = min(MAX_NUM_WORDS, len(word_index) + 1)
+    embedding_matrix = numpy.random.uniform(-0.001, 0.001, (num_words, EMBEDDING_DIM))
+    for word, i in word_index.items():
+        if i >= MAX_NUM_WORDS:
+            continue
+        embedding_vector = embeddings_index.get(word)
+        if embedding_vector is not None:
+            # words not found in embedding index will be random in (-0.001, 0.001).
+            embedding_matrix[i] = embedding_vector
+         
+    # pad documents to a max length of 108 words
+    # TODO - max_emb_encoder(x_emb, x_mask) - padding the end
+    # data (838332, 108)
+    #data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
+    
+    data = numpy.random.uniform(-0.001, 0.001, (len(sequences), EMBEDDING_DIM))
+    indices = numpy.arange(data.shape[0]) 
+    #review_feature_vecs = numpy.zeros((len(reviews), num_features), dtype="float32")
+    
+    for seq in sequences:
+        #for each review
+        seq_ind = 0
+        #word_cnt = 0
+        #feature_vec = numpy.random.uniform(-0.001, 0.001, (EMBEDDING_DIM))
+
+        # mean
+        def average_emb(input_seq):
+            word_cnt = 0
+            #feature_vec = numpy.random.uniform(-0.001, 0.001, (EMBEDDING_DIM))
+            _feature_vec = []
+            for word_index in input_seq:
+                word_cnt += 1
+                # ind = seq[word_index]
+                _feature_vec.append(embedding_matrix[word_index])
+
+            # mean
+            feature_vec = numpy.array(_feature_vec)
+            H_enc = feature_vec.mean(axis=0)
+            embedded_sequences = H_enc
+
+            return  embedded_sequences
+
+        # max 
+        def max_emb(input_seq):
+            #feature_vec = numpy.random.uniform(-0.001, 0.001, (EMBEDDING_DIM))
+            _feature_vec = []
+            for word_index in input_seq:
+                _feature_vec.append(embedding_matrix[word_index])
+
+            feature_vec = numpy.array(_feature_vec)
+            H_enc = feature_vec.max(0)  # batch 1 emb
+
+            embedded_sequences = H_enc
+
+            return  embedded_sequences
+
+        # concat
+        def concat_emb(input_seq):
+            H_enc_1 = max_emb(input_seq)
+            H_enc_2 = average_emb(input_seq)
+
+            embedded_sequences = H_enc_2 +  H_enc_1
+            #embedded_sequences = K.concatenate([H_enc_2, H_enc_1], 1)
+            return embedded_sequences
+
+        data[seq_ind] = average_emb(seq)
+        #data[seq_ind] = max_emb(seq)
+        #data[seq_ind] = concat_emb(seq)    
+        seq_ind += 1
+
+    """
+    for i in indices: 
+        # for each review
+
+        # aver
+        #numpy.average(data[i])
+
+        #max_pooling - get the max index
+        # (108, 100)
+        max_matrix = numpy.random.uniform(-0.001, 0.001, (MAX_SEQUENCE_LENGTH, EMBEDDING_DIM))
+        for j in range(len(data[i])):
+            #word = _word_index[ind]
+            ind = data[i,j]
+            max_matrix[j] = embedding_matrix[ind]
+
+        #data[i] = max_matrix.max(0)
+        _data[i] = numpy.amax(max_matrix, axis=1)
+
+        #index_max = numpy.argmax(data[i])
+        #value_max = numpy.max(data[i])
+        #data[i] = numpy.zeros((1,MAX_SEQUENCE_LENGTH))
+        #data[i,index_max] = value_max    
+        """
+    
+
+    #labels = to_categorical(numpy.asarray(labels))
+    print('Shape of data tensor:', data.shape)
+    #print('Shape of label tensor:', labels.shape)
+
+    #it the data into a training set and a validation set
+    indices = numpy.arange(data.shape[0])
+    numpy.random.shuffle(indices)
+    data = data[indices]
+    #labels = labels[indices]
+    num_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
+    num_test_samples = int(0.2 * data.shape[0])
+
+    x_train = data[:-num_validation_samples]
+    y_train = _labels[:-num_validation_samples]
+    x_test = data[-num_test_samples:]
+    y_test_1 = _labels[-num_test_samples:]
+    x_val = data[-num_validation_samples:]
+    y_val_1 = _labels[-num_validation_samples:]
+
+    #y_test_k = labels_matrix[ (len(labels_matrix)  - num_test_samples) : (len(labels_matrix) + 1), : ]
+
+
+    #x_test = data[-num_test_samples:]
+    #y_test = labels[-num_test_samples:]
+    #_y_test = _labels[-num_test_samples:]
+    _y_test_PERCENT =_labels_PERCENT[-num_test_samples:]
+
+    #
+    #C = 1.0  # SVM regularization parameter
+    print('Classify ... ')
+    # svm_classifier = svm.SVC(kernel='linear', gamma=2, C=1.0)
+    #svm_classifier = svm.SVC(kernel='rbf', gamma=2, C=1.0) #Gaussian Kernel
+    #svm_classifier.fit(x_train,y_train)
+
+    #classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
+    classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
+                     solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
+    #scoring = ['precision_macro', 'recall_macro']
+    #y_pred = cross_val_predict(classifier, x_train, y_train, cv=10)
+    #_y_proba = cross_val_predict(classifier, x_train, y_train, cv=10, method='predict_proba')
+    _y_proba = cross_val_predict(classifier, data, _labels, cv=10, method='predict_proba')
+    #classifier.fit(X_train, y_train)
+    #y_pred = classifier.predict(X_test)
+    #_y_proba = classifier.predict_proba(X_test)
+    y_proba_ind = numpy.argsort(-_y_proba,axis=1) 
+
+    #predict
+    #y_pred = svm_classifier.predict(x_test)
+    #y_proba_ind = numpy.argsort(-y_pred)
+    #print("y_proba: ", y_proba_ind)
+
+    K = 5
+
+    #num = 0
+    #y_test = y_lst[:, 0]
+    #y_pred_max = y_proba_ind[:, 0]
+
+    #precision_1 = metrics.precision_score(_y_test, y_pred_max, average='macro')
+    #print("precision_1: %f" % precision_1)
+        
+    #num_lst = []
+ 
+    #num = numpy.sum(y_test == y_pred_max)
+    #num_lst.append(num)
+    
+    print("precision:")
+    i = 0
+    precisions = []
+    
+    while i < K:
+        #y_test = y_lst[:, 0:i+1]
+        y_pred = y_proba_ind[:, 0:i+1]
+        #print(y_pred)
+
+        i = i+1
+
+        precision = _precision_score(y_pred, _labels_PERCENT, K)
+        precisions.append(precision)
+
+        print(precision)
+
+    print("recall:")
+    #recall = []
+    #recall_1 = metrics.recall_score(_y_test, y_pred_max, average='micro')
+    #recall.append(recall_1)
+    #print("recall_1: %f" % recall_1)
+    
+    i = 0
+    recalls = []
+    while i < K:
+        #y_test = y_lst[:, 0:i+1]
+        y_pred = y_proba_ind[:,  0:i+1]
+
+        i = i+1
+
+        recall = _recall_score(y_pred, _labels_PERCENT, K)
+        recalls.append(recall)
+
+        print(recall)
+
+    """
+    print(scores.keys())
+    print(scores['test_precision_macro'])
+    print(scores['test_recall_macro'])
+
+    """
+    #print(numpy.mean([precisions, recalls], 0))
+    #print(f1)
+   
+    return 0
+
+def train_mlp():
+        # get documents
+    """
+    f1 = open('C:/Users/raymondzhao/myproject/dev.dplearning/data/amazon_data_0719.p', 'r')
+    asins = pickle.load(f1)
+    f1.close()
+    """
+    """
+    #dir = 'C:/Users/raymondzhao/myproject/dev.dplearning/data/'
+    #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    dir = "/data/raymond/workspace/exp2/"
+    file = dir + 'amazon_reviews.json'
+    asins = _read_data(file)
+
+    #file = dir + 'amazon_tech_all_5.csv'
+    #df = pd.read_csv(file)
+
+    # The text samples and their labels
+    texts = []  #list of text samples
+    #labels = array([])
+    labels = [] #list of label ids
+    labels_index = {}  # dictionary mapping label name to numeric id
+
+    # ['14 inches', '2.16 GHz Intel Celeron', '4 GB SDRAM DDR3', 
+    # [[b'I', b'placed', b'my', b'order', b'on', b'December', b'19th', b'and', b'was', b'under', b'the', b'impression', b'it', b'would', b'arrive', b'on', b'the', b'22nd']]
+        # [screensize,cpu, ram, Hard Drive,Graphics Coprocessor, reviews]
+    for _asin in asins:
+        print("The asin %s:", _asin)
+        # [screensize,cpu, ram, reviews]
+        _cpu = asins[_asin][1]
+        if _cpu:
+           _cpu_id = get_cpu_label(_cpu)
+           labels_index[_cpu] = _cpu_id
+
+        _sscreen = asins[_asin][0]
+        if _sscreen:
+            _sscreen_id = get_sscreen_label(_sscreen)
+            labels_index[_sscreen] = _sscreen_id
+
+        _ram = asins[_asin][2]
+        if _ram:
+            _ram_id = get_ram_label(_ram)
+            labels_index[_ram] = _ram_id
+        
+        _harddrive = asins[_asin][3]
+        if _harddrive:
+            _harddrive_id = get_harddrive_label(_harddrive)
+            labels_index[_harddrive] = _harddrive_id
+    
+        #Graphics Coprocessor
+        _graphprocessor = asins[_asin][4]
+        if _graphprocessor:
+            _graphprocessor_id = get_graphprocessor_label(_graphprocessor)
+            labels_index[_graphprocessor] = _graphprocessor_id
+        
+        #reviews
+        reviews = asins[_asin][5] 
+        table = str.maketrans('', '', string.punctuation)
+        #porter = PorterStemmer()
+        for _t in reviews:
+            # t =  " ".join(x.decode("utf-8") for x in _t) #bytes to str
+            #words = text.split()
+            # remove punctuation from each word , and stemming
+
+            stripped = [w.decode("utf-8").lower().translate(table) for w in _t]  
+            s = " ".join(x for x in stripped)
+            #stripped = [w.decode("utf-8").translate(table) for w in _t] 
+            #stripped = [w.decode("utf-8").lower().translate(table) for w in _t]
+            #
+
+            #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
+            texts.append(s)
+            labels.append(_cpu_id)
+            #labels.append(_sscreen_id)
+            #labels.append(_ram_id)
+            #labels.append(_harddrive_id)
+            #labels.append(_graphprocessor_id)
+    """
+
+    """
+    _cpus = df.loc[1, :].tolist()
+    for _cpu in _cpus[1:]:
+        #_cpu = asins[_asin][1]
+        if _cpu:
+           _cpu_id = get_cpu_label(_cpu)
+           labels_index[_cpu] = _cpu_id
+
+    _sscreens = df.loc[0, :].tolist()
+    for _sscreen in _sscreens[1:]:
+        #_sscreen = asins[_asin][0]
+        if _sscreen:
+            _sscreen_id = get_sscreen_label(_sscreen)
+            labels_index[_sscreen] = _sscreen_id
+    
+    _rams = df.loc[2, :].tolist()
+    for _ram in _rams[1:]:
+        if _ram:
+            _ram_id = get_ram_label(_ram)
+            labels_index[_ram] = _ram_id
+    
+    
+    _harddrives = df.loc[3, :].tolist()
+    for _harddrive in _harddrives[1:]:
+        if _harddrive:
+            _harddrive_id = get_harddrive_label(_harddrive)
+            labels_index[_harddrive] = _harddrive_id
+    
+    #Graphics Coprocessor
+    _graphprocessors = df.loc[4, :].tolist()
+    for _graphprocessor in _graphprocessors[1:]:
+        if _graphprocessor:
+            _graphprocessor_id = get_graphprocessor_label(_graphprocessor)
+            labels_index[_graphprocessor] = _graphprocessor_id
+    
+    
+    _reviews = df.loc[5, :].tolist()
+    for _t in _reviews[1:]:
+        t =  " ".join(str(x) for x in _t)
+        texts.append(t)
+        #labels.append(_cpu_id)
+        #labels.append(_sscreen_id)
+        #labels.append(_ram_id)
+        labels.append(_harddrive_id)
+        #labels.append(_graphprocessor_id)
+    """
+    """
+    # get texts and labels
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+
+    #dir = '/data/raymond/workspace/exp2/'
+    #file = dir +  'amazon_reviews.json'
+    file = dir + 'amazon_reviews_copy.json'
+    reviews = []
+    asins_dict = read_data_update.get_amazon_texts_labels(file)
+    texts = []
+    labels_lst = []
+    for asin in asins_dict:
+        texts.append(asins_dict[asin][0])
+        labels_lst.append(asins_dict[asin][1])
 
     #
     labels_matrix = numpy.array(labels_lst)
     labels = labels_matrix[:, 0].tolist()
-    
+    """
+
+    # get texts and labels
+    #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    dir = '/data/raymond/workspace/exp2/'
+
+    #dir = '/data/raymond/workspace/exp2/'
+    #file = dir +  'amazon_reviews.json'
+    file = dir + 'amazon_reviews_copy.json'
+    reviews = []
+    asins_dict = read_data_update.get_amazon_texts_labels(file)
+    # the generated asins
+    generated_asins = read_data_update.read_generated_amazon_reviews()
+    texts = []
+    #generated_texts = []
+    labels_lst = []
+    for asin in asins_dict:
+        """
+        for text in asins_dict[asin][0]:
+            texts.append(text)
+        """
+        #i = 0
+        if asin in generated_asins:
+            i = 0
+            while i < len(generated_asins[asin]):
+                texts.append(generated_asins[asin][i])
+                labels_lst.append(asins_dict[asin][1][i])
+
+                i = i+1
+
+            """
+            for text in generated_asins[asin]:
+                texts.append(text)
+
+            for label in asins_dict[asin][1]:
+                labels_lst.append(label)
+            """
+        else:
+            for text in asins_dict[asin][0]:
+                texts.append(text)
         
+        #texts.append(asins_dict[asin][0])
+            for label in asins_dict[asin][1]:
+                labels_lst.append(label)
+
+    #
+    labels_matrix = numpy.array(labels_lst)
+
+    PERCENT = 0.1 # the range between the pred object
+    _labels = labels_matrix[:, 0].tolist()
+    _labels_PERCENT = labels_matrix[:, 0 : 7 * 2]
+    
     #Found  reviews
     print('Found %s reviews.' % len(texts))
 
@@ -1166,53 +1748,112 @@ def train_svm():
     num_test_samples = int(0.2 * data.shape[0])
 
     x_train = data[:-num_validation_samples]
-    y_train = labels[:-num_validation_samples]
+    y_train = _labels[:-num_validation_samples]
     x_test = data[-num_test_samples:]
-    y_test_1 = labels[-num_test_samples:]
+    y_test_1 = _labels[-num_test_samples:]
     x_val = data[-num_validation_samples:]
-    y_val_1 = labels[-num_validation_samples:]
+    y_val_1 = _labels[-num_validation_samples:]
 
-    y_test_k = labels_matrix[ (len(labels_matrix)  - num_test_samples) : (len(labels_matrix) + 1), : ]
+    #y_test_k = labels_matrix[ (len(labels_matrix)  - num_test_samples) : (len(labels_matrix) + 1), : ]
+
+
+    #x_test = data[-num_test_samples:]
+    #y_test = labels[-num_test_samples:]
+    #_y_test = _labels[-num_test_samples:]
+    _y_test_PERCENT =_labels_PERCENT[-num_test_samples:]
 
     #
     #C = 1.0  # SVM regularization parameter
     print('Classify ... ')
     # svm_classifier = svm.SVC(kernel='linear', gamma=2, C=1.0)
-    svm_classifier = svm.SVC(kernel='rbf', gamma=2, C=1.0) #Gaussian Kernel
-    svm_classifier.fit(x_train,y_train)
+    #svm_classifier = svm.SVC(kernel='rbf', gamma=2, C=1.0) #Gaussian Kernel
+    #svm_classifier.fit(x_train,y_train)
 
-    y_pred = svm_classifier.predict(x_test)
+    classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
+                     solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
+    #scoring = ['precision_macro', 'recall_macro']
+    #y_pred = cross_val_predict(classifier, x_train, y_train, cv=10)
+    #_y_proba = cross_val_predict(classifier, x_train, y_train, cv=10, method='predict_proba')
+    _y_proba = cross_val_predict(classifier, data, _labels, cv=5, method='predict_proba')
+    #classifier.fit(X_train, y_train)
+    #y_pred = classifier.predict(X_test)
+    #_y_proba = classifier.predict_proba(X_test)
+    y_proba_ind = numpy.argsort(-_y_proba,axis=1) 
+
+    #predict
+    #y_pred = svm_classifier.predict(x_test)
+    #y_proba_ind = numpy.argsort(-y_pred)
+    #print("y_proba: ", y_proba_ind)
+
+    K = 5
+
+    #num = 0
+    #y_test = y_lst[:, 0]
+    #y_pred_max = y_proba_ind[:, 0]
+
+    #precision_1 = metrics.precision_score(_y_test, y_pred_max, average='macro')
+    #print("precision_1: %f" % precision_1)
+        
+    #num_lst = []
+ 
+    #num = numpy.sum(y_test == y_pred_max)
+    #num_lst.append(num)
     
-    K = 70
-
-    num = 0
-    y_test = y_test_k[:, 1]
-    num = numpy.sum(y_test == y_pred)
-
-    acc1 = num/len(y_pred)
-    print(acc1)
-
-    i = 1
+    print("precision:")
+    i = 0
+    precisions = []
+    
     while i < K:
+        #y_test = y_lst[:, 0:i+1]
+        y_pred = y_proba_ind[:, 0:i+1]
+        #print(y_pred)
+
         i = i+1
-        y_test = y_test_k[:, 0:i]
 
-        #print(confusion_matrix(y_test, y_pred))
+        precision = _precision_score(y_pred, _labels_PERCENT, K)
+        precisions.append(precision)
 
-        print(accuracy_score(y_test, y_pred))
-        #print(recall_score(y_test, y_pred))
-        #print(f1_score(y_test, y_pred))
+        print(precision)
 
-        #print(classification_report(y_test, y_pred))
+    print("recall:")
+    #recall = []
+    #recall_1 = metrics.recall_score(_y_test, y_pred_max, average='micro')
+    #recall.append(recall_1)
+    #print("recall_1: %f" % recall_1)
+    
+    i = 0
+    recalls = []
+    while i < K:
+        #y_test = y_lst[:, 0:i+1]
+        y_pred = y_proba_ind[:,  0:i+1]
+
+        i = i+1
+
+        recall = _recall_score(y_pred, _labels_PERCENT, K)
+        recalls.append(recall)
+
+        print(recall)
+
+    """
+    print(scores.keys())
+    print(scores['test_precision_macro'])
+    print(scores['test_recall_macro'])
+
+    """
+    #print(numpy.mean([precisions, recalls], 0))
+    #print(f1)
+
 
     return 0
 
 def main():
     #data()
     #
-    train_wordembedding()
+    #train_wordembedding()
     #
-    #train_svm()
+    train_svm()
+
+    #train_mlp()
 
 
 if __name__ == '__main__':

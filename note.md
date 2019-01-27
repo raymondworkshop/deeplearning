@@ -1,6 +1,18 @@
 ### work notes
 
+#### 2019-01-11 
+  * TODO
+     - Feedforward neural network and backprop
+     - Computation graphs and modules
+     - Autograd in ML
+
+
 #### 2019-01-10 
+  * todo
+    - using the labeld data
+    - improve the precisions based on range inds
+    - GAN
+
   * how to improve performances in machine learning
     - add more data 
     - model complexity -> too complex or not enough
@@ -14,7 +26,7 @@
   * system
     - jug to manage computations to use multiple cores or multiple machines
     - AWS E2
-     - StarCluster
+    - StarCluster
 
 #### 2019-01-03 
  * metrics - Discounted cumulative gain in information retrieval

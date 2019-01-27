@@ -14,6 +14,7 @@ import ast
 import re
 
 import string
+import math
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -240,43 +241,78 @@ def get_sscreen_label(lst):
 
 
 def _get_sscreen_label(_str):
-    # [ 11.6 inches, 13.3 inches, 14 inches, 15.6 inches, 17.3 inches ]
+    # [10.1 inches, 11.6 inches, 12.3 inches, 12.5 inches, 13.3 inches, 13.5 inches , 14 inches, 15.6 inches, 17.3 inches ]
+    lst = [10.1, 11.6, 12.3, 12.5, 13.3, 13.5, 14, 15.6, 17.3]
+    
     _sscreen_map = {
-        "<= 12 inches": 0,
-        "<= 13 inches":1,
-        "<= 14 inches": 2,
-        "<= 15 inches":3,
-        "> 15 inches":4
+        10.1 : 0,
+        11.6 : 1,
+        12.3 : 2,
+        12.5 : 3,
+        13.3 : 4,
+        13.5 : 5,
+        14.0 : 6,
+        15.6 : 7,
+        17.3 : 8
     }
+    
+
+    #_sscreen_dict = {}
 
     _sscreen_label = 4 #unknown
     if 'inches' in _str.lower():
-        _sscreen_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
-        if _sscreen_size <= 12:
+        _sscreen_size = float(re.search('[\d]+[.\d]*', _str).group())
+        if _sscreen_size == 10.1:
             _sscreen_label = 0
-        elif _sscreen_size <= 13:
+        if _sscreen_size == 11.6:
             _sscreen_label = 1
-        elif _sscreen_size  <= 14:
+        elif _sscreen_size == 12.3:
             _sscreen_label = 2
-        elif _sscreen_size <= 15:
+        elif _sscreen_size  == 12.5 :
             _sscreen_label = 3
-        else:
+        elif _sscreen_size == 13.3 :
             _sscreen_label = 4
+        elif _sscreen_size == 13.5 :
+            _sscreen_label = 5 
+        elif _sscreen_size == 14 :
+            _sscreen_label = 6   
+        elif _sscreen_size == 15.6 :
+            _sscreen_label = 7   
+        elif _sscreen_size == 17.3 :
+            _sscreen_label = 8 
+        else:
+            pass
 
-    return _sscreen_label
+    _sscreen_lst = get_inds(_sscreen_size, lst)
+    sscreen_lst = []
+    for _sscreen in _sscreen_lst:
+        sscreen_lst.append(_sscreen_map[_sscreen])
+        
+
+    return sscreen_lst
 
 
 def get_ram_label(_str):
     # [ "4 GB SDRAM DDR3", "4 GB DDR3 SDRAM","8 GB",4 GB SDRAM DDR4","16 GB DDR4" ,"2 GB SDRAM","6 GB DDR SDRAM", "12 GB DDR SDRAM" ]
+    lst = [2, 4, 6, 8, 12, 16]
     _ram_map = {
         "2 GB SDRAM": 0,
         "4 GB SDRAM DDR3": 1,
         "6 GB DDR SDRAM":2,
         "8 GB SDRAM DDR3": 3,
-        "8 GB SDRAM DDR4": 3,
-        "12 GB DDR SDRAM":4,
-        "16 GB DDR4" :5,
-        "others":6,
+        "8 GB SDRAM DDR4": 4,
+        "12 GB DDR SDRAM":5,
+        "16 GB DDR4" :6,
+        "others":7,
+    }
+
+    _ram_map = {
+        2 : 0,
+        4 : 1,
+        6 : 2,
+        8 : 3,
+        12 : 4,
+        16 : 5
     }
 
     #_ram_label = 7 #unknown
@@ -292,18 +328,24 @@ def get_ram_label(_str):
             if 'ddr3' in _str.lower():
                 _ram_label = 3
             elif 'ddr4' in _str.lower():
-                _ram_label = 3
+                _ram_label = 4
             else:
-                _ram_label = 3
+                _ram_label = 5
         elif _ram_size  == 12:
-            _ram_label = 4
+            _ram_label = 6
         elif _ram_size  == 16:
-            _ram_label = 5
+            _ram_label = 7
         else:
-            #_ram_label = 7
-            pass
+            _ram_label = 8
+            #pass
 
-    return _ram_label
+    _ram_lst = get_inds(_ram_size, lst)
+    ram_lst = []
+    for _ram in _ram_lst:
+        ram_lst.append(_ram_map[_ram])
+        
+
+    return ram_lst
 
 
 def get_harddrive_label(_str):
@@ -313,20 +355,26 @@ def get_harddrive_label(_str):
     # '2 TB HDD 5400 rpm', '32 GB SSD','64 GB SSD'
     #
     # ]
+    lst = [16, 128, 256, 500, 32, 64, 1000, 2000, 512, 320, 1024]
+
     _harddrive_map = {
-        "SSD <= 128": 0,
-        "SSD > 128": 1,
-        "HDD > 1T" :2,
-        "HDD ~= 1T" :3,
-        "HDD ~= 500G" :4,
-        "HDD < 500G" :5,
-        "others": 5
+        16: 0,
+        128: 1,
+        256 :2,
+        500 :3,
+        32 :4,
+        64 :5,
+        1000 : 5,
+        2000 : 6,
+        512 : 7,
+        320 : 8,
+        1024 : 9
     }
 
     #_harddrive_label = 5 #unknown
     if 'ssd' or 'solid' or 'mechanical' in _str.lower():
         if num_there(_str):
-            _harddrive_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
+            _harddrive_size = float(re.search('[\d]+[.\d]*', _str).group())
             if _harddrive_size <= 128:
                 _harddrive_label = 0
             else:
@@ -338,7 +386,7 @@ def get_harddrive_label(_str):
         #_harddrive_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
         if 'tb' in _str.lower():
             if num_there(_str):
-                _harddrive_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
+                _harddrive_size = float(re.search('[\d]+[.\d]*', _str).group())
                 if _harddrive_size > 1:
                     _harddrive_label = 1
                 else:
@@ -633,6 +681,55 @@ def read_amazon_data(file):
     return 0
 
 
+def get_repharased_asins(sheets):
+    asins = {}
+    for name, sheet in sheets.items():
+        #print(sheet)
+        #texts = []
+        rephrased_reviews = sheet.keys()[-1]
+
+        reviews = sheet[rephrased_reviews]
+        _text = reviews[0]
+        #value = math.isnan(float(_value))
+        if isinstance(_text, str):
+            asins[name] = []
+            for series_val in reviews.items():
+                if isinstance(series_val[1], str) : # # not NaN
+                   asins[name].append(series_val[1])
+                elif np.isnan(series_val[1]):
+                    break
+                else:
+                    pass
+        else:
+            #print(_text)
+            pass
+
+    return asins
+
+
+def read_generated_amazon_reviews():
+    """ get the generated amazon data
+    """
+    generated_asins = {}
+    asins_0 = {}
+    asins_1 = {}
+
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    #dir = '/data/raymond/workspace/exp2/'
+    file0 = dir + 'amazon_0.xlsx'
+    file1 = dir + 'amazon_1.xlsx'
+
+    sheets_0 = pd.read_excel(file0, sheet_name=None)
+    sheets_1 = pd.read_excel(file1, sheet_name=None)
+    
+    asins_0 = get_repharased_asins(sheets_0)
+    asins_1 = get_repharased_asins(sheets_1)
+    generated_asins.update(asins_0)
+    generated_asins.update(asins_1)
+
+    return generated_asins
+
+
 def _read_data(file):
     #list_reviews = []
     asins = {}
@@ -759,6 +856,22 @@ def _plt():
  0.48608201, 0.5086159,  0.50843061, 0.51264591, 0.52941176, 0.52777778,
  0.52631579, 0.525,     0.52380952, 0.52272727, 0.52173913, 0.52083333,
  0.52,       0.51923077, 0.51851852, 0.51785714, 0.51724138, 0.51666667]
+
+    f1 =[0.12256809, 0.11575875, 0.21984436, 0.28891051, 0.36536965, 0.44649805,
+ 0.52362424, 0.6118677,  0.6487246,  0.67042802, 0.69172267, 0.71579118,
+ 0.75815624, 0.77473596, 0.78236057, 0.78732977, 0.80041199, 0.81333766,
+ 0.81824698, 0.82548638, 0.83351862, 0.83993633, 0.83302318, 0.81914721,
+ 0.80638132, 0.79459743, 0.78368641, 0.77355475, 0.76412183, 0.75531777,
+ 0.74708171, 0.73936041, 0.73210706, 0.72528038, 0.7188438,  0.71276481,
+ 0.70701441, 0.70156666, 0.69639828, 0.69148833]
+
+    f1 = [0.04280156, 0.16050584, 0.21141375, 0.25826848, 0.34435798, 0.39429313,
+ 0.4205114,  0.45087549, 0.48357112, 0.49766537, 0.50707464, 0.5113489,
+ 0.5179587,  0.52098388, 0.52931258, 0.53039883, 0.54188602, 0.54669261,
+ 0.55181241, 0.55175097, 0.54928664, 0.54704634, 0.54500085, 0.54312581,
+ 0.54140078, 0.53980844, 0.53833405, 0.53696498, 0.53569033, 0.53450065,
+ 0.53338772, 0.53234436, 0.53136423, 0.53044175, 0.52957198, 0.52875054,
+ 0.5279735,  0.52723735, 0.52653896, 0.52587549]
 
     t = np.arange(0, len(f1))
     plt.plot(t, f1, 'bs')
@@ -1028,6 +1141,7 @@ def sort_items(lst):
     # sort item 
 
     dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    #dir = '/data/raymond/workspace/exp2/'
     cpu_tech_file = dir + 'amazon_tech_cpus_1207.json'
     price_lst = []
     #label_lst = []
@@ -1156,10 +1270,10 @@ def map_params_prices(file):
     cpu_labels_dict = sort_items(cpu_lst)
 
     # screen size
-    #sscreen_lst = get_sscreen_label(_sscreens)
+    sscreen_dict = get_sscreen_label(_sscreens)
     #print(sscreen_lst)
 
-    return cpu_labels_dict
+    return sscreen_dict
 
 
 def get_amazon_texts_labels(file):
@@ -1189,7 +1303,8 @@ def get_amazon_texts_labels(file):
     # [[b'I', b'placed', b'my', b'order', b'on', b'December', b'19th', b'and', b'was', b'under', b'the', b'impression', b'it', b'would', b'arrive', b'on', b'the', b'22nd']]
         # [screensize,cpu, ram, Hard Drive,Graphics Coprocessor, reviews]
     
-    tech_dict = {}
+    #tech_dict = {}
+    asins_dict = {}
 
     _sscreens = []
     _cpus = []
@@ -1211,22 +1326,23 @@ def get_amazon_texts_labels(file):
         """
 
         _sscreen = asins[_asin][0]
-        _sscreens.append(_sscreen)
-        """
         if _sscreen:
+            _sscreen_lst = []
             #_sscreen_id = get_sscreen_label(_sscreen)
             #labels_index[_sscreen] = _sscreen_id
             #
+            #_sscreens.append(_sscreen)
             _sscreens.append(_sscreen)
-        """
+            _sscreen_lst = _get_sscreen_label(_sscreen)
+        
 
         _ram = asins[_asin][2]
-        _rams.append(_ram)
-        """
         if _ram:
-            _ram_id = get_ram_label(_ram)
-            labels_index[_ram] = _ram_id
-        """
+            _ram_lst = []
+            #_ram_id = get_ram_label(_ram)
+            #labels_index[_ram] = _ram_id
+            _rams.append(_ram)
+            _ram_lst = get_ram_label(_ram)
         
         _harddrive = asins[_asin][3]
         _harddrives.append(_harddrive)
@@ -1247,6 +1363,35 @@ def get_amazon_texts_labels(file):
 
        # tech_dict[str(_asin)] = [_cpu,_sscreen,_ram,_harddrive,_graphprocessor]
 
+       #reviews
+        reviews = asins[_asin][5] 
+        table = str.maketrans('', '', string.punctuation)
+        #porter = PorterStemmer()
+        _texts = []
+        _labels = []
+        for _t in reviews:
+            # t =  " ".join(x.decode("utf-8") for x in _t) #bytes to str
+            #words = text.split()
+            # remove punctuation from each word , and stemming
+
+            stripped = [w.decode("utf-8").lower().translate(table) for w in _t]  
+            s = " ".join(x for x in stripped)
+            #stripped = [w.decode("utf-8").translate(table) for w in _t] 
+            #stripped = [w.decode("utf-8").lower().translate(table) for w in _t]
+            #
+
+            #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
+            #_texts.append(s)
+            #_labels.append(_cpu_id)
+            
+            #_labels.append(_sscreen_lst)
+            #_labels.append(_ram_lst)
+            #_labels.append(_harddrive_id)
+            #_labels.append(_graphprocessor_id)
+
+        #asins_dict[_asin] = [_texts, _labels]
+
+    
     #cpu
     cpu_lst = get_cpu_label(_cpus)
     print(cpu_lst)
@@ -1254,12 +1399,17 @@ def get_amazon_texts_labels(file):
     # get the class list according to the dist
     cpu_labels_dict = sort_items(cpu_lst)
 
+    
+    #_sscreen_labels_dict =
+    
     #_sscreens = []
     _cpus = []
     ind = 0
+    asins_dict = {}
     #for ind in cpu_labels_dict.items():
     for _asin in cpu_labels_dict:
         print("The asin %s:", _asin)
+        #asins_lst.append(_asin)
         # [screensize,cpu, ram, reviews]
         _cpu = asins[_asin][1]
         if _cpu:
@@ -1274,7 +1424,7 @@ def get_amazon_texts_labels(file):
         _sscreen = asins[_asin][0]
         if _sscreen:
             _sscreen_id = get_sscreen_label(_sscreen)
-            labels_index[_sscreen] = _sscreen_id
+            #labels_index[_sscreen] = _sscreen_id
             #
             #_sscreens.append(_sscreen)
 
@@ -1298,6 +1448,8 @@ def get_amazon_texts_labels(file):
         reviews = asins[_asin][5] 
         table = str.maketrans('', '', string.punctuation)
         #porter = PorterStemmer()
+        _texts = []
+        _labels = []
         for _t in reviews:
             # t =  " ".join(x.decode("utf-8") for x in _t) #bytes to str
             #words = text.split()
@@ -1310,15 +1462,93 @@ def get_amazon_texts_labels(file):
             #
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
-            texts.append(s)
-            labels.append(_cpu_id)
+            _texts.append(s)
+            _labels.append(_cpu_id)
             
             #labels.append(_sscreen_id)
             #labels.append(_ram_id)
             #labels.append(_harddrive_id)
             #labels.append(_graphprocessor_id)
+
+        asins_dict[_asin] = [_texts, _labels]
     
-    return texts, labels
+
+    # screen size
+    #sscreen_dict = get_sscreen_label(_sscreens)
+
+    """
+    # about CPUs
+    _cpus = []
+    ind = 0
+    asins_dict = {}
+    #for ind in cpu_labels_dict.items():
+    for _asin in cpu_labels_dict:
+        print("The asin %s:", _asin)
+        #asins_lst.append(_asin)
+        # [screensize,cpu, ram, reviews]
+        _cpu = asins[_asin][1]
+        if _cpu:
+           #_cpu_id = _get_cpu_label(_cpu)
+           _cpu_id = cpu_labels_dict[_asin]
+           #_cpus.append(_cpu)
+
+           #labels_index[_cpu] = _cpu_id
+           #
+           #_cpus.append(_cpu)
+
+        _sscreen = asins[_asin][0]
+        if _sscreen:
+            _sscreen_id = get_sscreen_label(_sscreen)
+            #labels_index[_sscreen] = _sscreen_id
+            #
+            #_sscreens.append(_sscreen)
+
+        _ram = asins[_asin][2]
+        if _ram:
+            _ram_id = get_ram_label(_ram)
+            labels_index[_ram] = _ram_id
+        
+        _harddrive = asins[_asin][3]
+        if _harddrive:
+            _harddrive_id = get_harddrive_label(_harddrive)
+            labels_index[_harddrive] = _harddrive_id
+    
+        #Graphics Coprocessor
+        _graphprocessor = asins[_asin][4]
+        if _graphprocessor:
+            _graphprocessor_id = get_graphprocessor_label(_graphprocessor)
+            labels_index[_graphprocessor] = _graphprocessor_id
+        
+        #reviews
+        reviews = asins[_asin][5] 
+        table = str.maketrans('', '', string.punctuation)
+        #porter = PorterStemmer()
+        _texts = []
+        _labels = []
+        for _t in reviews:
+            # t =  " ".join(x.decode("utf-8") for x in _t) #bytes to str
+            #words = text.split()
+            # remove punctuation from each word , and stemming
+
+            stripped = [w.decode("utf-8").lower().translate(table) for w in _t]  
+            s = " ".join(x for x in stripped)
+            #stripped = [w.decode("utf-8").translate(table) for w in _t] 
+            #stripped = [w.decode("utf-8").lower().translate(table) for w in _t]
+            #
+
+            #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
+            _texts.append(s)
+            _labels.append(_cpu_id)
+            
+            #labels.append(_sscreen_id)
+            #labels.append(_ram_id)
+            #labels.append(_harddrive_id)
+            #labels.append(_graphprocessor_id)
+
+        asins_dict[_asin] = [_texts, _labels]
+    """
+    
+    return asins_dict
 
 
 def main():
@@ -1375,9 +1605,12 @@ def main():
     #file = 'amazon_reviews.json'
     #file = 'amazon_reviews_copy.json'
     reviews = []
-    #texts, labels = get_amazon_texts_labels(file)
+    asins_dict = get_amazon_texts_labels(file)
 
-    _plt()
+    #generated_asins = {}
+    #generated_asins = read_generated_amazon_reviews()
+
+    #_plt()
 
  
     #asins = read_data(file)
