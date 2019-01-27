@@ -46,6 +46,8 @@ from keras import initializers
 import matplotlib.pyplot as plt
 
 #from get_data import get_labels
+#from . import read_data_update
+import read_data_update
 
 #MAX_SEQUENCE_LENGTH = 1000
 MAX_SEQUENCE_LENGTH = 100 #54 * 2 #300
@@ -346,6 +348,7 @@ def read_data(file):
     return asins
 
 def train():
+
         # get documents
     """
     f1 = open('C:/Users/raymondzhao/myproject/dev.dplearning/data/amazon_data_0719.p', 'r')
@@ -424,8 +427,142 @@ def train():
     
     return texts, labels
 
+def _precision_score(y_test, y_pred, K):
+    precision = 0
+
+    num = 0
+    i = 0
+
+    """
+    while i < len(y_test):
+        lst = y_test[i].tolist()
+        if y_pred[i] in lst:
+            num = num + 1
+
+        i = i + 1
+
+    precision = num / (len(y_pred) * y_test.shape[1])
+    """
+
+    while i < y_test.shape[1]:
+        lst = y_test[:, i].tolist()
+        j = 0
+        while  j < len(lst):
+            if lst[j] in y_pred[j].tolist():
+                num = num + 1
+            j = j + 1
+
+        i = i + 1
+    
+    precision = num / (len(y_pred) * y_test.shape[1])
+   
+    
+    """
+    i = set(y_test.flatten()).intersection(y_pred.flatten())
+    len1 = len(y_pred)
+    if len1 == 0:
+        precision = 0
+    else:
+        precision =  len(i) / len1
+    """
+
+    return precision
+
+
+def _recall_score(y_test, y_pred):
+    recall = 0
+
+    num = 0
+    i = 0
+    """
+    while i < len(y_test):
+        lst = y_test[i].tolist()
+        if y_pred[i] in lst:
+            num = num + 1
+
+        i = i + 1
+    """
+
+    
+    while i < y_test.shape[1]:
+        lst = y_test[:, i].tolist()
+        j = 0
+        while  j < len(lst):
+            if lst[j] in y_pred[j].tolist():
+                num = num + 1
+            j = j + 1
+
+        i = i + 1
+    
+    recall = num / len(y_test)
+    
+    """
+    i = set(y_test).intersection(y_pred)
+    return len(i) / len(y_test)
+    """
+
+    return recall
+
+
+
+def train_RNN():
+    # get texts and labels
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+
+    #dir = '/data/raymond/workspace/exp2/'
+    #file = dir +  'amazon_reviews.json'
+    file = dir + 'amazon_reviews_copy.json'
+    reviews = []
+    asins_dict = read_data_update.get_amazon_texts_labels(file)
+    # the generated asins
+    generated_asins = read_data_update.read_generated_amazon_reviews()
+    texts = []
+    #generated_texts = []
+    labels_lst = []
+    for asin in asins_dict:
+        """
+        for text in asins_dict[asin][0]:
+            texts.append(text)
+        """
+        #i = 0
+        if asin in generated_asins:
+            i = 0
+            while i < len(generated_asins[asin]):
+                texts.append(generated_asins[asin][i])
+                labels_lst.append(asins_dict[asin][1][i])
+
+                i = i+1
+
+            """
+            for text in generated_asins[asin]:
+                texts.append(text)
+
+            for label in asins_dict[asin][1]:
+                labels_lst.append(label)
+            """
+        else:
+            for text in asins_dict[asin][0]:
+                texts.append(text)
+        
+        #texts.append(asins_dict[asin][0])
+            for label in asins_dict[asin][1]:
+                labels_lst.append(label)
+
+    #
+    labels_matrix = np.array(labels_lst)
+
+    PERCENT = 0.1 # the range between the pred object
+    #_labels = labels_matrix[:, 0].tolist()
+    #_labels_PERCENT = labels_matrix[:, 0 : 7 * 1]
+
+    return texts, labels_matrix
+
+
 #
-texts, labels = train()
+#texts, labels = train()
+texts, labels_matrix = train_RNN()
+_labels = labels_matrix[:, 0].tolist()
+_labels_PERCENT = labels_matrix[:, 0 : 7]
     
 #
 tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
@@ -437,7 +574,7 @@ print('Found %s unique tokens.' % len(word_index))
 
 data = pad_sequences(sequences, maxlen=MAX_SEQUENCE_LENGTH)
 
-labels = to_categorical(np.asarray(labels))
+labels = to_categorical(np.asarray(_labels))
 print('Shape of data tensor:', data.shape)
 print('Shape of label tensor:', labels.shape)
 
@@ -445,14 +582,16 @@ indices = np.arange(data.shape[0])
 np.random.shuffle(indices)
 data = data[indices]
 labels = labels[indices]
-#nb_validation_samples = int((VALIDATION_SPLIT + TEST_SPLIT) * data.shape[0])
-nb_validation_samples = int(VALIDATION_SPLIT *  data.shape[0])
+nb_validation_samples = int((VALIDATION_SPLIT + TEST_SPLIT) * data.shape[0])
+#nb_validation_samples = int(VALIDATION_SPLIT *  data.shape[0])
 nb_test_samples = int(TEST_SPLIT * data.shape[0])
 
 x_train = data[:-nb_validation_samples]
 y_train = labels[:-nb_validation_samples]
-x_test = data[-nb_validation_samples:]
-y_test = labels[-nb_validation_samples:]
+x_test = data[-nb_test_samples:]
+y_test = labels[-nb_test_samples:]
+_y_test = _labels[-nb_test_samples:]
+_y_test_PERCENT =_labels_PERCENT[-nb_test_samples:]
 """
 x_val = data[-nb_validation_samples:-nb_test_samples]
 y_val = labels[-nb_validation_samples:-nb_test_samples]
@@ -466,9 +605,10 @@ print(y_train.sum(axis=0))
 print(y_test.sum(axis=0))
 
 #GLOVE_DIR = "~/Testground/data/glove"
-GLOVE_DIR = "/data/raymond/workspace/exp2/"
+#GLOVE_DIR = "/data/raymond/workspace/exp2/"
+GLOVE_DIR = "C:/Users/raymondzhao/myproject/dev.deeplearning/data/"
 embeddings_index = {}
-f = open(os.path.join(GLOVE_DIR, 'glove.6B.100d.txt'))
+f = open(GLOVE_DIR + 'glove.6B.100d.txt',  "r", encoding="utf-8")
 for line in f:
     values = line.split()
     word = values[0]
@@ -476,7 +616,7 @@ for line in f:
     embeddings_index[word] = coefs
 f.close()
 
-print('Total %s word vectors.' % len(embeddings_index))
+print('Loaded %s word vectors.' % len(embeddings_index))
 
 embedding_matrix = np.random.random((len(word_index) + 1, EMBEDDING_DIM))
 #embedding_matrix = np.random.uniform(-0.001, 0.001, (len(word_index) + 1, EMBEDDING_DIM))
@@ -537,19 +677,83 @@ for epoch in range(5):
     """
 
     loss, accuracy, precision, recall = model.evaluate(x_test, y_test, batch_size=bsize, verbose=0)
-    
+
+    """
     f1 = (precision + recall) / 2
     fs.append(f1)
     acc.append(accuracy)
     pre.append(precision)
     rec.append(recall)
     print('accuracy: %f, precision: %f, recall: %f, f1: %f' % (accuracy, precision, recall, f1))
+    """
 
+    #predict
+    y_proba = model.predict(x_test)
+    y_proba_ind = np.argsort(-y_proba)
+    print("y_proba: ", y_proba_ind)
+
+    K = 5
+
+    #num = 0
+    #y_test = y_lst[:, 0]
+    y_pred_max = y_proba_ind[:, 0]
+
+    #precision_1 = metrics.precision_score(_y_test, y_pred_max, average='macro')
+    #print("precision_1: %f" % precision_1)
+        
+    #num_lst = []
+ 
+    #num = np.sum(y_test == y_pred_max)
+    #num_lst.append(num)
+    
+    print("precision:")
+    i = 0
+    precisions = []
+    
+    while i < K:
+        #y_test = y_lst[:, 0:i+1]
+        y_pred = y_proba_ind[:, 0:i+1]
+
+        i = i+1
+
+        precision = _precision_score(y_pred, _y_test_PERCENT, K)
+        precisions.append(precision)
+
+        print(precision)
+
+    print("recall:")
+    #recall = []
+    #recall_1 = metrics.recall_score(_y_test, y_pred_max, average='micro')
+    #recall.append(recall_1)
+    #print("recall_1: %f" % recall_1)
+    
+    i = 0
+    recalls = []
+    while i < K:
+        #y_test = y_lst[:, 0:i+1]
+        y_pred = y_proba_ind[:, 0:i+1]
+
+        i = i+1
+
+        recall = _recall_score(y_pred, _y_test_PERCENT)
+        recalls.append(recall)
+        print(recall)
+
+    """
+    print(scores.keys())
+    print(scores['test_precision_macro'])
+    print(scores['test_recall_macro'])
+
+    """
+    print(np.mean([precisions, recalls], 0))
+
+"""
 print("The metric \n")
 print('accuracy: ',acc)
 print('precision: ',pre)
 print('recall: ',rec)
 print('f1: ',fs)
+"""
 
 """
 def plot_history(history):
