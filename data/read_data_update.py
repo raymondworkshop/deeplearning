@@ -371,7 +371,8 @@ def get_harddrive_label(_str):
         1024 : 9
     }
 
-    #_harddrive_label = 5 #unknown
+    _harddrive_label = 5 #unknown
+    _harddrive_size = 32
     if 'ssd' or 'solid' or 'mechanical' in _str.lower():
         if num_there(_str):
             _harddrive_size = float(re.search('[\d]+[.\d]*', _str).group())
@@ -382,8 +383,8 @@ def get_harddrive_label(_str):
         else:
             _harddrive_label = 0
 
-    if 'hdd' in _str.lower():
-        #_harddrive_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
+    elif 'hdd' in _str.lower():
+        _harddrive_size = int(float(re.search('[\d]+[.\d]*', _str).group()))
         if 'tb' in _str.lower():
             if num_there(_str):
                 _harddrive_size = float(re.search('[\d]+[.\d]*', _str).group())
@@ -398,8 +399,15 @@ def get_harddrive_label(_str):
                     _harddrive_label = 3
                 else:
                     _harddrive_label = 4
+    else:
+        pass
 
-    return _harddrive_label
+    _harddrive_lst = get_inds(_harddrive_size, lst)
+    harddrive_lst = []
+    for _harddrive in _harddrive_lst:
+        harddrive_lst.append(_harddrive_map[_harddrive])
+
+    return harddrive_lst
 
 
 def num_there(s):
@@ -413,21 +421,32 @@ def get_graphprocessor_label(_str):
 
     ]
     """
+
+    lst = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
     _graphprocessor_map = {
         "Intel HD Graphics 50X": 0,
-        "Intel HD Graphics 505": 0,
-        "Intel UHD Graphics 620":1,
-        "Intel HD Graphics" :1,
-        "AMD Radeon R2": 3,
-        "AMD Radeon R5": 4,
-        "AMD Radeon R7": 4,
-        "AMD Radeon R4" :3,
-        "NVIDIA GeForce GTX 1050": 58,
-        "NVIDIA GeForce 940MX" :  5,
-        "Integrated" : 6,
-        "others| PC | FirePro W4190M ": 7
+        "Intel HD Graphics 505": 1,
+        "Intel UHD Graphics 620":2,
+        "Intel HD Graphics" :3,
+        "AMD Radeon R2": 4,
+        "AMD Radeon R5": 5,
+        "AMD Radeon R7": 6,
+        "AMD Radeon R4" :7,
+        "NVIDIA GeForce GTX 1050": 8,
+        "NVIDIA GeForce 940MX" :  9,
+        "Integrated" : 10,
+        "others| PC | FirePro W4190M ": 11
     }
 
+    _labels = 11
+    if _str in _graphprocessor_map.keys():
+        _labels = _graphprocessor_map[_str]
+
+    else:
+        pass
+
+    """
     _graphprocessor_label = 5 #unknown
     if 'intel' in _str.lower():
         
@@ -463,8 +482,17 @@ def get_graphprocessor_label(_str):
 
     if 'integrated' in _str.lower():
         _graphprocessor_label  = 4
+    """
 
-    return _graphprocessor_label
+    _graphprocessor_lst = get_inds(_labels, lst)
+    """
+    graphprocessor_lst = []
+    for _graphprocessor in _graphprocessor_lst:
+        graphprocessor_lst.append(_graphprocessor_lst)
+    """
+
+    return _graphprocessor_lst
+
 
 
 def get_text_labels():
@@ -1345,21 +1373,25 @@ def get_amazon_texts_labels(file):
             _ram_lst = get_ram_label(_ram)
         
         _harddrive = asins[_asin][3]
-        _harddrives.append(_harddrive)
-        """
         if _harddrive:
-            _harddrive_id = get_harddrive_label(_harddrive)
-            labels_index[_harddrive] = _harddrive_id
-        """
+            _harddrive_lst = []
+            #
+            _harddrives.append(_harddrive)
+
+            _harddrive_lst = get_harddrive_label(_harddrive)
+        
     
         #Graphics Coprocessor
         _graphprocessor = asins[_asin][4]
-        _graphprocessors.append(_graphprocessor)
-        """
+        #_graphprocessors.append(_graphprocessor)
+        
         if _graphprocessor:
-            _graphprocessor_id = get_graphprocessor_label(_graphprocessor)
-            labels_index[_graphprocessor] = _graphprocessor_id
-        """
+            #_graphprocessor_id = get_graphprocessor_label(_graphprocessor)
+            _graphprocessor_lst = []
+            #
+            _graphprocessors.append(_graphprocessor)
+            _graphprocessor_lst = get_graphprocessor_label(_graphprocessor)
+        
 
        # tech_dict[str(_asin)] = [_cpu,_sscreen,_ram,_harddrive,_graphprocessor]
 
@@ -1381,15 +1413,15 @@ def get_amazon_texts_labels(file):
             #
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
-            #_texts.append(s)
+            _texts.append(s)
             #_labels.append(_cpu_id)
             
             #_labels.append(_sscreen_lst)
             #_labels.append(_ram_lst)
-            #_labels.append(_harddrive_id)
-            #_labels.append(_graphprocessor_id)
+            #_labels.append(_harddrive_lst)
+            _labels.append(_graphprocessor_lst)
 
-        #asins_dict[_asin] = [_texts, _labels]
+        asins_dict[_asin] = [_texts, _labels]
 
     
     #cpu
@@ -1402,6 +1434,7 @@ def get_amazon_texts_labels(file):
     
     #_sscreen_labels_dict =
     
+    """
     #_sscreens = []
     _cpus = []
     ind = 0
@@ -1463,14 +1496,15 @@ def get_amazon_texts_labels(file):
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             _texts.append(s)
-            _labels.append(_cpu_id)
+            #_labels.append(_cpu_id)
             
-            #labels.append(_sscreen_id)
+            _labels.append(_sscreen_id)
             #labels.append(_ram_id)
             #labels.append(_harddrive_id)
             #labels.append(_graphprocessor_id)
 
         asins_dict[_asin] = [_texts, _labels]
+    """
     
 
     # screen size
