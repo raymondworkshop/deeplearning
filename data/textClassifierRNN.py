@@ -469,7 +469,7 @@ def _precision_score(y_test, y_pred, K):
     return precision
 
 
-def _recall_score(y_test, y_pred):
+def _recall_score(y_test, y_pred, K):
     recall = 0
 
     num = 0
@@ -494,7 +494,7 @@ def _recall_score(y_test, y_pred):
 
         i = i + 1
     
-    recall = num / len(y_test)
+    recall = num / (len(y_test) * K)
     
     """
     i = set(y_test).intersection(y_pred)
@@ -562,7 +562,7 @@ def train_RNN():
 #texts, labels = train()
 texts, labels_matrix = train_RNN()
 _labels = labels_matrix[:, 0].tolist()
-_labels_PERCENT = labels_matrix[:, 0 : 7]
+_labels_PERCENT = labels_matrix[:, 0 : 2]
     
 #
 tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
@@ -735,7 +735,7 @@ for epoch in range(5):
 
         i = i+1
 
-        recall = _recall_score(y_pred, _y_test_PERCENT)
+        recall = _recall_score(y_pred, _y_test_PERCENT, K)
         recalls.append(recall)
         print(recall)
 

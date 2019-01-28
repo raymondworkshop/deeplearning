@@ -453,7 +453,7 @@ def _recall_score(y_test, y_pred, K):
 
         i = i + 1
     
-    recall = num / (len(y_test)  )
+    recall = num / (len(y_test)   )
     
     """
     i = set(y_test).intersection(y_pred)
@@ -657,7 +657,7 @@ def train_wordembedding():
 
     PERCENT = 0.1 # the range between the pred object
     _labels = labels_matrix[:, 0].tolist()
-    _labels_PERCENT = labels_matrix[:, 0 : 1]
+    _labels_PERCENT = labels_matrix[:, 0 : 5]
     
     #Found 838332 reviews
     print('Found %s reviews.' % len(texts))
@@ -1165,7 +1165,7 @@ def train_svm():
 
     PERCENT = 0.1 # the range between the pred object
     _labels = labels_matrix[:, 0].tolist()
-    _labels_PERCENT = labels_matrix[:, 0 : 7 * 2]
+    _labels_PERCENT = labels_matrix[:, 0 : 2]
     
     #Found  reviews
     print('Found %s reviews.' % len(texts))
@@ -1285,9 +1285,9 @@ def train_svm():
             #embedded_sequences = K.concatenate([H_enc_2, H_enc_1], 1)
             return embedded_sequences
 
-        data[seq_ind] = average_emb(seq)
+        #data[seq_ind] = average_emb(seq)
         #data[seq_ind] = max_emb(seq)
-        #data[seq_ind] = concat_emb(seq)    
+        data[seq_ind] = concat_emb(seq)    
         seq_ind += 1
 
     """
@@ -1339,7 +1339,7 @@ def train_svm():
 
     #x_test = data[-num_test_samples:]
     #y_test = labels[-num_test_samples:]
-    #_y_test = _labels[-num_test_samples:]
+    _y_test = _labels[-num_test_samples:]
     _y_test_PERCENT =_labels_PERCENT[-num_test_samples:]
 
     #
@@ -1355,7 +1355,7 @@ def train_svm():
     #scoring = ['precision_macro', 'recall_macro']
     #y_pred = cross_val_predict(classifier, x_train, y_train, cv=10)
     #_y_proba = cross_val_predict(classifier, x_train, y_train, cv=10, method='predict_proba')
-    _y_proba = cross_val_predict(classifier, data, _labels, cv=10, method='predict_proba')
+    _y_proba = cross_val_predict(classifier, data, _labels, cv=5, method='predict_proba')
     #classifier.fit(X_train, y_train)
     #y_pred = classifier.predict(X_test)
     #_y_proba = classifier.predict_proba(X_test)
@@ -1370,10 +1370,10 @@ def train_svm():
 
     #num = 0
     #y_test = y_lst[:, 0]
-    #y_pred_max = y_proba_ind[:, 0]
+    y_pred_max = y_proba_ind[:, 0]
 
-    #precision_1 = metrics.precision_score(_y_test, y_pred_max, average='macro')
-    #print("precision_1: %f" % precision_1)
+    precision_1 = metrics.precision_score(_labels, y_pred_max, average='macro')
+    print("precision_1: %f" % precision_1)
         
     #num_lst = []
  
@@ -1385,8 +1385,9 @@ def train_svm():
     precisions = []
     
     while i < K:
-        #y_test = y_lst[:, 0:i+1]
+        #y_test = labels_matrix[:, 0:i+1]
         y_pred = y_proba_ind[:, 0:i+1]
+        #y_pred_max = y_proba_ind[:, 0]
         #print(y_pred)
 
         i = i+1
@@ -1405,8 +1406,9 @@ def train_svm():
     i = 0
     recalls = []
     while i < K:
-        #y_test = y_lst[:, 0:i+1]
+        y_test = labels_matrix[:, 0:i+1]
         y_pred = y_proba_ind[:,  0:i+1]
+        y_pred_max = y_proba_ind[:, 0]
 
         i = i+1
 
