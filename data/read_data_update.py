@@ -355,7 +355,7 @@ def get_harddrive_label(_str):
     # '2 TB HDD 5400 rpm', '32 GB SSD','64 GB SSD'
     #
     # ]
-    lst = [16, 128, 256, 500, 32, 64, 1000, 2000, 512, 320, 1024]
+    lst = [16, 32, 64, 128, 256, 320, 500, 512, 1000, 1024, 2000 ]
 
     _harddrive_map = {
         16: 0,
@@ -366,9 +366,9 @@ def get_harddrive_label(_str):
         64 :5,
         1000 : 5,
         2000 : 6,
-        512 : 7,
-        320 : 8,
-        1024 : 9
+        512 : 3,
+        320 : 2,
+        1024 : 5
     }
 
     _harddrive_label = 5 #unknown
@@ -1418,15 +1418,15 @@ def get_amazon_texts_labels(file):
             
             #_labels.append(_sscreen_lst)
             #_labels.append(_ram_lst)
-            #_labels.append(_harddrive_lst)
-            _labels.append(_graphprocessor_lst)
+            _labels.append(_harddrive_lst)
+            #_labels.append(_graphprocessor_lst)
 
         asins_dict[_asin] = [_texts, _labels]
 
     
     #cpu
     cpu_lst = get_cpu_label(_cpus)
-    print(cpu_lst)
+    #print(cpu_lst)
 
     # get the class list according to the dist
     cpu_labels_dict = sort_items(cpu_lst)
