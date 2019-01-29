@@ -453,7 +453,7 @@ def _recall_score(y_test, y_pred, K):
 
         i = i + 1
     
-    recall = num / (len(y_test)   )
+    recall = num / (len(y_test) )
     
     """
     i = set(y_test).intersection(y_pred)
@@ -1349,9 +1349,9 @@ def train_svm():
     #svm_classifier = svm.SVC(kernel='rbf', gamma=2, C=1.0) #Gaussian Kernel
     #svm_classifier.fit(x_train,y_train)
 
-    #classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
-    classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
-                     solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
+    classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
+    #classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
+    #                 solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
     #scoring = ['precision_macro', 'recall_macro']
     #y_pred = cross_val_predict(classifier, x_train, y_train, cv=10)
     #_y_proba = cross_val_predict(classifier, x_train, y_train, cv=10, method='predict_proba')
