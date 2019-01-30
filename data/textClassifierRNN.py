@@ -37,6 +37,8 @@ from keras.layers import Embedding
 from keras.layers import Dense, Input, Flatten
 from keras.layers import Conv1D, MaxPooling1D, Embedding, Dropout, LSTM, GRU, Bidirectional
 from keras.models import Model
+from keras.layers import Dropout
+
 
 from keras import backend as K
 from keras.engine.topology import Layer, InputSpec
@@ -420,9 +422,9 @@ def train():
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             texts.append(s)
             #labels.append(_cpu_id)
-            labels.append(_sscreen_id)
+            #labels.append(_sscreen_id)
             #labels.append(_ram_id)
-            #labels.append(_harddrive_id)
+            labels.append(_harddrive_id)
             #labels.append(_graphprocessor_id)
     
     return texts, labels
@@ -635,7 +637,8 @@ embedding_layer = Embedding(len(word_index) + 1,
 sequence_input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 embedded_sequences = embedding_layer(sequence_input)
 l_lstm = Bidirectional(LSTM(100))(embedded_sequences)
-preds = Dense(labels.shape[1], activation='softmax')(l_lstm)
+_preds = Dense(labels.shape[1], activation='softmax')(l_lstm)
+preds = Dropout(2)(_preds)
 
 model = Model(sequence_input, preds)
 model.compile(loss='categorical_crossentropy',
