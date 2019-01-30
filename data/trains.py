@@ -428,6 +428,24 @@ def _precision_score(y_test, y_pred, K):
     return precision
 
 
+def new_recall_score(y_pred,y_real):
+    
+    recall = 0
+    total_recall=0
+    num = y_pred.shape[0]
+    
+#    for each row, if there is matched class, then it's a count
+#    simply check each row of y_pred and y_real if their intersection is true
+    for i in range(y_pred.shape[0]):
+        if(set(y_pred[i,:]).intersection(y_real[i,:])):
+            total_recall=total_recall+1
+            
+    recall=total_recall/num
+    return recall
+    
+
+
+
 def _recall_score(y_test, y_pred, K):
     recall = 0
 
@@ -442,7 +460,6 @@ def _recall_score(y_test, y_pred, K):
         i = i + 1
     """
 
-    
     while i < y_test.shape[1]:
         lst = y_test[:, i].tolist()
         j = 0
@@ -453,7 +470,7 @@ def _recall_score(y_test, y_pred, K):
 
         i = i + 1
     
-    recall = num / (len(y_test) )
+    recall = num / (len(y_test))
     
     """
     i = set(y_test).intersection(y_pred)
@@ -1286,8 +1303,8 @@ def train_svm():
             return embedded_sequences
 
         #data[seq_ind] = average_emb(seq)
-        #data[seq_ind] = max_emb(seq)
-        data[seq_ind] = concat_emb(seq)    
+        data[seq_ind] = max_emb(seq)
+        #data[seq_ind] = concat_emb(seq)    
         seq_ind += 1
 
     """
@@ -1349,9 +1366,9 @@ def train_svm():
     #svm_classifier = svm.SVC(kernel='rbf', gamma=2, C=1.0) #Gaussian Kernel
     #svm_classifier.fit(x_train,y_train)
 
-    classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
-    #classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
-    #                 solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
+    #classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
+    classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
+                     solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
     #scoring = ['precision_macro', 'recall_macro']
     #y_pred = cross_val_predict(classifier, x_train, y_train, cv=10)
     #_y_proba = cross_val_predict(classifier, x_train, y_train, cv=10, method='predict_proba')
@@ -1412,7 +1429,8 @@ def train_svm():
 
         i = i+1
 
-        recall = _recall_score(y_pred, _labels_PERCENT, K)
+        #recall = _recall_score(y_pred, _labels_PERCENT, K)
+        recall = new_recall_score (y_pred, _labels_PERCENT)
         recalls.append(recall)
 
         print(recall)
@@ -1427,6 +1445,7 @@ def train_svm():
     #print(f1)
    
     return 0
+
 
 def train_mlp():
         # get documents
