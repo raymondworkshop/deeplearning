@@ -442,8 +442,6 @@ def new_recall_score(y_pred,y_real):
             
     recall=total_recall/num
     return recall
-    
-
 
 
 def _recall_score(y_test, y_pred, K):
@@ -1182,7 +1180,7 @@ def train_svm():
 
     PERCENT = 0.1 # the range between the pred object
     _labels = labels_matrix[:, 0].tolist()
-    _labels_PERCENT = labels_matrix[:, 0 : 2]
+    _labels_PERCENT = labels_matrix[:, 0 : 14]
     
     #Found  reviews
     print('Found %s reviews.' % len(texts))
@@ -1303,8 +1301,8 @@ def train_svm():
             return embedded_sequences
 
         #data[seq_ind] = average_emb(seq)
-        data[seq_ind] = max_emb(seq)
-        #data[seq_ind] = concat_emb(seq)    
+        #data[seq_ind] = max_emb(seq)
+        data[seq_ind] = concat_emb(seq)    
         seq_ind += 1
 
     """
@@ -1331,7 +1329,6 @@ def train_svm():
         #data[i,index_max] = value_max    
         """
     
-
     #labels = to_categorical(numpy.asarray(labels))
     print('Shape of data tensor:', data.shape)
     #print('Shape of label tensor:', labels.shape)
@@ -1366,9 +1363,9 @@ def train_svm():
     #svm_classifier = svm.SVC(kernel='rbf', gamma=2, C=1.0) #Gaussian Kernel
     #svm_classifier.fit(x_train,y_train)
 
-    #classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
-    classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
-                     solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
+    classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
+    #classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
+    #                 solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
     #scoring = ['precision_macro', 'recall_macro']
     #y_pred = cross_val_predict(classifier, x_train, y_train, cv=10)
     #_y_proba = cross_val_predict(classifier, x_train, y_train, cv=10, method='predict_proba')
@@ -1383,7 +1380,7 @@ def train_svm():
     #y_proba_ind = numpy.argsort(-y_pred)
     #print("y_proba: ", y_proba_ind)
 
-    K = 5
+    K = 10
 
     #num = 0
     #y_test = y_lst[:, 0]
@@ -1430,7 +1427,7 @@ def train_svm():
         i = i+1
 
         #recall = _recall_score(y_pred, _labels_PERCENT, K)
-        recall = new_recall_score (y_pred, _labels_PERCENT)
+        recall = new_recall_score(y_pred, _labels_PERCENT)
         recalls.append(recall)
 
         print(recall)
