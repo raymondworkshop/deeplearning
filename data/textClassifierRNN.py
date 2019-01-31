@@ -471,6 +471,22 @@ def _precision_score(y_test, y_pred, K):
     return precision
 
 
+def new_recall_score(y_pred,y_real):
+    
+    recall = 0
+    total_recall=0
+    num = y_pred.shape[0]
+    
+#    for each row, if there is matched class, then it's a count
+#    simply check each row of y_pred and y_real if their intersection is true
+    for i in range(y_pred.shape[0]):
+        if(set(y_pred[i,:]).intersection(y_real[i,:])):
+            total_recall=total_recall+1
+            
+    recall=total_recall/num
+    return recall
+    
+
 def _recall_score(y_test, y_pred, K):
     recall = 0
 
@@ -559,12 +575,11 @@ def train_RNN():
 
     return texts, labels_matrix
 
-
 #
 #texts, labels = train()
 texts, labels_matrix = train_RNN()
 _labels = labels_matrix[:, 0].tolist()
-_labels_PERCENT = labels_matrix[:, 0 : 2]
+_labels_PERCENT = labels_matrix[:, 0 : 14]
     
 #
 tokenizer = Tokenizer(num_words=MAX_NB_WORDS)
@@ -738,7 +753,8 @@ for epoch in range(5):
 
         i = i+1
 
-        recall = _recall_score(y_pred, _y_test_PERCENT, K)
+        #recall = _recall_score(y_pred, _y_test_PERCENT, K)
+        recall = new_recall_score (y_pred, _labels_PERCENT)
         recalls.append(recall)
         print(recall)
 
@@ -827,8 +843,6 @@ embedding_layer = Embedding(len(word_index) + 1,
                             weights=[embedding_matrix],
                             input_length=MAX_SEQUENCE_LENGTH,
                             trainable=True)
-
-
 
 sequence_input = Input(shape=(MAX_SEQUENCE_LENGTH,), dtype='int32')
 embedded_sequences = embedding_layer(sequence_input)

@@ -494,7 +494,6 @@ def get_graphprocessor_label(_str):
     return _graphprocessor_lst
 
 
-
 def get_text_labels():
     # get documents
     """
@@ -1334,6 +1333,7 @@ def get_amazon_texts_labels(file):
     #tech_dict = {}
     asins_dict = {}
 
+    
     _sscreens = []
     _cpus = []
     _rams = []
@@ -1344,14 +1344,14 @@ def get_amazon_texts_labels(file):
         # [screensize,cpu, ram, reviews]
         _cpu = asins[_asin][1]
         _cpus.append(_cpu)
-        """
+
+        """ 
         if _cpu:
            #_cpu_id = get_cpu_label(_cpu)
            #labels_index[_cpu] = _cpu_id
            #
            #_cpus.append(_cpu)
            _cpus.append(_cpu)
-        """
 
         _sscreen = asins[_asin][0]
         if _sscreen:
@@ -1414,14 +1414,15 @@ def get_amazon_texts_labels(file):
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             _texts.append(s)
-            #_labels.append(_cpu_id)
+            _labels.append(_cpu_id)
             
             #_labels.append(_sscreen_lst)
             #_labels.append(_ram_lst)
             #_labels.append(_harddrive_lst)
-            _labels.append(_graphprocessor_lst)
+            #_labels.append(_graphprocessor_lst)
 
-        asins_dict[_asin] = [_texts, _labels]
+        """
+        #asins_dict[_asin] = [_texts, _labels]
 
     #cpu
     cpu_lst = get_cpu_label(_cpus)
@@ -1432,7 +1433,7 @@ def get_amazon_texts_labels(file):
     
     #_sscreen_labels_dict =
     
-    """
+    
     #_sscreens = []
     _cpus = []
     ind = 0
@@ -1494,21 +1495,19 @@ def get_amazon_texts_labels(file):
 
             #t = re.sub('[!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]+','', t)
             _texts.append(s)
-            #_labels.append(_cpu_id)
+            _labels.append(_cpu_id)
             
-            _labels.append(_sscreen_id)
+            #_labels.append(_sscreen_id)
             #labels.append(_ram_id)
             #labels.append(_harddrive_id)
             #labels.append(_graphprocessor_id)
 
         asins_dict[_asin] = [_texts, _labels]
-    """
     
-
+    """
     # screen size
     #sscreen_dict = get_sscreen_label(_sscreens)
 
-    """
     # about CPUs
     _cpus = []
     ind = 0
@@ -1579,7 +1578,7 @@ def get_amazon_texts_labels(file):
 
         asins_dict[_asin] = [_texts, _labels]
     """
-    
+
     return asins_dict
 
 
