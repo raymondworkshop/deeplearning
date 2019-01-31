@@ -1180,7 +1180,7 @@ def train_svm():
 
     PERCENT = 0.1 # the range between the pred object
     _labels = labels_matrix[:, 0].tolist()
-    _labels_PERCENT = labels_matrix[:, 0 : 14]
+    _labels_PERCENT = labels_matrix[:, 0 : 1]
     
     #Found  reviews
     print('Found %s reviews.' % len(texts))
