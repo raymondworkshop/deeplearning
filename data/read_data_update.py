@@ -1338,6 +1338,11 @@ def get_amazon_texts_labels(file):
     _rams = []
     _harddrives = []
     _graphprocessors = []
+
+    words = []
+    _reviews = []
+    num_words = []
+    #num_reviews = 0
     for _asin in asins:
         print("The asin %s:", _asin)
         # [screensize,cpu, ram, reviews]
@@ -1397,9 +1402,20 @@ def get_amazon_texts_labels(file):
         #porter = PorterStemmer()
         _texts = []
         _labels = []
+        
+        #num_words = 0
+        
         for _t in reviews:
+            
+            #words = []
             # t =  " ".join(x.decode("utf-8") for x in _t) #bytes to str
-            #words = text.split()
+            """
+            _num_words = len(_t)
+            if _num_words <= 800:
+                num_words.append(_num_words)
+                num_reviews = num_reviews + 1
+            """
+
             # remove punctuation from each word , and stemming
 
             stripped = [w.decode("utf-8").lower().translate(table) for w in _t]  
@@ -1419,12 +1435,28 @@ def get_amazon_texts_labels(file):
 
         asins_dict[_asin] = [_texts, _labels]
 
+        #if num_words <= 1000:
+        #words.append(num_words)
+        _reviews.append(num_reviews)
+        
+
     #cpu
     cpu_lst = get_cpu_label(_cpus)
     #print(cpu_lst)
 
     # get the class list according to the dist
     cpu_labels_dict = sort_items(cpu_lst)
+    """
+    #plt.hist(_reviews, bins=40, color='g')
+    plt.hist(num_words, bins=20 , color="g")
+    #plt.hist(_reviews, words, color="blue")
+    #plt.bar()
+    #plt.bar(words, _reviews, align='center', alpha=0.5)
+    plt.xlabel('Number of words in one review')
+    plt.ylabel('Number of reviews')
+    plt.title('The distribution of the number of words in the review')
+    plt.show()
+    """
     
     """
     #_sscreen_labels_dict =
@@ -1640,7 +1672,7 @@ def main():
     #_plt()
 
  
-    #asins = read_data(file)
+    #asins = _read_data(file)
 
     #read_flipkart_data(file4,csv_file4)
 

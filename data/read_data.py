@@ -3,7 +3,6 @@
 read the data
 
 """
-
 import gzip
 import json
 
@@ -322,7 +321,6 @@ def get_text_labels():
     return texts, labels
 
 
-
 def parse(path):
     g = gzip.open(path, 'r')
     for l in g:
@@ -522,6 +520,79 @@ def _read_data(file):
     return 0
 
 
+def read_amazon_data(file):
+    hp_asins = {}
+
+    num_reviews = 0
+    num_words = 0
+    num_brands = 0
+
+    words = []
+    reviews_ = []
+
+    sheets = []
+    with open(file, "r", encoding="utf-8") as f:
+        for line in f:
+            data = ast.literal_eval(str(line))
+            """
+            if 'reviews' in line:
+                #line = line.replace("\'", "\"")
+                reviews = data['reviews']      
+               # len_review = 0
+                #cnt = 0
+                #mean_review = 0
+                #max_len_review = 0
+                for review in reviews:
+                    list_reviews.append(review)
+            """
+
+            if 'tech' in line and len(data['tech']) > 0 and 'reviews' in line:
+                _asin = str(data['asin'])
+                #f1.write(_asin + ":" + "\t")
+
+                reviews = data['reviews']
+                texts = []
+                _num_reviews = 0
+                for review in reviews:
+                    # list_reviews.append(review)
+                    _num_reviews += 1
+                    #
+                    stripped = [w.decode("utf-8") for w in review]
+                    s = " ".join(x for x in stripped)
+                    texts.append(s)
+                    # write file in some format
+                    #s.decode("cp950", "ignore")
+
+
+    #num_reviews = num_reviews + _num_reviews
+    #num_words = num_words + _num_words
+    #num_brands += 1
+    # hist
+    """
+    #plt.hist(len_reviews, bins=20, color='g')
+    plt.hist(words,bins=40, color="blue")
+    plt.xlabel('Number of words in one review')
+    plt.ylabel('Number of reviews')
+    plt.title('The distribution of the number of words in the review')
+    plt.show()
+    """
+
+    """
+    plt.hist(reviews_, bins=20, color="blue")
+    plt.xlabel('Number of reviews in one laptop')
+    plt.ylabel('Number of laptops')
+    plt.title('The distribution of the number of reviews')
+    plt.show()
+
+    print("Num of brands in HP: %d:", num_brands)
+    print("Num of reviews: %d:", num_reviews)
+    print("Num of words: %d:", num_words)
+    """
+
+    return hp_asins
+
+
+
 def read_hp_data(file3):
     hp_asins = {}
 
@@ -574,6 +645,7 @@ def read_hp_data(file3):
     plt.show()
     """
 
+    """
     plt.hist(reviews_, bins=20, color="blue")
     plt.xlabel('Number of reviews in one laptop')
     plt.ylabel('Number of laptops')
@@ -583,6 +655,7 @@ def read_hp_data(file3):
     print("Num of brands in HP: %d:", num_brands)
     print("Num of reviews: %d:", num_reviews)
     print("Num of words: %d:", num_words)
+    """
 
     return hp_asins
 
@@ -695,6 +768,7 @@ def read_flipkart_data(file, csv_file4):
     print("Num of words: %d:", num_words)
     return 0
 
+
 def get_amazon_data(file):
     list_reviews = []
     asins = {}
@@ -748,7 +822,6 @@ def get_amazon_data(file):
                     asins[_asin].append(reviews)
 
     return asins
-
 
 
 def get_amazon_texts_labels(file):
@@ -831,7 +904,6 @@ def get_amazon_texts_labels(file):
     return texts, labels
 
 
-
 def main():
     """
     path = "/Users/zhaowenlong/workspace/proj/dev.dplearning/data/reviews_Electronics_5_small.json.gz"
@@ -868,7 +940,7 @@ def main():
     dir = "/data/raymond/workspace/exp2/"
     file = dir + 'amazon_reviews.json'
     
-    asins = read_data(file)
+    asins = _read_data(file)
 
     #read_flipkart_data(file4,csv_file4)
 
