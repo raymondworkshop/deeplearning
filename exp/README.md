@@ -1,5 +1,6 @@
 
 #### references
+* [Spring2019 - 11-785 Introduction to Deep Learning](http://deeplearning.cs.cmu.edu/)
 * [CMU CS 11-747, Spring 2019 - NN for NLP](http://phontron.com/class/nn4nlp2019/schedule.html)
 * [DATA130006: Introduction to Natural Language Processing](http://www.sdspeople.fudan.edu.cn/zywei/DATA130006/index.html)
 * [Machine Learning: 2014-2015](https://www.cs.ox.ac.uk/people/nando.defreitas/machinelearning/)
