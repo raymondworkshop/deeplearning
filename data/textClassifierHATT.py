@@ -39,7 +39,9 @@ import keras_metrics
 from nltk import tokenize
 
 #
-import read_data
+#import read_data
+import read_data_update
+
 
 #MAX_SEQUENCE_LENGTH = 1000
 MAX_SEQUENCE_LENGTH = 100 #300
