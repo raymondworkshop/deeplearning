@@ -42,6 +42,7 @@ import math
 import string
 from nltk.stem import PorterStemmer
 
+
 from sklearn import svm 
 from sklearn.neural_network import MLPClassifier
 
@@ -919,8 +920,8 @@ def train_wordembedding():
     embedded_sequences = embedding_layer(sequence_input) # (batch , 54, 100)
 
     #max_emb_encoder(sequence_input, )
-    #xx = Lambda(average_emb)(embedded_sequences)  #(?, 100)
-    xx = Lambda(max_emb)(embedded_sequences)  #(?, 100)
+    xx = Lambda(average_emb)(embedded_sequences)  #(?, 100)
+    #xx = Lambda(max_emb)(embedded_sequences)  #(?, 100)
     #xx = Lambda(concat_emb)(embedded_sequences)
 
     #xx = Dense(EMBEDDING_DIM, activation='relu')(xx)
@@ -1373,9 +1374,9 @@ def train_svm():
             #embedded_sequences = K.concatenate([H_enc_2, H_enc_1], 1)
             return embedded_sequences
 
-        #data[seq_ind] = average_emb(seq)
+        data[seq_ind] = average_emb(seq)
         #data[seq_ind] = max_emb(seq)
-        data[seq_ind] = concat_emb(seq)    
+        #data[seq_ind] = concat_emb(seq)    
         seq_ind += 1
 
     """
@@ -1436,9 +1437,9 @@ def train_svm():
     #svm_classifier = svm.SVC(kernel='rbf', gamma=2, C=1.0) #Gaussian Kernel
     #svm_classifier.fit(x_train,y_train)
 
-    classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
-    #classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
-    #                 solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
+    #classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
+    classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
+                     solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
     #scoring = ['precision_macro', 'recall_macro']
     #y_pred = cross_val_predict(classifier, x_train, y_train, cv=10)
     #_y_proba = cross_val_predict(classifier, x_train, y_train, cv=10, method='predict_proba')
@@ -1484,6 +1485,7 @@ def train_svm():
 
         print(precision)
 
+    #
     print("recall:")
     #recall = []
     #recall_1 = metrics.recall_score(_y_test, y_pred_max, average='micro')
@@ -1504,6 +1506,21 @@ def train_svm():
         recalls.append(recall)
 
         print(recall)
+
+    # NDCG 
+    print("NDCG")
+    i = 0
+    ndcgs = []
+    while i < K:
+        #y_test = y_lst[:, 0:i+1]
+        y_pred = y_proba_ind[:,  0:i+1]
+
+        i = i+1
+
+        ndcg = ndcg_score(_labels_PERCENT, y_pred, K)
+        ndcgs.append(ndcg)
+
+        print(ndcg)
 
     """
     print(scores.keys())
@@ -1934,8 +1951,8 @@ def train_mlp():
     #print(numpy.mean([precisions, recalls], 0))
     #print(f1)
 
-
     return 0
+
 
 def main():
     #data()
@@ -1945,7 +1962,6 @@ def main():
     train_svm()
 
     #train_mlp()
-
 
 if __name__ == '__main__':
     main()
