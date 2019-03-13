@@ -1395,7 +1395,7 @@ def get_amazon_texts_labels(file):
         
 
        # tech_dict[str(_asin)] = [_cpu,_sscreen,_ram,_harddrive,_graphprocessor]
-        """
+        
        #reviews
         reviews = asins[_asin][5] 
         table = str.maketrans('', '', string.punctuation)
@@ -1403,10 +1403,8 @@ def get_amazon_texts_labels(file):
         _texts = []
         _labels = []
         
-        #num_words = 0
-        
+        #num_words = 0   
         for _t in reviews:
-            
             #words = []
             # t =  " ".join(x.decode("utf-8") for x in _t) #bytes to str
             
@@ -1415,7 +1413,6 @@ def get_amazon_texts_labels(file):
             #    num_words.append(_num_words)
             #    num_reviews = num_reviews + 1
             
-
             # remove punctuation from each word , and stemming
 
             stripped = [w.decode("utf-8").lower().translate(table) for w in _t]  
@@ -1431,14 +1428,14 @@ def get_amazon_texts_labels(file):
             #_labels.append(_sscreen_lst)
             #_labels.append(_ram_lst)
             #_labels.append(_harddrive_lst)
-            #_labels.append(_graphprocessor_lst)
+            _labels.append(_graphprocessor_lst)
 
         asins_dict[_asin] = [_texts, _labels]
 
         #if num_words <= 1000:
         #words.append(num_words)
         #_reviews.append(num_reviews)
-        """
+        
         
     #cpu
     cpu_lst = get_cpu_label(_cpus)
@@ -1534,6 +1531,7 @@ def get_amazon_texts_labels(file):
     # screen size
     #sscreen_dict = get_sscreen_label(_sscreens)
     
+    """
     # about CPUs
     _cpus = []
     ind = 0
@@ -1603,6 +1601,7 @@ def get_amazon_texts_labels(file):
             #labels.append(_graphprocessor_id)
 
         asins_dict[_asin] = [_texts, _labels]
+    """
     
 
     return asins_dict
