@@ -20,7 +20,7 @@ import math
 import string
 
 import keras_metrics
-from sklearn.preprocessing import LabelBinarizer
+from sklearn.preprocessing import LabelBinarizer,OneHotEncoder,MultiLabelBinarizer
 
 
 from bs4 import BeautifulSoup
@@ -455,7 +455,7 @@ def dcg_score(y_true, y_score, k=5):
 
     discounts = np.log2(np.arange(len(y_true)) + 2)
     return np.sum(gain / discounts)
-    
+
 
 def ndcg_score(ground_truth, predictions, k=5):
     """Normalized discounted cumulative gain (NDCG) at rank K.
@@ -488,9 +488,12 @@ def ndcg_score(ground_truth, predictions, k=5):
     >>> score = ndcg_score(ground_truth, predictions, k=2)
     0.6666666666
     """
-    lb = LabelBinarizer()
-    lb.fit(range(len(predictions) + 1))
-    T = lb.transform(ground_truth)
+    #lb = LabelBinarizer()
+    lb = MultiLabelBinarizer()
+    #lb.fit(range(len(predictions) + 1))
+    #T = lb.transform(ground_truth)
+    T = lb.fit_transform(ground_truth)
+    #T = lb.fit(range(len(ground_truth) + 1))
 
     scores = []
 
@@ -839,7 +842,7 @@ for epoch in range(5):
     print(scores['test_recall_macro'])
 
     """
-    print(np.mean([precisions, recalls], 0))
+    #print(np.mean([precisions, recalls], 0))
 
 
     # NDCG 
