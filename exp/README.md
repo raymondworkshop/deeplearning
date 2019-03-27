@@ -1,5 +1,6 @@
 
 #### references
+* [Machine Learning Foundations: A Case Study Approach](https://www.coursera.org/learn/ml-foundations/home/welcome)
 * [Spring2019 - 11-785 Introduction to Deep Learning](http://deeplearning.cs.cmu.edu/)
 * [CMU CS 11-747, Spring 2019 - NN for NLP](http://phontron.com/class/nn4nlp2019/schedule.html)
 * [DATA130006: Introduction to Natural Language Processing](http://www.sdspeople.fudan.edu.cn/zywei/DATA130006/index.html)
