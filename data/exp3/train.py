@@ -41,6 +41,8 @@ FLAGS = tf.flags.FLAGS
 #     print("{}={}".format(attr.upper(), value))
 # print("")
 
+import math
+
 def preprocess():
     # Data Preparation
     # ==================================================
@@ -53,6 +55,10 @@ def preprocess():
     negative_data_file = dir + 'rt-polaritydata/rt-polarity.neg'
     #x_text, y = data_helpers.load_data_and_labels(positive_data_file, negative_data_file)
     x_text, y = data_helpers.load_data_and_labels_update(positive_data_file, negative_data_file)
+
+    #texts, labels_matrix = train_HAN()
+    _labels = y[:, 0].tolist()
+    _labels_PERCENT = y[:, 0 : math.ceil(y.shape[1] * 0.2)]
 
     # Build vocabulary
     max_document_length = max([len(x.split(" ")) for x in x_text])

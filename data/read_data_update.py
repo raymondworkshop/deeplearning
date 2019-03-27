@@ -1396,12 +1396,14 @@ def get_amazon_texts_labels(file):
 
        # tech_dict[str(_asin)] = [_cpu,_sscreen,_ram,_harddrive,_graphprocessor]
         
-       #reviews
+        
+        #reviews
         reviews = asins[_asin][5] 
         table = str.maketrans('', '', string.punctuation)
         #porter = PorterStemmer()
         _texts = []
         _labels = []
+        
         
         #num_words = 0   
         for _t in reviews:
@@ -1426,16 +1428,15 @@ def get_amazon_texts_labels(file):
             #_labels.append(_cpu_id)
             
             #_labels.append(_sscreen_lst)
-            #_labels.append(_ram_lst)
+            _labels.append(_ram_lst)
             #_labels.append(_harddrive_lst)
-            _labels.append(_graphprocessor_lst)
+            #_labels.append(_graphprocessor_lst)
 
         asins_dict[_asin] = [_texts, _labels]
 
         #if num_words <= 1000:
         #words.append(num_words)
-        #_reviews.append(num_reviews)
-        
+        #_reviews.append(num_reviews) 
         
     #cpu
     cpu_lst = get_cpu_label(_cpus)
@@ -1602,7 +1603,6 @@ def get_amazon_texts_labels(file):
 
         asins_dict[_asin] = [_texts, _labels]
     """
-    
 
     return asins_dict
 
