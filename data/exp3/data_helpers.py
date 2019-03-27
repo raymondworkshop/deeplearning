@@ -4,7 +4,8 @@ import re
 import ast
 from keras.utils import to_categorical
 
-
+#import read_data
+import read_data_update
 
 def get_cpu_label(_str):
     # [ 2 GHz AMD A Series, 1.1 GHz Intel Celeron, 2.16 GHz Intel Celeron,3 GHz 8032,1.6 GHz,3.5 GHz 8032,4 GHz Intel Core i7]
@@ -259,6 +260,7 @@ def load_data_and_labels(positive_data_file, negative_data_file):
     y = np.concatenate([positive_labels, negative_labels], 0)
     return [x_text, y]
 
+
 def read_data(file):
     list_reviews = []
     asins = {}
@@ -314,6 +316,7 @@ def read_data(file):
 
     return asins
 
+
 def load_data_and_labels_update(positive_data_file, negative_data_file):
     """
     Loads MR polarity data from files, splits the data into words and generates labels.
@@ -322,8 +325,66 @@ def load_data_and_labels_update(positive_data_file, negative_data_file):
     # Load data from files
     #dir = "/data/raymond/workspace/exp2/"
 
-    #dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
-    dir = '/data/raymond/workspace/exp3/data/'
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    #dir = '/data/raymond/workspace/exp3/data/'
+    #file = dir + 'amazon_reviews.json'
+    file = dir + 'amazon_reviews_copy.json'
+    reviews = []
+    asins_dict = read_data_update.get_amazon_texts_labels(file)
+    # the generated asins
+    generated_asins = read_data_update.read_generated_amazon_reviews()
+    texts = []
+    #generated_texts = []
+    labels_lst = []
+    for asin in asins_dict:
+        """
+        for text in asins_dict[asin][0]:
+            texts.append(text)
+        """
+        #i = 0
+        if asin in generated_asins:
+            i = 0
+            while i < len(generated_asins[asin]):
+                texts.append(generated_asins[asin][i])
+                labels_lst.append(asins_dict[asin][1][i])
+
+                i = i+1
+
+            """
+            for text in generated_asins[asin]:
+                texts.append(text)
+
+            for label in asins_dict[asin][1]:
+                labels_lst.append(label)
+            """
+        else:
+            for text in asins_dict[asin][0]:
+                texts.append(text)
+        
+        #texts.append(asins_dict[asin][0])
+            for label in asins_dict[asin][1]:
+                labels_lst.append(label)
+
+    #
+    labels_matrix = np.array(labels_lst)
+
+    PERCENT = 0.1 # the range between the pred object
+    #_labels = labels_matrix[:, 0].tolist()
+    #_labels_PERCENT = labels_matrix[:, 0 : 7 * 1]
+
+    return texts, labels_matrix
+
+
+def _load_data_and_labels_update(positive_data_file, negative_data_file):
+    """
+    Loads MR polarity data from files, splits the data into words and generates labels.
+    Returns split sentences and labels.
+    """
+    # Load data from files
+    #dir = "/data/raymond/workspace/exp2/"
+
+    dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
+    #dir = '/data/raymond/workspace/exp3/data/'
     #file = dir + 'amazon_reviews.json'
     file = dir + 'amazon_reviews_copy.json'
     asins = read_data(file)
@@ -392,8 +453,8 @@ def load_data_and_labels_update(positive_data_file, negative_data_file):
             #labels.append(_cpu_id)
             #labels.append(_sscreen_id)
             #labels.append(_ram_id)
-            labels.append(_harddrive_id)
-            #labels.append(_graphprocessor_id)
+            #labels.append(_harddrive_id)
+            labels.append(_graphprocessor_id)
 
     labels = to_categorical(np.asarray(labels))
 
