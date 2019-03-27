@@ -1437,9 +1437,9 @@ def train_svm():
     #svm_classifier = svm.SVC(kernel='rbf', gamma=2, C=1.0) #Gaussian Kernel
     #svm_classifier.fit(x_train,y_train)
 
-    #classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
-    classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
-                     solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
+    classifier = OneVsRestClassifier(svm.SVC(kernel='linear', C=1, probability=True, random_state=0))
+    #classifier = OneVsRestClassifier(MLPClassifier(hidden_layer_sizes=(100,100,100), max_iter=500, alpha=0.0001,
+    #                 solver='sgd', verbose=10,  random_state=21, tol=0.000000001))
     #scoring = ['precision_macro', 'recall_macro']
     #y_pred = cross_val_predict(classifier, x_train, y_train, cv=10)
     #_y_proba = cross_val_predict(classifier, x_train, y_train, cv=10, method='predict_proba')
@@ -1454,7 +1454,7 @@ def train_svm():
     #y_proba_ind = numpy.argsort(-y_pred)
     #print("y_proba: ", y_proba_ind)
 
-    K = 10
+    K = 5
 
     #num = 0
     #y_test = y_lst[:, 0]
@@ -1507,6 +1507,7 @@ def train_svm():
 
         print(recall)
 
+    """
     # NDCG 
     print("NDCG")
     i = 0
@@ -1521,6 +1522,7 @@ def train_svm():
         ndcgs.append(ndcg)
 
         print(ndcg)
+    """
 
     """
     print(scores.keys())
