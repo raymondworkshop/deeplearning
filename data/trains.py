@@ -1454,7 +1454,7 @@ def train_svm():
     #y_proba_ind = numpy.argsort(-y_pred)
     #print("y_proba: ", y_proba_ind)
 
-    K = 5
+    K = 10
 
     #num = 0
     #y_test = y_lst[:, 0]
