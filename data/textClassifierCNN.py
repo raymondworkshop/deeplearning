@@ -317,7 +317,7 @@ print("Traning Model...")
 #bsize = 64
 #epoch = int(len(x_train) / bsize)
 #epoch = 12
-for epoch in range(5):
+for epoch in range(10):
     hist = model.fit(x_train, y_train, 
                      verbose=1, 
                      #validation_split=VALIDATION_SPLIT,

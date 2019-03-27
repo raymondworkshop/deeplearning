@@ -422,21 +422,21 @@ def get_graphprocessor_label(_str):
     ]
     """
 
-    lst = [0, 1, 2, 3, 4, 5, 6, 7]
+    lst = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
     _graphprocessor_map = {
-        "Intel HD Graphics 50X": 3,
-        "Intel HD Graphics 505": 3,
-        "Intel UHD Graphics 620":2,
+        "Intel HD Graphics 50X": 5,
+        "Intel HD Graphics 505": 4,
+        "Intel UHD Graphics 620":3,
         "Intel HD Graphics" :2,
-        "AMD Radeon R2": 4,
-        "AMD Radeon R5": 5,
-        "AMD Radeon R7": 5,
-        "AMD Radeon R4" :4,
+        "AMD Radeon R2": 9,
+        "AMD Radeon R5": 6,
+        "AMD Radeon R7": 7,
+        "AMD Radeon R4" :8,
         "NVIDIA GeForce GTX 1050": 0,
         "NVIDIA GeForce 940MX" :  1,
-        "Integrated" : 6,
-        "others| PC | FirePro W4190M ": 7
+        "Integrated" : 10,
+        "others| PC | FirePro W4190M ": 11
     }
 
     _labels = 11
@@ -1428,9 +1428,9 @@ def get_amazon_texts_labels(file):
             #_labels.append(_cpu_id)
             
             #_labels.append(_sscreen_lst)
-            _labels.append(_ram_lst)
+            #_labels.append(_ram_lst)
             #_labels.append(_harddrive_lst)
-            #_labels.append(_graphprocessor_lst)
+            _labels.append(_graphprocessor_lst)
 
         asins_dict[_asin] = [_texts, _labels]
 
