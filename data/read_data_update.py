@@ -742,7 +742,7 @@ def read_generated_amazon_reviews():
     asins_1 = {}
 
     dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
-    #dir = '/data/raymond/workspace/exp2/'
+    #dir = '/data/raymond/workspace/exp6/'
     file0 = dir + 'amazon_0.xlsx'
     file1 = dir + 'amazon_1.xlsx'
 
@@ -753,6 +753,56 @@ def read_generated_amazon_reviews():
     asins_1 = get_repharased_asins(sheets_1)
     generated_asins.update(asins_0)
     generated_asins.update(asins_1)
+
+    # plot
+    percent = 0.2
+    #words = 0
+    reviews = []
+    needs = 0
+    _sorted_asins={}
+    for asin in generated_asins:
+        print(asin)
+        words = 0
+        i = 0
+        while i < len(generated_asins[asin]):
+            words = words + len(generated_asins[asin][i].split())
+            needs = needs + 1
+            i = i + 1
+
+        _sorted_asins[asin] = words
+
+        reviews.append(words)
+        #generated_asins[asins]
+    
+    sorted_asins = {}
+    sorted_asins = sorted(_sorted_asins.items(), key=lambda x: x[1], reverse=True)
+
+    n = math.ceil(len(reviews) * percent) # 20% first
+    long_asins_lst = []
+    for _dict in sorted_asins[0:n]:
+        long_asins_lst.append(_dict[0])
+
+    short_asins_lst = []
+    for _dict in sorted_asins[n:]:
+        short_asins_lst.append(_dict[0])
+
+    long_generated_asins = {}
+    for asin in long_asins_lst:
+        long_generated_asins[asin] = generated_asins[asin]
+
+    short_generated_asins = {}
+    for asin in short_asins_lst:
+        short_generated_asins[asin] = generated_asins[asin]
+    
+    print("needs: ", needs)
+    #plt
+    #plt.hist(len_reviews, bins=20, color='g')
+    plt.hist(reviews,bins=40, color="blue")
+    plt.xlabel('number of words in one need text')
+    plt.ylabel('number of needs')
+    plt.title('The distribution of the number of words in the needs data')
+    plt.show()
+    
 
     return generated_asins
 
@@ -1396,7 +1446,7 @@ def get_amazon_texts_labels(file):
 
        # tech_dict[str(_asin)] = [_cpu,_sscreen,_ram,_harddrive,_graphprocessor]
         
-        """
+        
         #reviews
         reviews = asins[_asin][5] 
         table = str.maketrans('', '', string.punctuation)
@@ -1433,18 +1483,19 @@ def get_amazon_texts_labels(file):
             #_labels.append(_graphprocessor_lst)
 
         asins_dict[_asin] = [_texts, _labels]
-        """
+        
         #if num_words <= 1000:
         #words.append(num_words)
         #_reviews.append(num_reviews) 
-        
+
+    """   
     #cpu
     cpu_lst = get_cpu_label(_cpus)
     #print(cpu_lst)
 
     # get the class list according to the dist
     cpu_labels_dict = sort_items(cpu_lst)
-    """
+    
     #plt.hist(_reviews, bins=40, color='g')
     plt.hist(num_words, bins=20 , color="g")
     #plt.hist(_reviews, words, color="blue")
@@ -1529,10 +1580,11 @@ def get_amazon_texts_labels(file):
 
         asins_dict[_asin] = [_texts, _labels]
     """
+
     # screen size
     #sscreen_dict = get_sscreen_label(_sscreens)
     
-    
+    """
     # about CPUs
     _cpus = []
     ind = 0
@@ -1587,7 +1639,7 @@ def get_amazon_texts_labels(file):
             # remove punctuation from each word , and stemming
 
             stripped = [w.decode("utf-8").lower().translate(table) for w in _t]  
-            s = " ".join(x for x in stripped)
+            s = " ".join(x for x in stripped) 
             #stripped = [w.decode("utf-8").translate(table) for w in _t] 
             #stripped = [w.decode("utf-8").lower().translate(table) for w in _t]
             #
@@ -1602,7 +1654,7 @@ def get_amazon_texts_labels(file):
             #labels.append(_graphprocessor_id)
 
         asins_dict[_asin] = [_texts, _labels]
-    
+    """
 
     return asins_dict
 
@@ -1621,7 +1673,7 @@ def main():
     """
 
     dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
-    #dir = "/data/raymond/workspace/exp2/"
+    dir = "/data/raymond/workspace/exp6/"
     file = dir + 'amazon_reviews_copy.json'
     #file = dir + 'amazon_reviews.json'
 
@@ -1661,10 +1713,10 @@ def main():
     #file = 'amazon_reviews.json'
     #file = 'amazon_reviews_copy.json'
     reviews = []
-    asins_dict = get_amazon_texts_labels(file)
+    #asins_dict = get_amazon_texts_labels(file)
 
     #generated_asins = {}
-    #generated_asins = read_generated_amazon_reviews()
+    generated_asins = read_generated_amazon_reviews()
 
     #_plt()
 
