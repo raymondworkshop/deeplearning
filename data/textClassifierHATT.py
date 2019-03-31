@@ -42,7 +42,7 @@ import math
 
 #
 #import read_data
-import read_data_update
+import read_data_update_copy
 
 
 #MAX_SEQUENCE_LENGTH = 1000
@@ -394,13 +394,13 @@ def train_HAN():
     # get texts and labels
     dir = 'C:/Users/raymondzhao/myproject/dev.deeplearning/data/'
 
-    #dir = '/data/raymond/workspace/exp2/'
+    #dir = '/data/raymond/workspace/exp6/'
     #file = dir +  'amazon_reviews.json'
     file = dir + 'amazon_reviews_copy.json'
     reviews = []
-    asins_dict = read_data_update.get_amazon_texts_labels(file)
+    asins_dict = read_data_update_copy.get_amazon_texts_labels(file)
     # the generated asins
-    generated_asins = read_data_update.read_generated_amazon_reviews()
+    generated_asins = read_data_update_copy.read_generated_amazon_reviews()
     texts = []
     #generated_texts = []
     labels_lst = []
@@ -491,6 +491,7 @@ print(y_test.sum(axis=0))
 #GLOVE_DIR = "~/Testground/data/glove"
 #GLOVE_DIR = "/data/raymond/workspace/exp2/"
 GLOVE_DIR = "C:/Users/raymondzhao/myproject/dev.deeplearning/data/"
+#GLOVE_DIR = "/data/raymond/workspace/exp6/"
 embeddings_index = {}
 f = open(GLOVE_DIR + 'glove.6B.100d.txt',  "r", encoding="utf-8")
 for line in f:
@@ -659,7 +660,7 @@ rec = []
 bsize = 64
 #epoch = int(len(x_train) / bsize)
 #epoch = 12
-for epoch in range(5):
+for epoch in range(25):
     hist = model.fit(x_train, y_train, 
                      validation_split=VALIDATION_SPLIT,
                      #validation_data=(x_val, y_val),
