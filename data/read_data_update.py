@@ -720,10 +720,15 @@ def get_repharased_asins(sheets):
         #value = math.isnan(float(_value))
         if isinstance(_text, str):
             asins[name] = []
+            item = 0
             for series_val in reviews.items():
+                item += 1
                 if isinstance(series_val[1], str) : # # not NaN
                    asins[name].append(series_val[1])
                 elif np.isnan(series_val[1]):
+                    #break
+                    pass
+                elif item > 799:
                     break
                 else:
                     pass
@@ -758,20 +763,25 @@ def read_generated_amazon_reviews():
     percent = 0.2
     #words = 0
     reviews = []
-    needs = 0
+    _needs = 0
+    needs = []
     _sorted_asins={}
     for asin in generated_asins:
         print(asin)
         words = 0
         i = 0
         while i < len(generated_asins[asin]):
-            words = words + len(generated_asins[asin][i].split())
-            needs = needs + 1
+            _words = len(generated_asins[asin][i].split())
+            needs.append(_words)
+
+            words = words + _words 
+            _needs = _needs + 1
             i = i + 1
 
         _sorted_asins[asin] = words
 
         reviews.append(words)
+
         #generated_asins[asins]
     
     sorted_asins = {}
@@ -794,10 +804,10 @@ def read_generated_amazon_reviews():
     for asin in short_asins_lst:
         short_generated_asins[asin] = generated_asins[asin]
     
-    print("needs: ", needs)
+    print("_needs: ", _needs)
     #plt
     #plt.hist(len_reviews, bins=20, color='g')
-    plt.hist(reviews,bins=40, color="blue")
+    plt.hist(needs,bins=40, color="blue")
     plt.xlabel('number of words in one need text')
     plt.ylabel('number of needs')
     plt.title('The distribution of the number of words in the needs data')
