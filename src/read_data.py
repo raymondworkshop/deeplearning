@@ -59,6 +59,7 @@ def get_data(file):
                     for key, value in params.items():
                         if 'processor' in key.lower():
                             asins[_asin].append(value)
+                        
                         if 'ram' in key.lower():
                             asins[_asin].append(value)
                         if 'screen size' in key.lower():
@@ -66,11 +67,18 @@ def get_data(file):
                         # hard drive
                         if 'hard' in key.lower():
                             asins[_asin].append(value)
+
+                        if 'graphics' in key.lower():
+                            asins[_asin].append(value)
                         #
                         if 'weight' in key.lower():
                             asins[_asin].append(value)
 
-                        if len(asins[_asin]) == 5:
+                        if 'battery' in key.lower():
+                            asins[_asin].append(value)
+
+
+                        if len(asins[_asin]) == 7:
                             break
 
                     reviews = data['reviews']
@@ -91,10 +99,25 @@ def get_data(file):
                     asins[_asin].append(num_words)
 
                 #
-                df[_asin] = asins[_asin]
+                #df[_asin] = asins[_asin]
+
+                """
+
+                    # write to excel
+                    dir = "C:/Users/raymondzhao/myproject/dev.deeplearning/src/"
+                    file2 = dir + 'amazon_tech_0506.xlsx'
+                    writer = pd.ExcelWriter(file2, mode='a')
+
+                    df1 = pd.DataFrame(asins[_asin])
+                    df1.to_excel(writer, sheet_name=_asin)
+                    writer.save()
+
+                    writer.close()
+                """
+    _df = df.from_dict(list(asins.items()))
 
     # return asins
-    return df, len_reviews
+    return _df, len_reviews
 
 
 def analyze_data(df, len_reviews):
@@ -167,13 +190,16 @@ def main():
 
     #dir = "C:/Users/raymondzhao/myproject/dev.dplearning/data/"
     #dir = "/data/raymond/workspace/exp2/"
-    dir = "/Users/zhaowenlong/workspace/proj/dev.deeplearning/data/"
-    file = dir + 'amazon_reviews.json'
+    #dir = "/Users/zhaowenlong/workspace/proj/dev.deeplearning/data/"
+    dir = "C:/Users/raymondzhao/myproject/dev.deeplearning/src/"
+    #file = dir + 'amazon_reviews.json'
+    file = dir + 'new_amazon_update_0506_draft.json'
 
-    #df, len_reviews = get_data(file)
+    df, len_reviews = get_data(file)
     # save to the csv
-    file1 = dir + 'amazon_tech_0803.csv'
-    #df.to_csv(file1)
+    #file1 = dir + 'amazon_tech_0803.csv'
+    file1 = dir + 'new_amazon_laptop_0506.xlsx'
+    df.to_csv(file1)
 
     # load data
     #file1 = dir + 'amazon_tech_0803.csv'
@@ -183,9 +209,8 @@ def main():
     #analyze_data(df, len_reviews)
 
 
-
     # plot
-    plot()
+    #plot()
 
     #import pdb
     # pdb.set_trace()

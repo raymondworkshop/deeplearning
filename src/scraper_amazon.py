@@ -121,7 +121,8 @@ def get_results(asin):
         _dict["title"] = soup.title.string
     """
     if "robot" in title.lower():
-        print("Robot Check")
+        print("Warning: Robot Check - Please wait")
+
     if title:
         _dict["title"] = title
 
