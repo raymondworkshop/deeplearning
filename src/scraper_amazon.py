@@ -114,6 +114,8 @@ def get_results(asin):
     else:
         _dict["title"] = soup.title.string
     """
+    if "robot" in title.lower():
+        print("Robot Check")
     if title:
         _dict["title"] = title
 
@@ -137,7 +139,7 @@ def get_results(asin):
                 _dict["date"] = _td.lstrip().rstrip().rstrip("\n").lstrip("\n")
                 
                 year = re.search('\d{4}', _dict["date"]).group()
-                if int(year) < 2017: # only get the ones in recent two years
+                if int(year) < 2015: # only get the ones in recent two years
                     return _dict
                 
 
@@ -261,11 +263,35 @@ def main():
         f.write(str(set(ASINS)))
     """
 
-    ASINS = ["B07193JRJR"]
+    #ASINS = ["B07193JRJR"]
     #ASINS = ["B07C8BJ1NT","B01JJQVNLK","B078KNND2S", "B005OSFT90", "B01AP5AJFA","B01AP5AJFA", "ACSVBGNA01", "B06WWKYM1X"]
 
+    ASINS = ["B077X1ZB7H", "B079TGL2BZ", "B07KQXQWK1","B07L49MY9H","B07L9MM5RN",
+ "B07N41YXP5", "B07Q478DHY", "B07KNLVRJ2", "B07KDQW7Q1",
+"B0762S8PYM", "B075FLBJV7", "B07MGT236W", "B07NXTKWMX", "B0795W86N3",
+"B07Q147J19", "B07D97S1CR", "B07K23MWKV", "B07MBR3D8C", "B07PB5M8DS",
+"B07KWG73RQ", "B07FSFRWS4", "B07KWG73RQ", "B07FSFRWS4", "B0748YG81P",
+"B07MY6Z3QC", "B07L28M2CB", "B07HZL1NWW", "B07BJ9T8XC", "B07KWK3N7V",
+"B07FW7D635", "B077GN5H7D", "B07DMJGV9W", "B07P2JH6MS", "B07JF6HRJ1",
+"B07ML5ZVZY", "B07HB744Y1", "B07QRWRPJ6", "B07PX4B36S", "B07K8T4SG1",
+"B07MQBN2X1", "B078YCMD67", "B07C9J1PY6", "B07MZ8XBNR", "B01NBE6Y5D",
+"B07GKZJ8CX", "B07N79NPSQ", "B07MPVF5LF", "B0716J3CYJ", "B07MKNL71F",
+"B07KTLGQ4R", "B07MM2TSFB", "B07PPDFFG9", "B07P6T1VBJ", "B07D5H84NL",
+"B07PWVH4FW", "B07MW5VL59", "B07KWRD7DD", "B07P54RSPY", "B07M88S533",
+"B07MKLLVFZ", "B07NCCDCNK", "B07H3KT9RV", "B07CD3MRZD", "B01NBE6Y5D",
+"B076BFW7VZ", "B07MH2YHTX", "B07L6PLLWN", "B07LF6BTWN", "B07BWF4H3W",
+"B07DRGBS61", "B07DTR113H", "B07KVFTVHX", "B07CD3MRZF", "B07K1STZHB",
+"B07DQR6DQT", "B07N48XQ1V", "B077XFNXX1", "B07N48XQ1V", "B077ZLH5LC",
+"B07BRHXCZL", "B01APA6K6M", "B07L9LCYMJ", "B07LF6BTWN", "B07L8BX6NB",
+"B077P7D2B2", "B07KWS13NY", "B07BXG7725", "B07KJTRTLX", "B07MNTRQ8Q",
+"B07Q8TQVRX", "B07MKZM4Y2", "B07MD1FMN4", "B01GQVA114", "B07HPSR3Z9",
+"B01DBGVB7K", "B07KNFW5NJ", "B0744GWBXC", "B00AZL0M34", "B07GDYNK3B",
+"B07QQB6DC1", "B07DT78VJJ", "B07P5RT1P5", "B07L9JX6KC", "B07BLPHRX9",
+"B07FZZRG2M", "B07L519KGY", "B07JBJM275", "B07FKHYHCQ", "B07QYXQ277"]
+
     #f = open('amazon_update_0628_latest_4.json', 'a', encoding="utf-8")
-    f = open('amazon_update_0629_draft.json', 'a', encoding="utf-8")
+    #f = open('amazon_update_0629_draft.json', 'a', encoding="utf-8")
+    f = open('new_amazon_update_0506_draft.json', 'a', encoding="utf-8")
     _ret = {}
     for asin in ASINS:
         _ret = get_results(asin)
