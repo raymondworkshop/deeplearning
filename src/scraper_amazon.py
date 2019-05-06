@@ -76,7 +76,13 @@ def get_reviews(html, cnt):
 
         # TODO: get reviews
         _reviews_div = soup.find_all(
-            'div', {'class': "a-row a-spacing-medium review-data"})
+            'div', {'class': "a-row a-spacing-small review-data"})
+        
+        """   
+        _reviews_div = soup.find_all(
+            'div', {'id': "cm_cr-review_list"})
+        """
+
         #_reviews = []
         for item in _reviews_div:
             _txt = item.get_text().lstrip().rstrip().rstrip("\n").lstrip("\n")
