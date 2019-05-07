@@ -21,3 +21,6 @@
          
 
   - python3 -i *py (with adjusted dirs)
+  
+* notices
+  - when in block, you should stop the scripts
