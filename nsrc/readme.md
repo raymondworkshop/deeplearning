@@ -8,9 +8,9 @@
   - Notices: you need to update some dirs in the code 
 
 * Amazon dataset -> data/ 
-  - scrape review data from [Amazon](www.amazon.com) 
+  - scrape review data from [Amazon](www.amazon.com) -  follow the instructions
     + code -> [scraper_amazon.py](https://github.com/muyun/dev.deeplearning/blob/master/src/scraper_amazon.py)
-    + follow the instructions 
+     
 
 * algs 
   - code 
@@ -23,4 +23,4 @@
   - python3 -i *py (with adjusted dirs)
   
 * notices
-  - when in block, you should stop the scripts
+  - when blocking, you should stop the scripts
