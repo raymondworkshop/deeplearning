@@ -6,3 +6,4 @@ data/venv/*
 .DS_Store
 tfenv/
 .vscode/
+nsrc/
