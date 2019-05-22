@@ -34,4 +34,4 @@
 #### reference
 
 
-####  Copyright (c) 2018-2019 HSU
+####  Copyright (c) 2018-2019 [HSUHK](https://stra.hsu.edu.hk/en/)
