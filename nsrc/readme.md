@@ -9,7 +9,8 @@
 
 * Amazon dataset -> data/ 
   - scrape review data from [Amazon](www.amazon.com) -  follow the instructions
-    + code -> [scraper_amazon.py](https://github.com/muyun/dev.deeplearning/blob/master/src/scraper_amazon.py)
+    + code -> [scraper_amazon.py](https://github.com/muyun/dev.deeplearning/blob/master/src/scraper_amazon.py) 
+    + wehn b
      
 
 * algs 
@@ -22,5 +23,4 @@
 
   - python3 -i *py (with adjusted dirs)
   
-* notices
-  - when blocking, you should stop the scripts
+* This is a demonstrated prototype
