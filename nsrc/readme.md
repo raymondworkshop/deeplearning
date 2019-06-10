@@ -1,7 +1,7 @@
 
 #### notes 
 * requirements 
-  - Install the related pkg in requirements.txt 
+  - Install the related pkgs in requirements.txt 
   - Pre-trained GloVe word vectors [here](https://nlp.stanford.edu/projects/glove/)
 
 * dataset
