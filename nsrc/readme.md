@@ -15,4 +15,4 @@
    - Attention -> textClassifierHATT.py 
          
   
-* This is a demonstrated prototype
+* Implementation of the papers', and a demonstrated prototype
