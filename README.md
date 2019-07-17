@@ -1,7 +1,8 @@
-### dev.dplearning
+### dev.deeplearning
+ * This is mainly on deeplearning, especially using on txt.
 
 
-#### notes 
+####  
 #### Notes on deep learning
  * ch2 
    - 通过**与非门**的组合可以实现计算机 ? [The elements of computing systems](http://www1.idc.ac.il/tecs/plan.html) 
