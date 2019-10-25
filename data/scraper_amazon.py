@@ -220,10 +220,11 @@ def get_results(asin):
 
 
 def main():
-    """
+    
     # get all asins of some product
     ASINS = []
 
+    """
     # scrape all the pages
     # total = 0
     page = 1  # by default
@@ -242,10 +243,10 @@ def main():
         print(ASINS)
 
     # write the file
-    with open("amazon_asin_0627.md", 'a') as f:
+    with open("amazon_asin_0426.md", 'a') as f:
         f.write(str(tuple(ASINS)))
-
     """
+    
     # get the infor based on ASINS
     # reviews, technical specifications, price, brand
     # title
@@ -261,7 +262,9 @@ def main():
         f.write(str(set(ASINS)))
     """
 
-    ASINS = ["B07193JRJR"]
+    
+    #ASINS = ["B07193JRJR"]
+
     #ASINS = ["B07C8BJ1NT","B01JJQVNLK","B078KNND2S", "B005OSFT90", "B01AP5AJFA","B01AP5AJFA", "ACSVBGNA01", "B06WWKYM1X"]
 
     #f = open('amazon_update_0628_latest_4.json', 'a', encoding="utf-8")
@@ -273,7 +276,7 @@ def main():
         f.write(str(_ret) + "\n")
 
     f.close()
-
+    
     # print(_ret)
     # print(get_results)
     return 0

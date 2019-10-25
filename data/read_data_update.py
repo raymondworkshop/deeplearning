@@ -1142,9 +1142,9 @@ def read_flipkart_data(file, csv_file4):
 
     # f1.close()
     # return asins
-    print("Num of brands in Flipkart: %d:", num_brands)
-    print("Num of reviews: %d:", num_reviews)
-    print("Num of words: %d:", num_words)
+    #print("Num of brands in Flipkart: %d:", num_brands)
+    #print("Num of reviews: %d:", num_reviews)
+    #print("Num of words: %d:", num_words)
     return 0
 
 
@@ -1689,7 +1689,7 @@ def main():
 
     file2 = dir + 'reviews.xls'
 
-    #df = get_data(file, file2)
+    df = get_data(file, file2)
     #file1 = dir + 'amazon_tech_0903.csv'
     # df.to_csv(file1)
 
@@ -1726,7 +1726,7 @@ def main():
     #asins_dict = get_amazon_texts_labels(file)
 
     #generated_asins = {}
-    generated_asins = read_generated_amazon_reviews()
+    #generated_asins = read_generated_amazon_reviews()
 
     #_plt()
 

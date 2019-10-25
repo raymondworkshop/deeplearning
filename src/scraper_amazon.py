@@ -1,5 +1,13 @@
 """
 A web scraper that queries Amazon
+
+Instruction: 
+    * get the asins OF the products - manually, in a list
+       - do some parameter selections on the left in amazons web 
+       - for example ["B01ATX3PBS", "B07G77QHV8"] 
+
+    * 
+
 """
 from bs4 import BeautifulSoup
 import requests
@@ -122,11 +130,12 @@ def get_results(asin):
     """
     if "robot" in title.lower():
         print("Warning: Robot Check - Please wait")
+        return 0
 
     if title:
         _dict["title"] = title
 
-    product_price = soup.find(id="style_name_0_price")
+    product_price = soup.find(id="style_name_0_price") #priceblock_ourprice
     if product_price:
         _dict["price"] = product_price.text.rstrip(
             '\n').lstrip("\n").rstrip().rstrip()
@@ -146,10 +155,9 @@ def get_results(asin):
                 _dict["date"] = _td.lstrip().rstrip().rstrip("\n").lstrip("\n")
                 
                 year = re.search('\d{4}', _dict["date"]).group()
-                if int(year) < 2015: # only get the ones in recent two years
+                if int(year) < 2012: # only get the ones from 2015 
                     return _dict
-                
-
+        
     else:
         _dict["date"] = ""
 
@@ -270,10 +278,11 @@ def main():
         f.write(str(set(ASINS)))
     """
 
+    # laptop
     #ASINS = ["B07193JRJR"]
     #ASINS = ["B07C8BJ1NT","B01JJQVNLK","B078KNND2S", "B005OSFT90", "B01AP5AJFA","B01AP5AJFA", "ACSVBGNA01", "B06WWKYM1X"]
 
-    ASINS = ["B077X1ZB7H", "B079TGL2BZ", "B07KQXQWK1","B07L49MY9H","B07L9MM5RN",
+    LAPTOP_ASINS = ["B077X1ZB7H", "B079TGL2BZ", "B07KQXQWK1","B07L49MY9H","B07L9MM5RN",
  "B07N41YXP5", "B07Q478DHY", "B07KNLVRJ2", "B07KDQW7Q1",
 "B0762S8PYM", "B075FLBJV7", "B07MGT236W", "B07NXTKWMX", "B0795W86N3",
 "B07Q147J19", "B07D97S1CR", "B07K23MWKV", "B07MBR3D8C", "B07PB5M8DS",
@@ -296,9 +305,24 @@ def main():
 "B07QQB6DC1", "B07DT78VJJ", "B07P5RT1P5", "B07L9JX6KC", "B07BLPHRX9",
 "B07FZZRG2M", "B07L519KGY", "B07JBJM275", "B07FKHYHCQ", "B07QYXQ277"]
 
+    #desktop
+    DESKTOP_ASINS = ["B01ATX3PBS", "B07G77QHV8"]
+
+    #mobile phone 
+    #PHONE_ASINS = ["B072271F5K", "B06Y6J869C"]
+    
+    #camera
+    #CAMERA_ASINS = ["B00I8BIBCW", "B00I8BIC9E"]
+
+    ASINS = DESKTOP_ASINS
+    ASINS = ["B077X1ZB7H"]
+
     #f = open('amazon_update_0628_latest_4.json', 'a', encoding="utf-8")
     #f = open('amazon_update_0629_draft.json', 'a', encoding="utf-8")
-    f = open('new_amazon_update_0506_draft.json', 'a', encoding="utf-8")
+    #f = open('new_amazon_laptop_0506_draft.json', 'a', encoding="utf-8")
+    #f = open('new_amazon_phone_0506_draft.json', 'a', encoding="utf-8")
+    f = open('new_amazon_camera_0506_draft.json', 'a', encoding="utf-8")
+
     _ret = {}
     for asin in ASINS:
         _ret = get_results(asin)
@@ -309,6 +333,8 @@ def main():
 
     # print(_ret)
     # print(get_results)
+
+    print("Done")
     return 0
 
 
