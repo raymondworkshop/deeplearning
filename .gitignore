@@ -7,3 +7,5 @@ data/venv/*
 tfenv/
 .vscode/
 nsrc/
+src/*xlsx
+src/*json
