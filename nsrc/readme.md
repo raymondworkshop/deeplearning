@@ -16,4 +16,5 @@
    - Attention -> textClassifierHATT.py 
          
   
-* prototype
+* demo 
+
