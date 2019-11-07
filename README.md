@@ -1,5 +1,5 @@
 ### dev.deeplearning
- * This is mainly on deeplearning, especially using on txt.
+ * This is mainly on deeplearning, especially in NLP.
 
 
 ####  
