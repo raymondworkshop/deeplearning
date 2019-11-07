@@ -2,7 +2,7 @@
  * This is mainly on deeplearning, especially deeplearning in NLP.
 
 
-#### A Use Case - Intelligent Configurations (iCON) Design
+#### A Use Case in Intelligent Configurations (iCON) Design
 #####  Descrption 
 Online product configurations are prevailing tools in e-commerce industry to elicit customer needs. Yet current online configurations require customers to specify the choices of each product attribute, which poses a great challenge for customers with no background knowledge.
 
