@@ -2,7 +2,7 @@
  * This is mainly on deeplearning, especially deeplearning in NLP.
 
 
-#### A use case - Intelligent Configurations (iCON) Design
+#### A Use Case - Intelligent Configurations (iCON) Design
 #####  Descrption 
 Online product configurations are prevailing tools in e-commerce industry to elicit customer needs. Yet current online configurations require customers to specify the choices of each product attribute, which poses a great challenge for customers with no background knowledge.
 
@@ -12,8 +12,8 @@ For example, when users input the keywords like “a large Screen Size laptop“
 
 ![Fig.1](https://github.com/muyun/dev.deeplearning/blob/master/nsrc/icon_demo.png) 
 
-##### deep learning Solution 
-We develop tools to collect Amazon user reviews (laptop), and suppose these reviews as user inputs. Then we build **Deep learning Model** to do query-to-attributes mapping [map user inputs (the functional requirements in unstructured query) into product parameters or features (structured attributes)].
+##### A Solution based on deep learning
+We develop tools to extract Amazon user review (laptop) data, and suppose these reviews as user inputs. Then we build **Deep learning Models** to do the query-to-attributes mapping [map user inputs (the functional requirements in unstructured query) into product parameters or features (structured attributes)].
 
    
 #### Notes on deep learning
