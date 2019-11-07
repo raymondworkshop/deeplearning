@@ -1,4 +1,4 @@
-### dev.deeplearning
+### deeplearning
  * This is mainly on deeplearning, especially deeplearning in NLP.
 
 
