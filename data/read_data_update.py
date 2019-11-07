@@ -1689,7 +1689,11 @@ def main():
 
     file2 = dir + 'reviews.xls'
 
+<<<<<<< HEAD
     df = get_data(file, file2)
+=======
+    #df = get_data(file, file2)
+>>>>>>> 62abca543e2276d7eab674684a157a7b95dfb307
     #file1 = dir + 'amazon_tech_0903.csv'
     # df.to_csv(file1)
 
