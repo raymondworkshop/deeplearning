@@ -12,25 +12,9 @@ For example, when users input the keywords like “a large Screen Size laptop“
 
 ![Fig.1](https://github.com/muyun/dev.deeplearning/blob/master/nsrc/icon_demo.png) 
 
-* Solutions  
+#####  Solutions  
 We develop tools to collect Amazon user reviews (laptop), and suppose these reviews as user inputs. Then we build **Deep learning Model** to do query-to-attributes mapping [map user inputs (the functional requirements in unstructured query) into product parameters or features (structured attributes)].
 
-
-##### Notes 
-* requirements 
-  - Install the related pkgs in requirements.txt 
-  - Pre-trained [GloVe word vectors](https://nlp.stanford.edu/projects/glove/)
-
-* dataset
-  - scrape review data from [Amazon](www.amazon.com) -  follow the instructions
-    + code -> [scraper_amazon.py](https://github.com/muyun/dev.deeplearning/blob/master/src/scraper_amazon.py) 
-  - other review data
-
-* algs - NN modules 
-   - MLP -> trainsMLP.py 
-   - RNN -> textClassifierRNN.py 
-   - CNN -> textClassifierCNN.py 
-   - Attention -> textClassifierHATT.py 
    
 #### Notes on deep learning
  * ch2 
