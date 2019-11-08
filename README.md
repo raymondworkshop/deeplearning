@@ -1,5 +1,5 @@
 ### deeplearning
- * This is mainly on deeplearning, especially deeplearning in NLP & NLU.
+ * This is mainly on deeplearning and its applications, especially deeplearning in NLP & NLU.
 
 
 #### A Use Case in Intelligent Configurations Design
