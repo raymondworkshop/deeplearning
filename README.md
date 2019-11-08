@@ -28,7 +28,8 @@ We develop tools to extract Amazon user review (laptop) data (suppose these revi
 * [Top-N Sort Algorithm](https://drive.google.com/file/d/1kpzEqbFUUvQ3dsSITs5C8ifK0VfOyAB0/view?usp=sharing)
 * [TOP-N Alg on word-embedding](https://docs.google.com/presentation/d/1YUsoW0bynIm33QrzEdIuhxSd99JZK30oNusAMOIt3qc/edit?usp=sharing)
 
-
+##### Paper
+Our paper “[Mapping Customer Needs in Natural Language to Product Specifications by Using Word Embeddings](https://drive.google.com/file/d/1pfpff9EWB2gOGllzh8DHIapp-fBGlC55/view)” has been accepted for publication at APIEMS 2018,Hong Kong.
 
    
 #### Notes on deep learning
