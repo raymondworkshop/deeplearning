@@ -9,7 +9,7 @@ For example, when users input the keywords like “a large Screen Size laptop“
 ![Fig.1](https://github.com/muyun/dev.deeplearning/blob/master/nsrc/icon_demo.png) 
 
 #### Solutions
-We develop tools to collect Amazon user reviews (laptop), and suppose these reviews as user inputs. Then we build **Deep learning Model** to do query-to-attributes mapping [map user inputs (the functional requirements in unstructured query) into product parameters or features (structured attributes)].
+We develop tools to extract Amazon user review (laptop) data ( suppose these reviews as user inputs). Then we build **Deep learning Model** to do query-to-attributes mapping [map user inputs (the functional requirements in unstructured query) into product parameters or features (structured attributes)].
 
 #### The Presentation about solutions
 * [How to collect data as Dataset](https://docs.google.com/presentation/d/1Y7zrC9QLHHcFlQpn3Yb2_paOgU_xB1B4yJwjM6ah98E/edit?usp=sharing)
