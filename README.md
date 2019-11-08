@@ -16,6 +16,11 @@ For example, when users input the keywords like “a large Screen Size laptop“
 ##### Solution
 We develop tools to extract Amazon user review (laptop) data (suppose these reviews as user inputs). Then we build **Deep learning Models** to do the query-to-attributes mapping [map user inputs (the functional requirements in unstructured query) into product parameters or features (structured attributes)].
 
+##### One paper summarizing the solution
+Our paper “[Mapping Customer Needs in Natural Language to Product Specifications by Using Word Embeddings](https://drive.google.com/file/d/1pfpff9EWB2gOGllzh8DHIapp-fBGlC55/view)” has been accepted for publication at APIEMS 2018,Hong Kong.
+
+
+
 ##### Presentations from me about deep learning technology and its application
 * [How to collect data as Dataset](https://docs.google.com/presentation/d/1Y7zrC9QLHHcFlQpn3Yb2_paOgU_xB1B4yJwjM6ah98E/edit?usp=sharing)
 * [Algorithm: word_embeddings_based_mapping](https://docs.google.com/presentation/d/1XpAfL3T-A0cxyRjVbmZFE2M8jsFQrwycfGX042OSP18/edit?usp=sharing)
@@ -28,10 +33,7 @@ We develop tools to extract Amazon user review (laptop) data (suppose these revi
 * [Top-N Sort Algorithm](https://drive.google.com/file/d/1kpzEqbFUUvQ3dsSITs5C8ifK0VfOyAB0/view?usp=sharing)
 * [TOP-N Alg on word-embedding](https://docs.google.com/presentation/d/1YUsoW0bynIm33QrzEdIuhxSd99JZK30oNusAMOIt3qc/edit?usp=sharing)
 
-##### Paper
-Our paper “[Mapping Customer Needs in Natural Language to Product Specifications by Using Word Embeddings](https://drive.google.com/file/d/1pfpff9EWB2gOGllzh8DHIapp-fBGlC55/view)” has been accepted for publication at APIEMS 2018,Hong Kong.
 
-   
 #### Notes on deep learning
  * ch2 
    - 通过**与非门**的组合可以实现计算机 ? [The elements of computing systems](http://www1.idc.ac.il/tecs/plan.html) 
