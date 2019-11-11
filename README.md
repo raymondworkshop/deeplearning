@@ -1,6 +1,26 @@
 ### deeplearning
  * This is mainly on deeplearning and its applications, especially in NLP & NLU.
 
+#### workflow to Approach a ML problem -> Prototype
+ * what kind of question or goal we wanna answer
+
+ * how to define and measure success -> like using a business metric like increased profit or decreased losses
+
+ * acquire the data and build a working prototype - a loop [TODO]
+   - analyze the mistakes
+   - collect more or diff data
+   - change the task formulation slightly
+ * humans in the loop
+   - algotithm might increase response time or reduce cost
+   - TODO
+   
+#### From Prototype to Production
+ * data analytics teams
+ * production teams -> reimplement the solution for robust, scalable system
+
+   - offline evaluation
+   - online testing using A/B testing [TODO]
+
 
 #### A Use Case in Intelligent Configurations Design
 #####  Descrption 
