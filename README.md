@@ -1,7 +1,7 @@
 ### deeplearning
  * This is mainly on deeplearning and its applications, especially in NLP & NLU.
 
-#### workflow to Approach a ML problem -> Prototype
+#### Workflow to Approach a ML problem -> Prototype
  * what kind of question or goal we wanna answer
 
  * how to define and measure success -> like using a business metric like increased profit or decreased losses
