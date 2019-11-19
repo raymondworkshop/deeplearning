@@ -1,5 +1,5 @@
 ### deeplearning
- * This is mainly on deeplearning and its applications, especially in NLP & NLU.
+ * This is mainly on deeplearning and its applications, especially in NLP.
 
  * Workflow to Approach a ML problem -> Prototype
    - what kind of question or goal we wanna answer
