@@ -42,7 +42,7 @@ We develop tools to extract Amazon user review (laptop) data (suppose these revi
 * [How to collect data as Dataset](https://docs.google.com/presentation/d/1Y7zrC9QLHHcFlQpn3Yb2_paOgU_xB1B4yJwjM6ah98E/edit?usp=sharing)
 * [Algorithm: word_embeddings_based_mapping](https://docs.google.com/presentation/d/1XpAfL3T-A0cxyRjVbmZFE2M8jsFQrwycfGX042OSP18/edit?usp=sharing)
 * [Algorithm: SVM based on word-embedding](https://drive.google.com/file/d/1GoGhYoFfq1Ha2MoseFj5KcWrzu0IISQ2/view?usp=sharing)
-* [CNN Alg for Sentence Classification](https://docs.google.com/presentation/d/1p6mpuqLxhCUoFj0vYUbOnQ2TVjeSkHNmytg___0Jc7I/edit?usp=sharing)
+* [CNN Alg for Sentence Classification](https://drive.google.com/file/d/1w8Qw0U5P9FVhO8-4WYMb0-foUYG47CBE/view?usp=sharing)
 * [The experiments based on CNN Alg](https://drive.google.com/file/d/1JKskq_ufcVFyvbG0yfBc1aRl0PLv39ak/view?usp=sharing)
 * [Algorithm: Recurrent Neural Networks](https://drive.google.com/file/d/1UG5GBp7PH-8pOlXFw_jMKGQQpUtEe2xV/view?usp=sharing)
 * [Algorithm: LSTM](https://drive.google.com/file/d/1f-5p59g9NrMlYHkhjagAYe7OO-23P-R-/view?usp=sharing)
