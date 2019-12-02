@@ -39,16 +39,17 @@ We develop tools to extract Amazon user review (laptop) data (suppose these revi
 
 
 ##### Presentations from me about deep learning technology and its application
-* [How to collect data as Dataset](https://docs.google.com/presentation/d/1Y7zrC9QLHHcFlQpn3Yb2_paOgU_xB1B4yJwjM6ah98E/edit?usp=sharing)
-* [Algorithm: word_embeddings_based_mapping](https://docs.google.com/presentation/d/1XpAfL3T-A0cxyRjVbmZFE2M8jsFQrwycfGX042OSP18/edit?usp=sharing)
-* [Algorithm: SVM based on word-embedding](https://drive.google.com/file/d/1GoGhYoFfq1Ha2MoseFj5KcWrzu0IISQ2/view?usp=sharing)
-* [CNN Alg for Sentence Classification](https://drive.google.com/file/d/1w8Qw0U5P9FVhO8-4WYMb0-foUYG47CBE/view?usp=sharing)
-* [The experiments based on CNN Alg](https://drive.google.com/file/d/1JKskq_ufcVFyvbG0yfBc1aRl0PLv39ak/view?usp=sharing)
-* [Algorithm: Recurrent Neural Networks](https://drive.google.com/file/d/1UG5GBp7PH-8pOlXFw_jMKGQQpUtEe2xV/view?usp=sharing)
-* [Algorithm: LSTM](https://drive.google.com/file/d/1f-5p59g9NrMlYHkhjagAYe7OO-23P-R-/view?usp=sharing)
-* [Algorithm:Hier-attention Network](https://drive.google.com/file/d/1MWM-tzy_I7I-MWqkIF3u9KodEKW3K2Tb/view?usp=sharing)
-* [Top-N Sort Algorithm](https://drive.google.com/file/d/1kpzEqbFUUvQ3dsSITs5C8ifK0VfOyAB0/view?usp=sharing)
-* [TOP-N Alg on word-embedding](https://docs.google.com/presentation/d/1YUsoW0bynIm33QrzEdIuhxSd99JZK30oNusAMOIt3qc/edit?usp=sharing)
+
+* [Collect data as Dataset](https://docs.google.com/presentation/d/1Y7zrC9QLHHcFlQpn3Yb2_paOgU_xB1B4yJwjM6ah98E/edit?usp=sharing)
+* [Algorithm: word embeddings based mapping](https://docs.google.com/presentation/d/1XpAfL3T-A0cxyRjVbmZFE2M8jsFQrwycfGX042OSP18/edit?usp=sharing)
+* [Algorithm: Support Vector Machine on word-embedding](https://docs.google.com/presentation/d/1GoGhYoFfq1Ha2MoseFj5KcWrzu0IISQ2/edit#slide=id.p1)
+* [Convolutional Neural Network for Sentence Classification](https://docs.google.com/presentation/d/1w8Qw0U5P9FVhO8-4WYMb0-foUYG47CBE/edit#slide=id.p1)
+* [The experiments based on Convolutional Neural Network](https://docs.google.com/presentation/d/1JKskq_ufcVFyvbG0yfBc1aRl0PLv39ak/edit#slide=id.p1)
+* [Algorithm: Recurrent Neural Networks](https://docs.google.com/presentation/d/1UG5GBp7PH-8pOlXFw_jMKGQQpUtEe2xV/edit#slide=id.p1)
+* [Algorithm: Long short-term memory Networks](https://docs.google.com/presentation/d/1f-5p59g9NrMlYHkhjagAYe7OO-23P-R-/edit#slide=id.p1)
+* [Algorithm:Hier-attention Network](https://docs.google.com/presentation/d/1MWM-tzy_I7I-MWqkIF3u9KodEKW3K2Tb/edit#slide=id.p1)
+* [Top-N Sort Algorithm](https://docs.google.com/presentation/d/1kpzEqbFUUvQ3dsSITs5C8ifK0VfOyAB0/edit#slide=id.p1)
+* [TOP-N Algorithm on word embeddings](https://docs.google.com/presentation/d/1kpzEqbFUUvQ3dsSITs5C8ifK0VfOyAB0/edit#slide=id.p1)
 
 
 #### Notes on deep learning
