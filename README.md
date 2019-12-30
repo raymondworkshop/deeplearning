@@ -84,4 +84,4 @@ We develop tools to extract Amazon user review (laptop) data (suppose these revi
 #### reference
 
 
-####  Copyright (c) 2018-2020 [HSUHK](https://stra.hsu.edu.hk/en/)
+####  Copyright (c) 2018 [HSUHK](https://stra.hsu.edu.hk/en/)
