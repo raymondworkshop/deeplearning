@@ -16,6 +16,3 @@ For example, when users input the keywords like “a large Screen Size laptop“
 
 
 #### reference
-
-
-####  Copyright (c) 2018 [HSUHK](https://stra.hsu.edu.hk/en/)
