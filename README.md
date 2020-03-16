@@ -1,7 +1,7 @@
 ### deeplearning
  * This is mainly on deeplearning and its applications, especially in NLP and NLU.
  
-#### Presentations from me about deep learning technology and its application
+#### My Presentations about deep learning technology and its application
 
 * [Collect data as Dataset](https://docs.google.com/presentation/d/1Y7zrC9QLHHcFlQpn3Yb2_paOgU_xB1B4yJwjM6ah98E/edit?usp=sharing)
 * [Algorithm: word embeddings based mapping](https://docs.google.com/presentation/d/1XpAfL3T-A0cxyRjVbmZFE2M8jsFQrwycfGX042OSP18/edit?usp=sharing)
