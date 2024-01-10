@@ -3,8 +3,8 @@
  
 #### My Presentations about deep learning technology and its application
 
-* [Collect data as Dataset](https://docs.google.com/presentation/d/1Y7zrC9QLHHcFlQpn3Yb2_paOgU_xB1B4yJwjM6ah98E/edit?usp=sharing)
-* [Algorithm: word embeddings based mapping](https://docs.google.com/presentation/d/1XpAfL3T-A0cxyRjVbmZFE2M8jsFQrwycfGX042OSP18/edit?usp=sharing)
+* [Collect data as Dataset](https://docs.google.com/presentation/d/17h2-zDEP1hqShYwiDf_2wL-o1UIpgm87/edit#slide=id.p1)
+* [Algorithm: word embeddings based mapping](https://docs.google.com/presentation/d/17h2-zDEP1hqShYwiDf_2wL-o1UIpgm87/edit?usp=sharing&ouid=102231699828569797138&rtpof=true&sd=true)
 * [Algorithm: Support Vector Machine on word-embedding](https://docs.google.com/presentation/d/1GoGhYoFfq1Ha2MoseFj5KcWrzu0IISQ2/edit#slide=id.p1)
 * [Convolutional Neural Network for Sentence Classification](https://docs.google.com/presentation/d/1w8Qw0U5P9FVhO8-4WYMb0-foUYG47CBE/edit#slide=id.p1)
 * [The experiments based on Convolutional Neural Network](https://docs.google.com/presentation/d/1JKskq_ufcVFyvbG0yfBc1aRl0PLv39ak/edit#slide=id.p1)
