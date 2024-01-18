@@ -5,7 +5,7 @@
 
 * [Collect data as Dataset](https://docs.google.com/presentation/d/17h2-zDEP1hqShYwiDf_2wL-o1UIpgm87/edit#slide=id.p1)
 * [Algorithm: word embeddings based mapping](https://docs.google.com/presentation/d/17h2-zDEP1hqShYwiDf_2wL-o1UIpgm87/edit?usp=sharing&ouid=102231699828569797138&rtpof=true&sd=true)
-* [Algorithm: Support Vector Machine on word-embedding](https://docs.google.com/presentation/d/1GoGhYoFfq1Ha2MoseFj5KcWrzu0IISQ2/edit#slide=id.p1)
+* [Algorithm: Support Vector Machine on word-embedding](https://docs.google.com/presentation/d/1bx6z8_0JE2Att50UIoXVGj3PvedzM3kw/edit?usp=sharing&ouid=102231699828569797138&rtpof=true&sd=true)
 * [Convolutional Neural Network for Sentence Classification](https://docs.google.com/presentation/d/1w8Qw0U5P9FVhO8-4WYMb0-foUYG47CBE/edit#slide=id.p1)
 * [The experiments based on Convolutional Neural Network](https://docs.google.com/presentation/d/1JKskq_ufcVFyvbG0yfBc1aRl0PLv39ak/edit#slide=id.p1)
 * [Algorithm: Recurrent Neural Network](https://docs.google.com/presentation/d/1UG5GBp7PH-8pOlXFw_jMKGQQpUtEe2xV/edit#slide=id.p1)
