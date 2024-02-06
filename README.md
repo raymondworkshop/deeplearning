@@ -29,7 +29,7 @@ For example, when users input the keywords like “a large Screen Size laptop“
 ##### Solution
 We develop tools to extract Amazon user review (laptop) data (suppose these reviews as user inputs). Then we build Deep learning Models to do the query-to-attributes mapping [map user inputs (the functional requirements in unstructured query) into product parameters or features (structured attributes)].
 
-We present this solution in the paper [Mapping Customer Needs in Natural Language to Product Specifications by Using Word Embeddings](https://drive.google.com/drive/folders/0B8JbPdkDj7JZUTRnQnpWQzZnd1k?resourcekey=0-sS9xd_XUXmXHqnk9GfkaXQ)
+We present this solution in the paper [Mapping Customer Needs in Natural Language to Product Specifications by Using Word Embeddings](https://drive.google.com/file/d/1PNLqb59WkcrjDrQxLR7DiSGb4byHw_df/view?usp=sharing)https://drive.google.com/file/d/1PNLqb59WkcrjDrQxLR7DiSGb4byHw_df/view?usp=sharing)
 
 
 #### reference
